@@ -34,6 +34,6 @@ function codeExecutionPlugin() {
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  base: '/DSA-PRACTICE/',
   plugins: [react(), codeExecutionPlugin()],
 });
