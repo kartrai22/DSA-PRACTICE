@@ -1,2844 +1,361 @@
 export const JAVA_THEORY_SECTIONS = [
   {
-    id: 'fundamentals',
-    title: 'Java Fundamentals',
-    icon: 'Blocks',
-    color: '#38bdf8',
-    chapters: [
+    "id": "fundamentals",
+    "title": "Java Fundamentals",
+    "icon": "Blocks",
+    "color": "#38bdf8",
+    "chapters": [
       {
-        id: 'intro-to-java',
-        title: 'Introduction to Java 21',
-        content: `## What is Java?
-
-Java is a **high-level, class-based, object-oriented** programming language designed to have as few implementation dependencies as possible. Java 21 is the latest **Long-Term Support (LTS)** release.
-
-### Key Features of Java 21
-- **Platform Independent**: Write Once, Run Anywhere (WORA) via JVM
-- **Strongly Typed**: Every variable must be declared with a type
-- **Garbage Collected**: Automatic memory management
-- **Multi-threaded**: Built-in support for concurrent programming
-- **Virtual Threads (Project Loom)**: Lightweight threads for massive concurrency
-- **Pattern Matching**: Modern, expressive conditional logic
-- **Record Classes**: Concise data carriers
-- **Sealed Classes**: Restricted class hierarchies
-
-### Your First Java Program
-
-\`\`\`java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, Java 21!");
-    }
-}
-\`\`\`
-
-### Java 21 — Simplified Main (Preview)
-
-\`\`\`java
-// JEP 463: Implicitly Declared Classes (Preview in 21)
-void main() {
-    System.out.println("Hello, simplified Java!");
-}
-\`\`\`
-
-### How Java Compiles & Runs
-
-\`\`\`
-+------------------+         +-------------------+         +------------------+
-|  Source Code     |  javac  |  Bytecode         |   JVM   |  Native Machine  |
-|  (HelloWorld.java)------>  |  (HelloWorld.class)-------> |  Code (Execution)|
-+------------------+         +-------------------+         +------------------+
-\`\`\`
-
-### JVM Memory Architecture Illustration
-
-\`\`\`
-+-------------------------------------------------------------------------------+
-|                             JVM RUNTIME DATA AREAS                            |
-+-------------------------------------------------------------------------------+
-|                                                                               |
-|  +---------------------------------+   +-----------------------------------+  |
-|  |           HEAP MEMORY           |   |           THREAD STACKS           |  |
-|  | (Shared by all threads)         |   | (Per-thread local variables)      |  |
-|  |                                 |   |                                   |  |
-|  |  +---------------------------+  |   |  +-----------------------------+  |  |
-|  |  | Young Gen (Eden, S0, S1)  |  |   |  | Stack Frame (main method)   |  |  |
-|  |  +---------------------------+  |   |  |  - Primitives: age = 25     |  |  |
-|  |  | Old / Tenured Generation  |  |   |  |  - Object Ref: str -----------------> [ "Hello" Object ]
-|  |  +---------------------------+  |   |  +-----------------------------+  |  |
-|  +---------------------------------+   +-----------------------------------+  |
-|                                                                               |
-|  +---------------------------------+   +-----------------------------------+  |
-|  |            METASPACE            |   |       NATIVE METHOD STACK         |  |
-|  | (Class definitions, methods,    |   | (C/C++ native execution JNI)      |  |
-|  |  static variables & bytecodes)  |   |                                   |  |
-|  +---------------------------------+   +-----------------------------------+  |
-+-------------------------------------------------------------------------------+
-\`\`\`
-
-### Key JVM Components:
-1. **ClassLoader**: Loads \`.class\` bytecode into the JVM Metaspace.
-2. **JIT Compiler (Just-In-Time)**: Converts frequently executed bytecode ("hot spots") directly into native machine code at runtime for high performance.
-3. **Garbage Collector (GC)**: Automatically reclaims unreachable objects from the Heap (Generational GC: ZGC, G1GC).`
+        "id": "intro-to-java",
+        "title": "Introduction to Java 21",
+        "content": "## What is Java?\n\nJava is a **high-level, class-based, object-oriented** programming language designed to have as few implementation dependencies as possible. Java 21 is the latest **Long-Term Support (LTS)** release.\n\n### Key Features of Java 21\n- **Platform Independent**: Write Once, Run Anywhere (WORA) via JVM\n- **Strongly Typed**: Every variable must be declared with a type\n- **Garbage Collected**: Automatic memory management\n- **Multi-threaded**: Built-in support for concurrent programming\n- **Virtual Threads (Project Loom)**: Lightweight threads for massive concurrency\n- **Pattern Matching**: Modern, expressive conditional logic\n- **Record Classes**: Concise data carriers\n- **Sealed Classes**: Restricted class hierarchies\n\n### Your First Java Program\n\n```java\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, Java 21!\");\n    }\n}\n```\n\n### Java 21 — Simplified Main (Preview)\n\n```java\n// JEP 463: Implicitly Declared Classes (Preview in 21)\nvoid main() {\n    System.out.println(\"Hello, simplified Java!\");\n}\n```\n\n### How Java Compiles & Runs\n\n```\n+------------------+         +-------------------+         +------------------+\n|  Source Code     |  javac  |  Bytecode         |   JVM   |  Native Machine  |\n|  (HelloWorld.java)------>  |  (HelloWorld.class)-------> |  Code (Execution)|\n+------------------+         +-------------------+         +------------------+\n```\n\n### JVM Memory Architecture Illustration\n\n```\n+-------------------------------------------------------------------------------+\n|                             JVM RUNTIME DATA AREAS                            |\n+-------------------------------------------------------------------------------+\n|                                                                               |\n|  +---------------------------------+   +-----------------------------------+  |\n|  |           HEAP MEMORY           |   |           THREAD STACKS           |  |\n|  | (Shared by all threads)         |   | (Per-thread local variables)      |  |\n|  |                                 |   |                                   |  |\n|  |  +---------------------------+  |   |  +-----------------------------+  |  |\n|  |  | Young Gen (Eden, S0, S1)  |  |   |  | Stack Frame (main method)   |  |  |\n|  |  +---------------------------+  |   |  |  - Primitives: age = 25     |  |  |\n|  |  | Old / Tenured Generation  |  |   |  |  - Object Ref: str -----------------> [ \"Hello\" Object ]\n|  |  +---------------------------+  |   |  +-----------------------------+  |  |\n|  +---------------------------------+   +-----------------------------------+  |\n|                                                                               |\n|  +---------------------------------+   +-----------------------------------+  |\n|  |            METASPACE            |   |       NATIVE METHOD STACK         |  |\n|  | (Class definitions, methods,    |   | (C/C++ native execution JNI)      |  |\n|  |  static variables & bytecodes)  |   |                                   |  |\n|  +---------------------------------+   +-----------------------------------+  |\n+-------------------------------------------------------------------------------+\n```\n\n### Key JVM Components:\n1. **ClassLoader**: Loads `.class` bytecode into the JVM Metaspace.\n2. **JIT Compiler (Just-In-Time)**: Converts frequently executed bytecode (\"hot spots\") directly into native machine code at runtime for high performance.\n3. **Garbage Collector (GC)**: Automatically reclaims unreachable objects from the Heap (Generational GC: ZGC, G1GC)."
       },
       {
-        id: 'variables-data-types',
-        title: 'Variables & Data Types',
-        content: `## Variables & Data Types
-
-Java is **statically typed** — every variable must have a declared type at compile time.
-
-### Primitive Types
-
-| Type | Size | Range | Default |
-|------|------|-------|---------|
-| \`byte\` | 1 byte | -128 to 127 | 0 |
-| \`short\` | 2 bytes | -32,768 to 32,767 | 0 |
-| \`int\` | 4 bytes | -2³¹ to 2³¹-1 | 0 |
-| \`long\` | 8 bytes | -2⁶³ to 2⁶³-1 | 0L |
-| \`float\` | 4 bytes | ~7 decimal digits | 0.0f |
-| \`double\` | 8 bytes | ~15 decimal digits | 0.0d |
-| \`char\` | 2 bytes | Unicode (0 to 65535) | '\\u0000' |
-| \`boolean\` | 1 bit | true / false | false |
-
-### Variable Declaration & Initialization
-
-\`\`\`java
-// Declaration
-int age;
-String name;
-
-// Declaration + Initialization
-int count = 42;
-double pi = 3.14159;
-boolean isActive = true;
-char grade = 'A';
-long bigNumber = 9_999_999_999L; // underscores for readability
-
-// Type Inference with var (Java 10+)
-var message = "Hello";     // inferred as String
-var numbers = List.of(1, 2, 3); // inferred as List<Integer>
-\`\`\`
-
-### Wrapper Classes (Autoboxing & Unboxing)
-
-\`\`\`java
-// Autoboxing: primitive → wrapper
-Integer wrapped = 42;          // int → Integer
-Double d = 3.14;               // double → Double
-
-// Unboxing: wrapper → primitive
-int unwrapped = wrapped;       // Integer → int
-
-// Useful methods
-int parsed = Integer.parseInt("123");
-String str = Integer.toString(42);
-int max = Integer.MAX_VALUE;   // 2147483647
-\`\`\`
-
-### Constants
-
-\`\`\`java
-final double PI = 3.14159265358979;
-final String APP_NAME = "MyApp";
-// PI = 3.14; // ❌ Compile error — cannot reassign final
-\`\`\`
-
-### Type Casting
-
-\`\`\`java
-// Implicit (widening) — safe, no data loss
-int i = 100;
-long l = i;        // int → long
-double d = l;      // long → double
-
-// Explicit (narrowing) — possible data loss
-double x = 9.78;
-int y = (int) x;   // 9 (decimal truncated)
-\`\`\``
+        "id": "variables-data-types",
+        "title": "Variables & Data Types",
+        "content": "## Variables & Data Types\n\nJava is **statically typed** — every variable must have a declared type at compile time.\n\n### Primitive Types\n\n| Type | Size | Range | Default |\n|------|------|-------|---------|\n| `byte` | 1 byte | -128 to 127 | 0 |\n| `short` | 2 bytes | -32,768 to 32,767 | 0 |\n| `int` | 4 bytes | -2³¹ to 2³¹-1 | 0 |\n| `long` | 8 bytes | -2⁶³ to 2⁶³-1 | 0L |\n| `float` | 4 bytes | ~7 decimal digits | 0.0f |\n| `double` | 8 bytes | ~15 decimal digits | 0.0d |\n| `char` | 2 bytes | Unicode (0 to 65535) | '\\u0000' |\n| `boolean` | 1 bit | true / false | false |\n\n### Variable Declaration & Initialization\n\n```java\n// Declaration\nint age;\nString name;\n\n// Declaration + Initialization\nint count = 42;\ndouble pi = 3.14159;\nboolean isActive = true;\nchar grade = 'A';\nlong bigNumber = 9_999_999_999L; // underscores for readability\n\n// Type Inference with var (Java 10+)\nvar message = \"Hello\";     // inferred as String\nvar numbers = List.of(1, 2, 3); // inferred as List<Integer>\n```\n\n### Wrapper Classes (Autoboxing & Unboxing)\n\n```java\n// Autoboxing: primitive → wrapper\nInteger wrapped = 42;          // int → Integer\nDouble d = 3.14;               // double → Double\n\n// Unboxing: wrapper → primitive\nint unwrapped = wrapped;       // Integer → int\n\n// Useful methods\nint parsed = Integer.parseInt(\"123\");\nString str = Integer.toString(42);\nint max = Integer.MAX_VALUE;   // 2147483647\n```\n\n### Constants\n\n```java\nfinal double PI = 3.14159265358979;\nfinal String APP_NAME = \"MyApp\";\n// PI = 3.14; // ❌ Compile error — cannot reassign final\n```\n\n### Type Casting\n\n```java\n// Implicit (widening) — safe, no data loss\nint i = 100;\nlong l = i;        // int → long\ndouble d = l;      // long → double\n\n// Explicit (narrowing) — possible data loss\ndouble x = 9.78;\nint y = (int) x;   // 9 (decimal truncated)\n```"
       },
       {
-        id: 'operators',
-        title: 'Operators & Expressions',
-        content: `## Operators & Expressions
-
-### Arithmetic Operators
-
-\`\`\`java
-int a = 10, b = 3;
-System.out.println(a + b);   // 13 (addition)
-System.out.println(a - b);   // 7  (subtraction)
-System.out.println(a * b);   // 30 (multiplication)
-System.out.println(a / b);   // 3  (integer division!)
-System.out.println(a % b);   // 1  (modulus/remainder)
-
-// For decimal division, cast to double
-System.out.println((double) a / b); // 3.333...
-\`\`\`
-
-### Comparison Operators
-
-\`\`\`java
-System.out.println(5 == 5);  // true
-System.out.println(5 != 3);  // true
-System.out.println(5 > 3);   // true
-System.out.println(5 < 3);   // false
-System.out.println(5 >= 5);  // true
-System.out.println(5 <= 3);  // false
-\`\`\`
-
-### Logical Operators
-
-\`\`\`java
-boolean x = true, y = false;
-System.out.println(x && y);  // false (AND — short-circuit)
-System.out.println(x || y);  // true  (OR — short-circuit)
-System.out.println(!x);      // false (NOT)
-
-// Short-circuit behavior:
-// In (a && b), if a is false, b is never evaluated
-// In (a || b), if a is true, b is never evaluated
-\`\`\`
-
-### Bitwise Operators
-
-\`\`\`java
-int a = 5;  // 0101 in binary
-int b = 3;  // 0011 in binary
-
-System.out.println(a & b);   // 1  (0001) — AND
-System.out.println(a | b);   // 7  (0111) — OR
-System.out.println(a ^ b);   // 6  (0110) — XOR
-System.out.println(~a);      // -6 — NOT (inverts all bits)
-System.out.println(a << 1);  // 10 (1010) — left shift
-System.out.println(a >> 1);  // 2  (0010) — right shift
-System.out.println(a >>> 1); // 2 — unsigned right shift
-\`\`\`
-
-### Ternary Operator
-
-\`\`\`java
-int age = 20;
-String status = (age >= 18) ? "Adult" : "Minor";
-// status = "Adult"
-\`\`\`
-
-### instanceof with Pattern Matching (Java 16+)
-
-\`\`\`java
-Object obj = "Hello";
-
-// Old way
-if (obj instanceof String) {
-    String s = (String) obj;
-    System.out.println(s.length());
-}
-
-// New way — pattern matching
-if (obj instanceof String s) {
-    System.out.println(s.length()); // s is auto-cast
-}
-\`\`\``
+        "id": "operators",
+        "title": "Operators & Expressions",
+        "content": "## Operators & Expressions\n\n### Arithmetic Operators\n\n```java\nint a = 10, b = 3;\nSystem.out.println(a + b);   // 13 (addition)\nSystem.out.println(a - b);   // 7  (subtraction)\nSystem.out.println(a * b);   // 30 (multiplication)\nSystem.out.println(a / b);   // 3  (integer division!)\nSystem.out.println(a % b);   // 1  (modulus/remainder)\n\n// For decimal division, cast to double\nSystem.out.println((double) a / b); // 3.333...\n```\n\n### Comparison Operators\n\n```java\nSystem.out.println(5 == 5);  // true\nSystem.out.println(5 != 3);  // true\nSystem.out.println(5 > 3);   // true\nSystem.out.println(5 < 3);   // false\nSystem.out.println(5 >= 5);  // true\nSystem.out.println(5 <= 3);  // false\n```\n\n### Logical Operators\n\n```java\nboolean x = true, y = false;\nSystem.out.println(x && y);  // false (AND — short-circuit)\nSystem.out.println(x || y);  // true  (OR — short-circuit)\nSystem.out.println(!x);      // false (NOT)\n\n// Short-circuit behavior:\n// In (a && b), if a is false, b is never evaluated\n// In (a || b), if a is true, b is never evaluated\n```\n\n### Bitwise Operators\n\n```java\nint a = 5;  // 0101 in binary\nint b = 3;  // 0011 in binary\n\nSystem.out.println(a & b);   // 1  (0001) — AND\nSystem.out.println(a | b);   // 7  (0111) — OR\nSystem.out.println(a ^ b);   // 6  (0110) — XOR\nSystem.out.println(~a);      // -6 — NOT (inverts all bits)\nSystem.out.println(a << 1);  // 10 (1010) — left shift\nSystem.out.println(a >> 1);  // 2  (0010) — right shift\nSystem.out.println(a >>> 1); // 2 — unsigned right shift\n```\n\n### Ternary Operator\n\n```java\nint age = 20;\nString status = (age >= 18) ? \"Adult\" : \"Minor\";\n// status = \"Adult\"\n```\n\n### instanceof with Pattern Matching (Java 16+)\n\n```java\nObject obj = \"Hello\";\n\n// Old way\nif (obj instanceof String) {\n    String s = (String) obj;\n    System.out.println(s.length());\n}\n\n// New way — pattern matching\nif (obj instanceof String s) {\n    System.out.println(s.length()); // s is auto-cast\n}\n```"
       },
       {
-        id: 'control-flow',
-        title: 'Control Flow',
-        content: `## Control Flow Statements
-
-### if / else if / else
-
-\`\`\`java
-int score = 85;
-
-if (score >= 90) {
-    System.out.println("Grade: A");
-} else if (score >= 80) {
-    System.out.println("Grade: B");
-} else if (score >= 70) {
-    System.out.println("Grade: C");
-} else {
-    System.out.println("Grade: F");
-}
-\`\`\`
-
-### Enhanced Switch Expression (Java 14+)
-
-\`\`\`java
-// Classic switch statement
-String day = "MONDAY";
-switch (day) {
-    case "MONDAY":
-    case "TUESDAY":
-        System.out.println("Start of week");
-        break;
-    case "FRIDAY":
-        System.out.println("TGIF!");
-        break;
-    default:
-        System.out.println("Midweek");
-}
-
-// Modern switch EXPRESSION (Java 14+)
-String result = switch (day) {
-    case "MONDAY", "TUESDAY" -> "Start of week";
-    case "FRIDAY" -> "TGIF!";
-    case "SATURDAY", "SUNDAY" -> "Weekend!";
-    default -> "Midweek";
-};
-
-// Switch with blocks and yield
-int numLetters = switch (day) {
-    case "MONDAY", "FRIDAY", "SUNDAY" -> 6;
-    case "TUESDAY" -> 7;
-    default -> {
-        String trimmed = day.strip();
-        yield trimmed.length();
-    }
-};
-\`\`\`
-
-### for Loop
-
-\`\`\`java
-// Classic for loop
-for (int i = 0; i < 5; i++) {
-    System.out.println("i = " + i);
-}
-
-// Enhanced for-each loop
-int[] numbers = {10, 20, 30, 40};
-for (int num : numbers) {
-    System.out.println(num);
-}
-\`\`\`
-
-### while / do-while
-
-\`\`\`java
-// while — checks condition BEFORE each iteration
-int i = 0;
-while (i < 5) {
-    System.out.println(i);
-    i++;
-}
-
-// do-while — executes at LEAST once
-int j = 10;
-do {
-    System.out.println(j);
-    j++;
-} while (j < 5); // prints 10, then exits
-\`\`\`
-
-### break & continue
-
-\`\`\`java
-// break — exit the loop entirely
-for (int i = 0; i < 10; i++) {
-    if (i == 5) break;
-    System.out.print(i + " "); // 0 1 2 3 4
-}
-
-// continue — skip current iteration
-for (int i = 0; i < 10; i++) {
-    if (i % 2 == 0) continue;
-    System.out.print(i + " "); // 1 3 5 7 9
-}
-
-// Labeled break (for nested loops)
-outer:
-for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-        if (j == 2) break outer;
-        System.out.print(i + "," + j + " ");
-    }
-}
-\`\`\``
+        "id": "control-flow",
+        "title": "Control Flow",
+        "content": "## Control Flow Statements\n\n### if / else if / else\n\n```java\nint score = 85;\n\nif (score >= 90) {\n    System.out.println(\"Grade: A\");\n} else if (score >= 80) {\n    System.out.println(\"Grade: B\");\n} else if (score >= 70) {\n    System.out.println(\"Grade: C\");\n} else {\n    System.out.println(\"Grade: F\");\n}\n```\n\n### Enhanced Switch Expression (Java 14+)\n\n```java\n// Classic switch statement\nString day = \"MONDAY\";\nswitch (day) {\n    case \"MONDAY\":\n    case \"TUESDAY\":\n        System.out.println(\"Start of week\");\n        break;\n    case \"FRIDAY\":\n        System.out.println(\"TGIF!\");\n        break;\n    default:\n        System.out.println(\"Midweek\");\n}\n\n// Modern switch EXPRESSION (Java 14+)\nString result = switch (day) {\n    case \"MONDAY\", \"TUESDAY\" -> \"Start of week\";\n    case \"FRIDAY\" -> \"TGIF!\";\n    case \"SATURDAY\", \"SUNDAY\" -> \"Weekend!\";\n    default -> \"Midweek\";\n};\n\n// Switch with blocks and yield\nint numLetters = switch (day) {\n    case \"MONDAY\", \"FRIDAY\", \"SUNDAY\" -> 6;\n    case \"TUESDAY\" -> 7;\n    default -> {\n        String trimmed = day.strip();\n        yield trimmed.length();\n    }\n};\n```\n\n### for Loop\n\n```java\n// Classic for loop\nfor (int i = 0; i < 5; i++) {\n    System.out.println(\"i = \" + i);\n}\n\n// Enhanced for-each loop\nint[] numbers = {10, 20, 30, 40};\nfor (int num : numbers) {\n    System.out.println(num);\n}\n```\n\n### while / do-while\n\n```java\n// while — checks condition BEFORE each iteration\nint i = 0;\nwhile (i < 5) {\n    System.out.println(i);\n    i++;\n}\n\n// do-while — executes at LEAST once\nint j = 10;\ndo {\n    System.out.println(j);\n    j++;\n} while (j < 5); // prints 10, then exits\n```\n\n### break & continue\n\n```java\n// break — exit the loop entirely\nfor (int i = 0; i < 10; i++) {\n    if (i == 5) break;\n    System.out.print(i + \" \"); // 0 1 2 3 4\n}\n\n// continue — skip current iteration\nfor (int i = 0; i < 10; i++) {\n    if (i % 2 == 0) continue;\n    System.out.print(i + \" \"); // 1 3 5 7 9\n}\n\n// Labeled break (for nested loops)\nouter:\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        if (j == 2) break outer;\n        System.out.print(i + \",\" + j + \" \");\n    }\n}\n```"
       },
       {
-        id: 'arrays',
-        title: 'Arrays',
-        content: `## Arrays
-
-Arrays are **fixed-size**, **zero-indexed** containers that hold elements of the same type.
-
-### Declaration & Initialization
-
-\`\`\`java
-// Declaration
-int[] numbers;
-String[] names;
-
-// Initialization
-numbers = new int[5]; // [0, 0, 0, 0, 0]
-names = new String[3]; // [null, null, null]
-
-// Inline initialization
-int[] primes = {2, 3, 5, 7, 11};
-String[] fruits = {"apple", "banana", "cherry"};
-
-// Accessing elements
-System.out.println(primes[0]);    // 2
-System.out.println(primes.length); // 5
-
-primes[4] = 13; // modify element
-\`\`\`
-
-### Iterating Arrays
-
-\`\`\`java
-int[] arr = {10, 20, 30, 40, 50};
-
-// Classic for loop
-for (int i = 0; i < arr.length; i++) {
-    System.out.println("arr[" + i + "] = " + arr[i]);
-}
-
-// Enhanced for-each
-for (int num : arr) {
-    System.out.println(num);
-}
-\`\`\`
-
-### Multi-Dimensional Arrays
-
-\`\`\`java
-// 2D Array (matrix)
-int[][] matrix = {
-    {1, 2, 3},
-    {4, 5, 6},
-    {7, 8, 9}
-};
-
-System.out.println(matrix[1][2]); // 6 (row 1, col 2)
-System.out.println(matrix.length);    // 3 rows
-System.out.println(matrix[0].length); // 3 cols
-
-// Iterating 2D array
-for (int i = 0; i < matrix.length; i++) {
-    for (int j = 0; j < matrix[i].length; j++) {
-        System.out.print(matrix[i][j] + " ");
-    }
-    System.out.println();
-}
-\`\`\`
-
-### java.util.Arrays Utility
-
-\`\`\`java
-import java.util.Arrays;
-
-int[] arr = {5, 2, 8, 1, 9};
-
-Arrays.sort(arr);                    // [1, 2, 5, 8, 9]
-System.out.println(Arrays.toString(arr));
-
-int idx = Arrays.binarySearch(arr, 5); // 2
-int[] copy = Arrays.copyOf(arr, 3);    // [1, 2, 5]
-Arrays.fill(arr, 0);                   // [0, 0, 0, 0, 0]
-
-boolean eq = Arrays.equals(
-    new int[]{1, 2}, new int[]{1, 2}
-); // true
-\`\`\``
+        "id": "arrays",
+        "title": "Arrays",
+        "content": "## Arrays\n\nArrays are **fixed-size**, **zero-indexed** containers that hold elements of the same type.\n\n### Declaration & Initialization\n\n```java\n// Declaration\nint[] numbers;\nString[] names;\n\n// Initialization\nnumbers = new int[5]; // [0, 0, 0, 0, 0]\nnames = new String[3]; // [null, null, null]\n\n// Inline initialization\nint[] primes = {2, 3, 5, 7, 11};\nString[] fruits = {\"apple\", \"banana\", \"cherry\"};\n\n// Accessing elements\nSystem.out.println(primes[0]);    // 2\nSystem.out.println(primes.length); // 5\n\nprimes[4] = 13; // modify element\n```\n\n### Iterating Arrays\n\n```java\nint[] arr = {10, 20, 30, 40, 50};\n\n// Classic for loop\nfor (int i = 0; i < arr.length; i++) {\n    System.out.println(\"arr[\" + i + \"] = \" + arr[i]);\n}\n\n// Enhanced for-each\nfor (int num : arr) {\n    System.out.println(num);\n}\n```\n\n### Multi-Dimensional Arrays\n\n```java\n// 2D Array (matrix)\nint[][] matrix = {\n    {1, 2, 3},\n    {4, 5, 6},\n    {7, 8, 9}\n};\n\nSystem.out.println(matrix[1][2]); // 6 (row 1, col 2)\nSystem.out.println(matrix.length);    // 3 rows\nSystem.out.println(matrix[0].length); // 3 cols\n\n// Iterating 2D array\nfor (int i = 0; i < matrix.length; i++) {\n    for (int j = 0; j < matrix[i].length; j++) {\n        System.out.print(matrix[i][j] + \" \");\n    }\n    System.out.println();\n}\n```\n\n### java.util.Arrays Utility\n\n```java\nimport java.util.Arrays;\n\nint[] arr = {5, 2, 8, 1, 9};\n\nArrays.sort(arr);                    // [1, 2, 5, 8, 9]\nSystem.out.println(Arrays.toString(arr));\n\nint idx = Arrays.binarySearch(arr, 5); // 2\nint[] copy = Arrays.copyOf(arr, 3);    // [1, 2, 5]\nArrays.fill(arr, 0);                   // [0, 0, 0, 0, 0]\n\nboolean eq = Arrays.equals(\n    new int[]{1, 2}, new int[]{1, 2}\n); // true\n```"
       },
       {
-        id: 'strings',
-        title: 'Strings & Text Blocks',
-        content: `## Strings in Java
-
-Strings are **immutable** objects. Every modification creates a **new** String.
-
-### String Constant Pool vs Heap Memory
-
-\`\`\`
-+-------------------------------------------------------------------------+
-|                              HEAP MEMORY                                |
-|                                                                         |
-|   +-----------------------------------------------------------------+   |
-|   |                      STRING CONSTANT POOL                       |   |
-|   |                                                                 |   |
-|   |                     [ "Hello" Object ] <---------+              |   |
-|   |                     [ "Hi" Object ]              |              |   |
-|   +--------------------------------------------------|--------------+   |
-|                                                      |                  |
-|   [ String Object s2 ] ----------------------------->| (heap reference) |
-+------------------------------------------------------|------------------+
-                                                       |
-STACK FRAME:                                           |
-  s1 (ref) --------------------------------------------+
-  s3 (ref) --------------------------------------------+ (points to exact same "Hello")
-\`\`\`
-
-- **String Literals ('Hello')**: Stored in the **String Constant Pool** inside the JVM Heap to save memory. Reused across identical literals.
-- **'new String("Hello")'**: Explicitly allocates a **new object** on the heap, bypassing pool reuse.
-
-### Creating Strings
-
-\`\`\`java
-String s1 = "Hello";          // String literal (pooled)
-String s2 = new String("Hi"); // new object on heap
-String s3 = "Hello";          // same pool reference as s1
-
-System.out.println(s1 == s3);      // true (same pool ref)
-System.out.println(s1 == s2);      // false (different objects)
-System.out.println(s1.equals(s2)); // Use .equals() for content!
-\`\`\`
-
-### Essential String Methods
-
-\`\`\`java
-String s = "Hello, World!";
-
-s.length();             // 13
-s.charAt(0);            // 'H'
-s.indexOf("World");     // 7
-s.substring(7);         // "World!"
-s.substring(0, 5);      // "Hello"
-s.toLowerCase();        // "hello, world!"
-s.toUpperCase();        // "HELLO, WORLD!"
-s.trim();               // removes leading/trailing whitespace
-s.strip();              // (Java 11+) Unicode-aware trim
-s.contains("World");    // true
-s.startsWith("Hello");  // true
-s.endsWith("!");        // true
-s.replace("World", "Java"); // "Hello, Java!"
-s.split(", ");          // ["Hello", "World!"]
-s.toCharArray();        // char[] {'H','e','l',...}
-s.isEmpty();            // false
-s.isBlank();            // false (Java 11+, checks whitespace)
-\`\`\`
-
-### String Formatting
-
-\`\`\`java
-// String.format()
-String msg = String.format("Name: %s, Age: %d", "Karthik", 25);
-
-// formatted() method (Java 15+)
-String msg2 = "Score: %.2f%%".formatted(98.567);
-// "Score: 98.57%"
-\`\`\`
-
-### Text Blocks (Java 15+)
-
-\`\`\`java
-// Multi-line strings with proper indentation
-String json = """
-        {
-            "name": "Karthik",
-            "age": 25,
-            "skills": ["Java", "DSA"]
-        }
-        """;
-
-String html = """
-        <html>
-            <body>
-                <h1>Hello</h1>
-            </body>
-        </html>
-        """;
-\`\`\`
-
-### StringBuilder (Mutable Strings)
-
-\`\`\`java
-// Use StringBuilder for repeated string modifications
-StringBuilder sb = new StringBuilder();
-sb.append("Hello");
-sb.append(" ");
-sb.append("World");
-sb.insert(5, ",");     // "Hello, World"
-sb.reverse();          // "dlroW ,olleH"
-sb.delete(0, 6);       // ",olleH"
-
-String result = sb.toString();
-
-// Efficient string concatenation in loops:
-StringBuilder builder = new StringBuilder();
-for (int i = 0; i < 1000; i++) {
-    builder.append(i).append(", ");
-}
-String csv = builder.toString();
-\`\`\``
+        "id": "strings",
+        "title": "Strings & Text Blocks",
+        "content": "## Strings in Java\n\nStrings are **immutable** objects. Every modification creates a **new** String.\n\n### String Constant Pool vs Heap Memory\n\n```\n+-------------------------------------------------------------------------+\n|                              HEAP MEMORY                                |\n|                                                                         |\n|   +-----------------------------------------------------------------+   |\n|   |                      STRING CONSTANT POOL                       |   |\n|   |                                                                 |   |\n|   |                     [ \"Hello\" Object ] <---------+              |   |\n|   |                     [ \"Hi\" Object ]              |              |   |\n|   +--------------------------------------------------|--------------+   |\n|                                                      |                  |\n|   [ String Object s2 ] ----------------------------->| (heap reference) |\n+------------------------------------------------------|------------------+\n                                                       |\nSTACK FRAME:                                           |\n  s1 (ref) --------------------------------------------+\n  s3 (ref) --------------------------------------------+ (points to exact same \"Hello\")\n```\n\n- **String Literals ('Hello')**: Stored in the **String Constant Pool** inside the JVM Heap to save memory. Reused across identical literals.\n- **'new String(\"Hello\")'**: Explicitly allocates a **new object** on the heap, bypassing pool reuse.\n\n### Creating Strings\n\n```java\nString s1 = \"Hello\";          // String literal (pooled)\nString s2 = new String(\"Hi\"); // new object on heap\nString s3 = \"Hello\";          // same pool reference as s1\n\nSystem.out.println(s1 == s3);      // true (same pool ref)\nSystem.out.println(s1 == s2);      // false (different objects)\nSystem.out.println(s1.equals(s2)); // Use .equals() for content!\n```\n\n### Essential String Methods\n\n```java\nString s = \"Hello, World!\";\n\ns.length();             // 13\ns.charAt(0);            // 'H'\ns.indexOf(\"World\");     // 7\ns.substring(7);         // \"World!\"\ns.substring(0, 5);      // \"Hello\"\ns.toLowerCase();        // \"hello, world!\"\ns.toUpperCase();        // \"HELLO, WORLD!\"\ns.trim();               // removes leading/trailing whitespace\ns.strip();              // (Java 11+) Unicode-aware trim\ns.contains(\"World\");    // true\ns.startsWith(\"Hello\");  // true\ns.endsWith(\"!\");        // true\ns.replace(\"World\", \"Java\"); // \"Hello, Java!\"\ns.split(\", \");          // [\"Hello\", \"World!\"]\ns.toCharArray();        // char[] {'H','e','l',...}\ns.isEmpty();            // false\ns.isBlank();            // false (Java 11+, checks whitespace)\n```\n\n### String Formatting\n\n```java\n// String.format()\nString msg = String.format(\"Name: %s, Age: %d\", \"Karthik\", 25);\n\n// formatted() method (Java 15+)\nString msg2 = \"Score: %.2f%%\".formatted(98.567);\n// \"Score: 98.57%\"\n```\n\n### Text Blocks (Java 15+)\n\n```java\n// Multi-line strings with proper indentation\nString json = \"\"\"\n        {\n            \"name\": \"Karthik\",\n            \"age\": 25,\n            \"skills\": [\"Java\", \"DSA\"]\n        }\n        \"\"\";\n\nString html = \"\"\"\n        <html>\n            <body>\n                <h1>Hello</h1>\n            </body>\n        </html>\n        \"\"\";\n```\n\n### StringBuilder (Mutable Strings)\n\n```java\n// Use StringBuilder for repeated string modifications\nStringBuilder sb = new StringBuilder();\nsb.append(\"Hello\");\nsb.append(\" \");\nsb.append(\"World\");\nsb.insert(5, \",\");     // \"Hello, World\"\nsb.reverse();          // \"dlroW ,olleH\"\nsb.delete(0, 6);       // \",olleH\"\n\nString result = sb.toString();\n\n// Efficient string concatenation in loops:\nStringBuilder builder = new StringBuilder();\nfor (int i = 0; i < 1000; i++) {\n    builder.append(i).append(\", \");\n}\nString csv = builder.toString();\n```"
       },
       {
-        id: 'methods',
-        title: 'Methods',
-        content: `## Methods
-
-Methods define reusable blocks of logic.
-
-### Method Syntax
-
-\`\`\`java
-accessModifier returnType methodName(parameterList) {
-    // method body
-    return value; // if non-void
-}
-\`\`\`
-
-### Examples
-
-\`\`\`java
-public class MathUtils {
-
-    // Instance method
-    public int add(int a, int b) {
-        return a + b;
-    }
-
-    // Static method — called on class, not instance
-    public static int multiply(int a, int b) {
-        return a * b;
-    }
-
-    // void method — no return value
-    public void greet(String name) {
-        System.out.println("Hello, " + name + "!");
-    }
-
-    // Method with variable arguments (varargs)
-    public int sum(int... numbers) {
-        int total = 0;
-        for (int n : numbers) {
-            total += n;
-        }
-        return total;
-    }
-}
-
-// Usage:
-MathUtils utils = new MathUtils();
-utils.add(3, 5);                  // 8
-MathUtils.multiply(4, 6);         // 24 (static)
-utils.greet("Karthik");           // Hello, Karthik!
-utils.sum(1, 2, 3, 4, 5);        // 15
-\`\`\`
-
-### Method Overloading
-
-\`\`\`java
-public class Calculator {
-    int add(int a, int b) { return a + b; }
-    double add(double a, double b) { return a + b; }
-    int add(int a, int b, int c) { return a + b + c; }
-}
-
-Calculator calc = new Calculator();
-calc.add(1, 2);       // calls int version → 3
-calc.add(1.5, 2.5);   // calls double version → 4.0
-calc.add(1, 2, 3);    // calls 3-param version → 6
-\`\`\`
-
-### Pass by Value
-
-\`\`\`java
-// Java ALWAYS passes by value
-// For primitives: copies the value
-// For objects: copies the reference (not the object)
-
-void changeValue(int x) {
-    x = 100; // doesn't affect caller's variable
-}
-
-void changeArray(int[] arr) {
-    arr[0] = 100; // DOES affect caller's array
-    // because we modified the object the reference points to
-}
-\`\`\``
+        "id": "methods",
+        "title": "Methods",
+        "content": "## Methods\n\nMethods define reusable blocks of logic.\n\n### Method Syntax\n\n```java\naccessModifier returnType methodName(parameterList) {\n    // method body\n    return value; // if non-void\n}\n```\n\n### Examples\n\n```java\npublic class MathUtils {\n\n    // Instance method\n    public int add(int a, int b) {\n        return a + b;\n    }\n\n    // Static method — called on class, not instance\n    public static int multiply(int a, int b) {\n        return a * b;\n    }\n\n    // void method — no return value\n    public void greet(String name) {\n        System.out.println(\"Hello, \" + name + \"!\");\n    }\n\n    // Method with variable arguments (varargs)\n    public int sum(int... numbers) {\n        int total = 0;\n        for (int n : numbers) {\n            total += n;\n        }\n        return total;\n    }\n}\n\n// Usage:\nMathUtils utils = new MathUtils();\nutils.add(3, 5);                  // 8\nMathUtils.multiply(4, 6);         // 24 (static)\nutils.greet(\"Karthik\");           // Hello, Karthik!\nutils.sum(1, 2, 3, 4, 5);        // 15\n```\n\n### Method Overloading\n\n```java\npublic class Calculator {\n    int add(int a, int b) { return a + b; }\n    double add(double a, double b) { return a + b; }\n    int add(int a, int b, int c) { return a + b + c; }\n}\n\nCalculator calc = new Calculator();\ncalc.add(1, 2);       // calls int version → 3\ncalc.add(1.5, 2.5);   // calls double version → 4.0\ncalc.add(1, 2, 3);    // calls 3-param version → 6\n```\n\n### Pass by Value\n\n```java\n// Java ALWAYS passes by value\n// For primitives: copies the value\n// For objects: copies the reference (not the object)\n\nvoid changeValue(int x) {\n    x = 100; // doesn't affect caller's variable\n}\n\nvoid changeArray(int[] arr) {\n    arr[0] = 100; // DOES affect caller's array\n    // because we modified the object the reference points to\n}\n```"
       }
     ]
   },
   {
-    id: 'oop',
-    title: 'Object-Oriented Programming',
-    icon: 'Boxes',
-    color: '#a78bfa',
-    chapters: [
+    "id": "oop",
+    "title": "Object-Oriented Programming",
+    "icon": "Boxes",
+    "color": "#a78bfa",
+    "chapters": [
       {
-        id: 'classes-objects',
-        title: 'Classes & Objects',
-        content: `## Classes & Objects
-
-A **class** is a blueprint; an **object** is an instance of that class.
-
-### Defining a Class
-
-\`\`\`java
-public class Student {
-    // Fields (instance variables)
-    private String name;
-    private int age;
-    private double gpa;
-
-    // Constructor
-    public Student(String name, int age, double gpa) {
-        this.name = name;
-        this.age = age;
-        this.gpa = gpa;
-    }
-
-    // Default constructor
-    public Student() {
-        this("Unknown", 0, 0.0);
-    }
-
-    // Getters and Setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public int getAge() { return age; }
-    public double getGpa() { return gpa; }
-
-    // Method
-    public boolean isHonorRoll() {
-        return gpa >= 3.5;
-    }
-
-    // toString
-    @Override
-    public String toString() {
-        return "Student{name='%s', age=%d, gpa=%.1f}"
-            .formatted(name, age, gpa);
-    }
-}
-
-// Creating objects
-Student s1 = new Student("Karthik", 21, 3.8);
-Student s2 = new Student(); // uses default constructor
-System.out.println(s1);     // Student{name='Karthik', age=21, gpa=3.8}
-System.out.println(s1.isHonorRoll()); // true
-\`\`\`
-
-### Access Modifiers
-
-| Modifier | Class | Package | Subclass | World |
-|----------|-------|---------|----------|-------|
-| \`public\` | ✅ | ✅ | ✅ | ✅ |
-| \`protected\` | ✅ | ✅ | ✅ | ❌ |
-| (default) | ✅ | ✅ | ❌ | ❌ |
-| \`private\` | ✅ | ❌ | ❌ | ❌ |
-
-### Static Members
-
-\`\`\`java
-public class Counter {
-    private static int count = 0; // shared across all instances
-
-    public Counter() {
-        count++;
-    }
-
-    public static int getCount() {
-        return count;
-    }
-}
-
-new Counter();
-new Counter();
-System.out.println(Counter.getCount()); // 2
-\`\`\``
+        "id": "classes-objects",
+        "title": "Classes & Objects",
+        "content": "## Classes & Objects\n\nA **class** is a blueprint; an **object** is an instance of that class.\n\n### Defining a Class\n\n```java\npublic class Student {\n    // Fields (instance variables)\n    private String name;\n    private int age;\n    private double gpa;\n\n    // Constructor\n    public Student(String name, int age, double gpa) {\n        this.name = name;\n        this.age = age;\n        this.gpa = gpa;\n    }\n\n    // Default constructor\n    public Student() {\n        this(\"Unknown\", 0, 0.0);\n    }\n\n    // Getters and Setters\n    public String getName() { return name; }\n    public void setName(String name) { this.name = name; }\n    public int getAge() { return age; }\n    public double getGpa() { return gpa; }\n\n    // Method\n    public boolean isHonorRoll() {\n        return gpa >= 3.5;\n    }\n\n    // toString\n    @Override\n    public String toString() {\n        return \"Student{name='%s', age=%d, gpa=%.1f}\"\n            .formatted(name, age, gpa);\n    }\n}\n\n// Creating objects\nStudent s1 = new Student(\"Karthik\", 21, 3.8);\nStudent s2 = new Student(); // uses default constructor\nSystem.out.println(s1);     // Student{name='Karthik', age=21, gpa=3.8}\nSystem.out.println(s1.isHonorRoll()); // true\n```\n\n### Access Modifiers\n\n| Modifier | Class | Package | Subclass | World |\n|----------|-------|---------|----------|-------|\n| `public` | ✅ | ✅ | ✅ | ✅ |\n| `protected` | ✅ | ✅ | ✅ | ❌ |\n| (default) | ✅ | ✅ | ❌ | ❌ |\n| `private` | ✅ | ❌ | ❌ | ❌ |\n\n### Static Members\n\n```java\npublic class Counter {\n    private static int count = 0; // shared across all instances\n\n    public Counter() {\n        count++;\n    }\n\n    public static int getCount() {\n        return count;\n    }\n}\n\nnew Counter();\nnew Counter();\nSystem.out.println(Counter.getCount()); // 2\n```"
       },
       {
-        id: 'inheritance',
-        title: 'Inheritance & Polymorphism',
-        content: `## Inheritance
-
-Inheritance allows a class to **extend** another class, inheriting its fields and methods.
-
-### Basic Inheritance
-
-\`\`\`java
-// Parent / Superclass
-public class Animal {
-    protected String name;
-
-    public Animal(String name) {
-        this.name = name;
-    }
-
-    public void speak() {
-        System.out.println(name + " makes a sound");
-    }
-
-    public void eat() {
-        System.out.println(name + " is eating");
-    }
-}
-
-// Child / Subclass
-public class Dog extends Animal {
-
-    private String breed;
-
-    public Dog(String name, String breed) {
-        super(name); // call parent constructor
-        this.breed = breed;
-    }
-
-    @Override // Method overriding
-    public void speak() {
-        System.out.println(name + " barks! Woof!");
-    }
-
-    // New method specific to Dog
-    public void fetch() {
-        System.out.println(name + " fetches the ball");
-    }
-}
-
-Dog dog = new Dog("Buddy", "Labrador");
-dog.speak();  // Buddy barks! Woof!  (overridden)
-dog.eat();    // Buddy is eating     (inherited)
-dog.fetch();  // Buddy fetches the ball
-\`\`\`
-
-## Polymorphism
-
-The ability to treat objects of different classes through a **common interface**.
-
-\`\`\`java
-// Runtime polymorphism
-Animal animal = new Dog("Rex", "Shepherd");
-animal.speak(); // "Rex barks! Woof!" — actual type determines behavior
-// animal.fetch(); // ❌ Compile error — reference type is Animal
-
-// Using polymorphism with collections
-List<Animal> animals = List.of(
-    new Dog("Buddy", "Lab"),
-    new Cat("Whiskers"),
-    new Bird("Tweety")
-);
-
-for (Animal a : animals) {
-    a.speak(); // each calls its own overridden version
-}
-\`\`\`
-
-### The \`final\` Keyword
-
-\`\`\`java
-final class ImmutableClass { }
-// Cannot be extended
-
-class Parent {
-    final void criticalMethod() { }
-    // Cannot be overridden in child classes
-}
-\`\`\``
+        "id": "inheritance",
+        "title": "Inheritance & Polymorphism",
+        "content": "## Inheritance\n\nInheritance allows a class to **extend** another class, inheriting its fields and methods.\n\n### Basic Inheritance\n\n```java\n// Parent / Superclass\npublic class Animal {\n    protected String name;\n\n    public Animal(String name) {\n        this.name = name;\n    }\n\n    public void speak() {\n        System.out.println(name + \" makes a sound\");\n    }\n\n    public void eat() {\n        System.out.println(name + \" is eating\");\n    }\n}\n\n// Child / Subclass\npublic class Dog extends Animal {\n\n    private String breed;\n\n    public Dog(String name, String breed) {\n        super(name); // call parent constructor\n        this.breed = breed;\n    }\n\n    @Override // Method overriding\n    public void speak() {\n        System.out.println(name + \" barks! Woof!\");\n    }\n\n    // New method specific to Dog\n    public void fetch() {\n        System.out.println(name + \" fetches the ball\");\n    }\n}\n\nDog dog = new Dog(\"Buddy\", \"Labrador\");\ndog.speak();  // Buddy barks! Woof!  (overridden)\ndog.eat();    // Buddy is eating     (inherited)\ndog.fetch();  // Buddy fetches the ball\n```\n\n## Polymorphism\n\nThe ability to treat objects of different classes through a **common interface**.\n\n```java\n// Runtime polymorphism\nAnimal animal = new Dog(\"Rex\", \"Shepherd\");\nanimal.speak(); // \"Rex barks! Woof!\" — actual type determines behavior\n// animal.fetch(); // ❌ Compile error — reference type is Animal\n\n// Using polymorphism with collections\nList<Animal> animals = List.of(\n    new Dog(\"Buddy\", \"Lab\"),\n    new Cat(\"Whiskers\"),\n    new Bird(\"Tweety\")\n);\n\nfor (Animal a : animals) {\n    a.speak(); // each calls its own overridden version\n}\n```\n\n### The `final` Keyword\n\n```java\nfinal class ImmutableClass { }\n// Cannot be extended\n\nclass Parent {\n    final void criticalMethod() { }\n    // Cannot be overridden in child classes\n}\n```"
       },
       {
-        id: 'abstraction-interfaces',
-        title: 'Abstract Classes & Interfaces',
-        content: `## Abstract Classes
-
-An abstract class **cannot be instantiated** and may contain abstract methods (without body).
-
-\`\`\`java
-public abstract class Shape {
-    protected String color;
-
-    public Shape(String color) {
-        this.color = color;
-    }
-
-    // Abstract method — MUST be implemented by subclasses
-    public abstract double area();
-    public abstract double perimeter();
-
-    // Concrete method — inherited as-is
-    public String getColor() {
-        return color;
-    }
-}
-
-public class Circle extends Shape {
-    private double radius;
-
-    public Circle(String color, double radius) {
-        super(color);
-        this.radius = radius;
-    }
-
-    @Override
-    public double area() {
-        return Math.PI * radius * radius;
-    }
-
-    @Override
-    public double perimeter() {
-        return 2 * Math.PI * radius;
-    }
-}
-\`\`\`
-
-## Interfaces
-
-Interfaces define a **contract** — what a class must do, not how.
-
-\`\`\`java
-public interface Flyable {
-    void fly();                    // abstract method
-    double getMaxAltitude();       // abstract method
-
-    // Default method (Java 8+) — provides implementation
-    default void land() {
-        System.out.println("Landing safely...");
-    }
-
-    // Static method
-    static boolean canFly(Object obj) {
-        return obj instanceof Flyable;
-    }
-
-    // Private method (Java 9+) — helper for defaults
-    private void logFlight() {
-        System.out.println("Flight logged");
-    }
-}
-
-public interface Swimmable {
-    void swim();
-}
-
-// A class can implement MULTIPLE interfaces
-public class Duck extends Animal implements Flyable, Swimmable {
-
-    public Duck(String name) { super(name); }
-
-    @Override
-    public void fly() {
-        System.out.println(name + " flaps wings and flies!");
-    }
-
-    @Override
-    public double getMaxAltitude() { return 500.0; }
-
-    @Override
-    public void swim() {
-        System.out.println(name + " paddles in water!");
-    }
-}
-\`\`\`
-
-### Abstract Class vs Interface
-
-| Feature | Abstract Class | Interface |
-|---------|---------------|-----------|
-| Constructors | ✅ Yes | ❌ No |
-| State (fields) | ✅ Instance fields | Constants only |
-| Multiple | ❌ Single inheritance | ✅ Multiple implementation |
-| Methods | Abstract + Concrete | Abstract + Default + Static |
-| Use when | Shared state & base logic | Defining capabilities |`
+        "id": "abstraction-interfaces",
+        "title": "Abstract Classes & Interfaces",
+        "content": "## Abstract Classes\n\nAn abstract class **cannot be instantiated** and may contain abstract methods (without body).\n\n```java\npublic abstract class Shape {\n    protected String color;\n\n    public Shape(String color) {\n        this.color = color;\n    }\n\n    // Abstract method — MUST be implemented by subclasses\n    public abstract double area();\n    public abstract double perimeter();\n\n    // Concrete method — inherited as-is\n    public String getColor() {\n        return color;\n    }\n}\n\npublic class Circle extends Shape {\n    private double radius;\n\n    public Circle(String color, double radius) {\n        super(color);\n        this.radius = radius;\n    }\n\n    @Override\n    public double area() {\n        return Math.PI * radius * radius;\n    }\n\n    @Override\n    public double perimeter() {\n        return 2 * Math.PI * radius;\n    }\n}\n```\n\n## Interfaces\n\nInterfaces define a **contract** — what a class must do, not how.\n\n```java\npublic interface Flyable {\n    void fly();                    // abstract method\n    double getMaxAltitude();       // abstract method\n\n    // Default method (Java 8+) — provides implementation\n    default void land() {\n        System.out.println(\"Landing safely...\");\n    }\n\n    // Static method\n    static boolean canFly(Object obj) {\n        return obj instanceof Flyable;\n    }\n\n    // Private method (Java 9+) — helper for defaults\n    private void logFlight() {\n        System.out.println(\"Flight logged\");\n    }\n}\n\npublic interface Swimmable {\n    void swim();\n}\n\n// A class can implement MULTIPLE interfaces\npublic class Duck extends Animal implements Flyable, Swimmable {\n\n    public Duck(String name) { super(name); }\n\n    @Override\n    public void fly() {\n        System.out.println(name + \" flaps wings and flies!\");\n    }\n\n    @Override\n    public double getMaxAltitude() { return 500.0; }\n\n    @Override\n    public void swim() {\n        System.out.println(name + \" paddles in water!\");\n    }\n}\n```\n\n### Abstract Class vs Interface\n\n| Feature | Abstract Class | Interface |\n|---------|---------------|-----------|\n| Constructors | ✅ Yes | ❌ No |\n| State (fields) | ✅ Instance fields | Constants only |\n| Multiple | ❌ Single inheritance | ✅ Multiple implementation |\n| Methods | Abstract + Concrete | Abstract + Default + Static |\n| Use when | Shared state & base logic | Defining capabilities |"
       },
       {
-        id: 'records',
-        title: 'Records (Java 16+)',
-        content: `## Record Classes
-
-Records are **immutable data carriers** — Java auto-generates constructor, getters, \`equals()\`, \`hashCode()\`, and \`toString()\`.
-
-### Basic Record
-
-\`\`\`java
-// This single line replaces ~50 lines of boilerplate!
-public record Point(int x, int y) { }
-
-Point p = new Point(3, 4);
-System.out.println(p.x());      // 3 (accessor, not getX!)
-System.out.println(p.y());      // 4
-System.out.println(p);          // Point[x=3, y=4]
-
-Point p2 = new Point(3, 4);
-System.out.println(p.equals(p2)); // true (value equality)
-\`\`\`
-
-### Records with Validation
-
-\`\`\`java
-public record Person(String name, int age) {
-    // Compact constructor for validation
-    public Person {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be blank");
-        }
-        if (age < 0 || age > 150) {
-            throw new IllegalArgumentException("Invalid age: " + age);
-        }
-        name = name.strip(); // can modify before assignment
-    }
-}
-
-// Custom methods in records
-public record Rectangle(double width, double height) {
-    public double area() {
-        return width * height;
-    }
-
-    public double perimeter() {
-        return 2 * (width + height);
-    }
-
-    // Static factory method
-    public static Rectangle square(double side) {
-        return new Rectangle(side, side);
-    }
-}
-
-Rectangle rect = new Rectangle(5, 3);
-System.out.println(rect.area());     // 15.0
-Rectangle sq = Rectangle.square(4);
-System.out.println(sq);             // Rectangle[width=4.0, height=4.0]
-\`\`\`
-
-### Records with Interfaces
-
-\`\`\`java
-public sealed interface Shape permits Circle, Rectangle { 
-    double area();
-}
-
-public record Circle(double radius) implements Shape {
-    public double area() { return Math.PI * radius * radius; }
-}
-
-public record Rectangle(double w, double h) implements Shape {
-    public double area() { return w * h; }
-}
-\`\`\``
+        "id": "records",
+        "title": "Records (Java 16+)",
+        "content": "## Record Classes\n\nRecords are **immutable data carriers** — Java auto-generates constructor, getters, `equals()`, `hashCode()`, and `toString()`.\n\n### Basic Record\n\n```java\n// This single line replaces ~50 lines of boilerplate!\npublic record Point(int x, int y) { }\n\nPoint p = new Point(3, 4);\nSystem.out.println(p.x());      // 3 (accessor, not getX!)\nSystem.out.println(p.y());      // 4\nSystem.out.println(p);          // Point[x=3, y=4]\n\nPoint p2 = new Point(3, 4);\nSystem.out.println(p.equals(p2)); // true (value equality)\n```\n\n### Records with Validation\n\n```java\npublic record Person(String name, int age) {\n    // Compact constructor for validation\n    public Person {\n        if (name == null || name.isBlank()) {\n            throw new IllegalArgumentException(\"Name cannot be blank\");\n        }\n        if (age < 0 || age > 150) {\n            throw new IllegalArgumentException(\"Invalid age: \" + age);\n        }\n        name = name.strip(); // can modify before assignment\n    }\n}\n\n// Custom methods in records\npublic record Rectangle(double width, double height) {\n    public double area() {\n        return width * height;\n    }\n\n    public double perimeter() {\n        return 2 * (width + height);\n    }\n\n    // Static factory method\n    public static Rectangle square(double side) {\n        return new Rectangle(side, side);\n    }\n}\n\nRectangle rect = new Rectangle(5, 3);\nSystem.out.println(rect.area());     // 15.0\nRectangle sq = Rectangle.square(4);\nSystem.out.println(sq);             // Rectangle[width=4.0, height=4.0]\n```\n\n### Records with Interfaces\n\n```java\npublic sealed interface Shape permits Circle, Rectangle { \n    double area();\n}\n\npublic record Circle(double radius) implements Shape {\n    public double area() { return Math.PI * radius * radius; }\n}\n\npublic record Rectangle(double w, double h) implements Shape {\n    public double area() { return w * h; }\n}\n```"
       },
       {
-        id: 'sealed-classes',
-        title: 'Sealed Classes (Java 17+)',
-        content: `## Sealed Classes
-
-Sealed classes **restrict which classes** can extend or implement them — giving you control over your type hierarchy.
-
-\`\`\`java
-// Only these 3 classes can extend Shape
-public sealed class Shape
-    permits Circle, Rectangle, Triangle {
-
-    private final String color;
-
-    public Shape(String color) {
-        this.color = color;
-    }
-
-    public String getColor() { return color; }
-}
-
-// 'final' — cannot be further extended
-public final class Circle extends Shape {
-    private final double radius;
-
-    public Circle(String color, double radius) {
-        super(color);
-        this.radius = radius;
-    }
-
-    public double area() { return Math.PI * radius * radius; }
-}
-
-// 'sealed' — further restricts its own hierarchy
-public sealed class Rectangle extends Shape
-    permits Square {
-
-    protected final double width, height;
-
-    public Rectangle(String color, double w, double h) {
-        super(color);
-        this.width = w;
-        this.height = h;
-    }
-}
-
-// 'non-sealed' — open for extension by anyone
-public non-sealed class Triangle extends Shape {
-    public Triangle(String color) { super(color); }
-}
-
-public final class Square extends Rectangle {
-    public Square(String color, double side) {
-        super(color, side, side);
-    }
-}
-\`\`\`
-
-### Sealed Interfaces
-
-\`\`\`java
-public sealed interface Payment
-    permits CreditCard, DebitCard, UPI {
-}
-
-public record CreditCard(String number, String cvv) implements Payment {}
-public record DebitCard(String number, String pin) implements Payment {}
-public record UPI(String vpa) implements Payment {}
-
-// Exhaustive pattern matching (Java 21)
-String processPayment(Payment p) {
-    return switch (p) {
-        case CreditCard c -> "CC ending " + c.number().substring(12);
-        case DebitCard d -> "Debit: " + d.number();
-        case UPI u -> "UPI: " + u.vpa();
-        // No default needed — sealed ensures exhaustiveness!
-    };
-}
-\`\`\``
+        "id": "sealed-classes",
+        "title": "Sealed Classes (Java 17+)",
+        "content": "## Sealed Classes\n\nSealed classes **restrict which classes** can extend or implement them — giving you control over your type hierarchy.\n\n```java\n// Only these 3 classes can extend Shape\npublic sealed class Shape\n    permits Circle, Rectangle, Triangle {\n\n    private final String color;\n\n    public Shape(String color) {\n        this.color = color;\n    }\n\n    public String getColor() { return color; }\n}\n\n// 'final' — cannot be further extended\npublic final class Circle extends Shape {\n    private final double radius;\n\n    public Circle(String color, double radius) {\n        super(color);\n        this.radius = radius;\n    }\n\n    public double area() { return Math.PI * radius * radius; }\n}\n\n// 'sealed' — further restricts its own hierarchy\npublic sealed class Rectangle extends Shape\n    permits Square {\n\n    protected final double width, height;\n\n    public Rectangle(String color, double w, double h) {\n        super(color);\n        this.width = w;\n        this.height = h;\n    }\n}\n\n// 'non-sealed' — open for extension by anyone\npublic non-sealed class Triangle extends Shape {\n    public Triangle(String color) { super(color); }\n}\n\npublic final class Square extends Rectangle {\n    public Square(String color, double side) {\n        super(color, side, side);\n    }\n}\n```\n\n### Sealed Interfaces\n\n```java\npublic sealed interface Payment\n    permits CreditCard, DebitCard, UPI {\n}\n\npublic record CreditCard(String number, String cvv) implements Payment {}\npublic record DebitCard(String number, String pin) implements Payment {}\npublic record UPI(String vpa) implements Payment {}\n\n// Exhaustive pattern matching (Java 21)\nString processPayment(Payment p) {\n    return switch (p) {\n        case CreditCard c -> \"CC ending \" + c.number().substring(12);\n        case DebitCard d -> \"Debit: \" + d.number();\n        case UPI u -> \"UPI: \" + u.vpa();\n        // No default needed — sealed ensures exhaustiveness!\n    };\n}\n```"
       },
       {
-        id: 'enums',
-        title: 'Enums',
-        content: `## Enums
-
-Enums define a **fixed set of constants** with type safety.
-
-### Basic Enum
-
-\`\`\`java
-public enum Day {
-    MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
-    FRIDAY, SATURDAY, SUNDAY
-}
-
-Day today = Day.FRIDAY;
-System.out.println(today);          // FRIDAY
-System.out.println(today.name());   // FRIDAY
-System.out.println(today.ordinal()); // 4 (0-indexed)
-
-// Iterate all values
-for (Day d : Day.values()) {
-    System.out.println(d);
-}
-
-// Parse from string
-Day parsed = Day.valueOf("MONDAY");
-\`\`\`
-
-### Enum with Fields & Methods
-
-\`\`\`java
-public enum Planet {
-    MERCURY(3.303e+23, 2.4397e6),
-    VENUS  (4.869e+24, 6.0518e6),
-    EARTH  (5.976e+24, 6.37814e6),
-    MARS   (6.421e+23, 3.3972e6);
-
-    private final double mass;    // kg
-    private final double radius;  // meters
-
-    Planet(double mass, double radius) {
-        this.mass = mass;
-        this.radius = radius;
-    }
-
-    // Surface gravity: G * mass / radius²
-    public double surfaceGravity() {
-        final double G = 6.67300E-11;
-        return G * mass / (radius * radius);
-    }
-
-    public double surfaceWeight(double otherMass) {
-        return otherMass * surfaceGravity();
-    }
-}
-
-double earthWeight = 75.0;
-double mass = earthWeight / Planet.EARTH.surfaceGravity();
-for (Planet p : Planet.values()) {
-    System.out.printf("Your weight on %s is %.2f N%n",
-        p, p.surfaceWeight(mass));
-}
-\`\`\`
-
-### Enum with Abstract Methods
-
-\`\`\`java
-public enum Operation {
-    ADD {
-        @Override
-        public double apply(double a, double b) { return a + b; }
-    },
-    SUBTRACT {
-        @Override
-        public double apply(double a, double b) { return a - b; }
-    },
-    MULTIPLY {
-        @Override
-        public double apply(double a, double b) { return a * b; }
-    };
-
-    public abstract double apply(double a, double b);
-}
-
-double result = Operation.ADD.apply(5, 3); // 8.0
-\`\`\``
+        "id": "enums",
+        "title": "Enums",
+        "content": "## Enums\n\nEnums define a **fixed set of constants** with type safety.\n\n### Basic Enum\n\n```java\npublic enum Day {\n    MONDAY, TUESDAY, WEDNESDAY, THURSDAY,\n    FRIDAY, SATURDAY, SUNDAY\n}\n\nDay today = Day.FRIDAY;\nSystem.out.println(today);          // FRIDAY\nSystem.out.println(today.name());   // FRIDAY\nSystem.out.println(today.ordinal()); // 4 (0-indexed)\n\n// Iterate all values\nfor (Day d : Day.values()) {\n    System.out.println(d);\n}\n\n// Parse from string\nDay parsed = Day.valueOf(\"MONDAY\");\n```\n\n### Enum with Fields & Methods\n\n```java\npublic enum Planet {\n    MERCURY(3.303e+23, 2.4397e6),\n    VENUS  (4.869e+24, 6.0518e6),\n    EARTH  (5.976e+24, 6.37814e6),\n    MARS   (6.421e+23, 3.3972e6);\n\n    private final double mass;    // kg\n    private final double radius;  // meters\n\n    Planet(double mass, double radius) {\n        this.mass = mass;\n        this.radius = radius;\n    }\n\n    // Surface gravity: G * mass / radius²\n    public double surfaceGravity() {\n        final double G = 6.67300E-11;\n        return G * mass / (radius * radius);\n    }\n\n    public double surfaceWeight(double otherMass) {\n        return otherMass * surfaceGravity();\n    }\n}\n\ndouble earthWeight = 75.0;\ndouble mass = earthWeight / Planet.EARTH.surfaceGravity();\nfor (Planet p : Planet.values()) {\n    System.out.printf(\"Your weight on %s is %.2f N%n\",\n        p, p.surfaceWeight(mass));\n}\n```\n\n### Enum with Abstract Methods\n\n```java\npublic enum Operation {\n    ADD {\n        @Override\n        public double apply(double a, double b) { return a + b; }\n    },\n    SUBTRACT {\n        @Override\n        public double apply(double a, double b) { return a - b; }\n    },\n    MULTIPLY {\n        @Override\n        public double apply(double a, double b) { return a * b; }\n    };\n\n    public abstract double apply(double a, double b);\n}\n\ndouble result = Operation.ADD.apply(5, 3); // 8.0\n```"
       }
     ]
   },
   {
-    id: 'collections',
-    title: 'Collections Framework',
-    icon: 'Database',
-    color: '#f472b6',
-    chapters: [
+    "id": "collections",
+    "title": "Collections Framework",
+    "icon": "Database",
+    "color": "#f472b6",
+    "chapters": [
       {
-        id: 'collections-overview',
-        title: 'Collections Overview',
-        content: `## Java Collections Framework
-
-The Collections Framework provides **data structures** and **algorithms** for storing and manipulating groups of objects.
-
-### Collection Hierarchy
-
-\`\`\`
-            Iterable
-               |
-           Collection
-          /    |     \\
-        List  Set   Queue
-        |      |      |
-   ArrayList  HashSet  PriorityQueue
-   LinkedList TreeSet  ArrayDeque
-              LinkedHashSet
-
-        Map (separate hierarchy)
-         |
-     HashMap
-     TreeMap
-     LinkedHashMap
-\`\`\`
-
-### Creating Collections (Java 9+ Factory Methods)
-
-\`\`\`java
-// Immutable collections
-List<String> names = List.of("Alice", "Bob", "Charlie");
-Set<Integer> nums = Set.of(1, 2, 3, 4, 5);
-Map<String, Integer> scores = Map.of(
-    "Alice", 95,
-    "Bob", 87,
-    "Charlie", 92
-);
-
-// These are IMMUTABLE — .add() or .put() throws UnsupportedOperationException
-
-// Mutable copies
-List<String> mutableList = new ArrayList<>(names);
-Set<Integer> mutableSet = new HashSet<>(nums);
-Map<String, Integer> mutableMap = new HashMap<>(scores);
-\`\`\`
-
-### Common Operations
-
-\`\`\`java
-List<String> list = new ArrayList<>();
-
-// Add
-list.add("Alpha");
-list.add("Beta");
-list.add(1, "Gamma"); // insert at index 1
-
-// Access
-String first = list.get(0);       // "Alpha"
-int size = list.size();            // 3
-boolean has = list.contains("Beta"); // true
-
-// Remove
-list.remove("Beta");       // by value
-list.remove(0);            // by index
-
-// Iterate
-for (String s : list) { System.out.println(s); }
-list.forEach(System.out::println);
-
-// Sort
-Collections.sort(list);
-list.sort(Comparator.naturalOrder());
-list.sort(Comparator.reverseOrder());
-\`\`\``
+        "id": "collections-overview",
+        "title": "Collections Overview",
+        "content": "## Java Collections Framework\n\nThe Collections Framework provides **data structures** and **algorithms** for storing and manipulating groups of objects.\n\n### Collection Hierarchy\n\n```\n            Iterable\n               |\n           Collection\n          /    |     \\\n        List  Set   Queue\n        |      |      |\n   ArrayList  HashSet  PriorityQueue\n   LinkedList TreeSet  ArrayDeque\n              LinkedHashSet\n\n        Map (separate hierarchy)\n         |\n     HashMap\n     TreeMap\n     LinkedHashMap\n```\n\n### Creating Collections (Java 9+ Factory Methods)\n\n```java\n// Immutable collections\nList<String> names = List.of(\"Alice\", \"Bob\", \"Charlie\");\nSet<Integer> nums = Set.of(1, 2, 3, 4, 5);\nMap<String, Integer> scores = Map.of(\n    \"Alice\", 95,\n    \"Bob\", 87,\n    \"Charlie\", 92\n);\n\n// These are IMMUTABLE — .add() or .put() throws UnsupportedOperationException\n\n// Mutable copies\nList<String> mutableList = new ArrayList<>(names);\nSet<Integer> mutableSet = new HashSet<>(nums);\nMap<String, Integer> mutableMap = new HashMap<>(scores);\n```\n\n### Common Operations\n\n```java\nList<String> list = new ArrayList<>();\n\n// Add\nlist.add(\"Alpha\");\nlist.add(\"Beta\");\nlist.add(1, \"Gamma\"); // insert at index 1\n\n// Access\nString first = list.get(0);       // \"Alpha\"\nint size = list.size();            // 3\nboolean has = list.contains(\"Beta\"); // true\n\n// Remove\nlist.remove(\"Beta\");       // by value\nlist.remove(0);            // by index\n\n// Iterate\nfor (String s : list) { System.out.println(s); }\nlist.forEach(System.out::println);\n\n// Sort\nCollections.sort(list);\nlist.sort(Comparator.naturalOrder());\nlist.sort(Comparator.reverseOrder());\n```"
       },
       {
-        id: 'list-implementations',
-        title: 'List: ArrayList vs LinkedList',
-        content: `## List Implementations
-
-### ArrayList
-
-Backed by a **resizable array** — best for random access.
-
-\`\`\`java
-List<Integer> list = new ArrayList<>();
-list.add(10);       // O(1) amortized
-list.add(20);
-list.add(30);
-list.get(1);        // O(1) — fast random access
-list.set(1, 25);    // O(1) — replace element
-list.remove(0);     // O(n) — shifts elements left
-
-// Useful patterns
-List<Integer> nums = new ArrayList<>(List.of(5, 3, 8, 1));
-Collections.sort(nums);              // [1, 3, 5, 8]
-Collections.reverse(nums);           // [8, 5, 3, 1]
-int idx = Collections.binarySearch(nums, 5); // requires sorted
-Collections.frequency(nums, 5);      // count occurrences
-\`\`\`
-
-### LinkedList
-
-Backed by a **doubly-linked list** — best for frequent insertions/removals at ends.
-
-\`\`\`java
-LinkedList<String> list = new LinkedList<>();
-list.addFirst("A");   // O(1)
-list.addLast("C");    // O(1)
-list.add(1, "B");     // O(n) — traverse to index
-
-list.getFirst();      // "A" — O(1)
-list.getLast();       // "C" — O(1)
-list.get(1);          // "B" — O(n) ⚠️ slow random access
-
-list.removeFirst();   // O(1)
-list.removeLast();    // O(1)
-\`\`\`
-
-### Performance Comparison
-
-| Operation | ArrayList | LinkedList |
-|-----------|-----------|------------|
-| get(index) | **O(1)** ✅ | O(n) |
-| add(end) | **O(1)** amortized | **O(1)** |
-| add(index) | O(n) | O(n)* |
-| remove(index) | O(n) | O(n)* |
-| addFirst / addLast | O(n) | **O(1)** ✅ |
-| Memory | Less (array) | More (node pointers) |
-
-> **Rule of thumb**: Use \`ArrayList\` in 99% of cases. Use \`LinkedList\` only when you need fast operations at both ends (as a Deque).`
+        "id": "list-implementations",
+        "title": "List: ArrayList vs LinkedList",
+        "content": "## List Implementations\n\n### ArrayList\n\nBacked by a **resizable array** — best for random access.\n\n```java\nList<Integer> list = new ArrayList<>();\nlist.add(10);       // O(1) amortized\nlist.add(20);\nlist.add(30);\nlist.get(1);        // O(1) — fast random access\nlist.set(1, 25);    // O(1) — replace element\nlist.remove(0);     // O(n) — shifts elements left\n\n// Useful patterns\nList<Integer> nums = new ArrayList<>(List.of(5, 3, 8, 1));\nCollections.sort(nums);              // [1, 3, 5, 8]\nCollections.reverse(nums);           // [8, 5, 3, 1]\nint idx = Collections.binarySearch(nums, 5); // requires sorted\nCollections.frequency(nums, 5);      // count occurrences\n```\n\n### LinkedList\n\nBacked by a **doubly-linked list** — best for frequent insertions/removals at ends.\n\n```java\nLinkedList<String> list = new LinkedList<>();\nlist.addFirst(\"A\");   // O(1)\nlist.addLast(\"C\");    // O(1)\nlist.add(1, \"B\");     // O(n) — traverse to index\n\nlist.getFirst();      // \"A\" — O(1)\nlist.getLast();       // \"C\" — O(1)\nlist.get(1);          // \"B\" — O(n) ⚠️ slow random access\n\nlist.removeFirst();   // O(1)\nlist.removeLast();    // O(1)\n```\n\n### Performance Comparison\n\n| Operation | ArrayList | LinkedList |\n|-----------|-----------|------------|\n| get(index) | **O(1)** ✅ | O(n) |\n| add(end) | **O(1)** amortized | **O(1)** |\n| add(index) | O(n) | O(n)* |\n| remove(index) | O(n) | O(n)* |\n| addFirst / addLast | O(n) | **O(1)** ✅ |\n| Memory | Less (array) | More (node pointers) |\n\n> **Rule of thumb**: Use `ArrayList` in 99% of cases. Use `LinkedList` only when you need fast operations at both ends (as a Deque)."
       },
       {
-        id: 'set-implementations',
-        title: 'Set: HashSet, TreeSet, LinkedHashSet',
-        content: `## Set Implementations
-
-A **Set** stores **unique elements** — no duplicates allowed.
-
-### HashSet
-
-Backed by a **HashMap** — fastest, no ordering guarantee.
-
-\`\`\`java
-Set<String> set = new HashSet<>();
-set.add("Java");
-set.add("Python");
-set.add("Java");    // duplicate — ignored
-System.out.println(set.size()); // 2
-
-set.contains("Java");  // O(1) — fast lookup
-set.remove("Python");  // O(1)
-\`\`\`
-
-### TreeSet
-
-Backed by a **Red-Black Tree** — elements are **sorted**.
-
-\`\`\`java
-Set<Integer> sorted = new TreeSet<>();
-sorted.add(30);
-sorted.add(10);
-sorted.add(20);
-System.out.println(sorted); // [10, 20, 30] — always sorted!
-
-// NavigableSet methods
-TreeSet<Integer> tree = new TreeSet<>(sorted);
-tree.first();              // 10 (smallest)
-tree.last();               // 30 (largest)
-tree.floor(25);            // 20 (≤ 25)
-tree.ceiling(15);          // 20 (≥ 15)
-tree.headSet(20);          // [10] (< 20)
-tree.tailSet(20);          // [20, 30] (≥ 20)
-\`\`\`
-
-### LinkedHashSet
-
-Maintains **insertion order**.
-
-\`\`\`java
-Set<String> ordered = new LinkedHashSet<>();
-ordered.add("C");
-ordered.add("A");
-ordered.add("B");
-System.out.println(ordered); // [C, A, B] — insertion order
-\`\`\`
-
-### Set Operations
-
-\`\`\`java
-Set<Integer> a = new HashSet<>(Set.of(1, 2, 3, 4));
-Set<Integer> b = new HashSet<>(Set.of(3, 4, 5, 6));
-
-// Union
-Set<Integer> union = new HashSet<>(a);
-union.addAll(b);    // [1, 2, 3, 4, 5, 6]
-
-// Intersection
-Set<Integer> intersection = new HashSet<>(a);
-intersection.retainAll(b);  // [3, 4]
-
-// Difference
-Set<Integer> diff = new HashSet<>(a);
-diff.removeAll(b);  // [1, 2]
-\`\`\` `
+        "id": "set-implementations",
+        "title": "Set: HashSet, TreeSet, LinkedHashSet",
+        "content": "## Set Implementations\n\nA **Set** stores **unique elements** — no duplicates allowed.\n\n### HashSet\n\nBacked by a **HashMap** — fastest, no ordering guarantee.\n\n```java\nSet<String> set = new HashSet<>();\nset.add(\"Java\");\nset.add(\"Python\");\nset.add(\"Java\");    // duplicate — ignored\nSystem.out.println(set.size()); // 2\n\nset.contains(\"Java\");  // O(1) — fast lookup\nset.remove(\"Python\");  // O(1)\n```\n\n### TreeSet\n\nBacked by a **Red-Black Tree** — elements are **sorted**.\n\n```java\nSet<Integer> sorted = new TreeSet<>();\nsorted.add(30);\nsorted.add(10);\nsorted.add(20);\nSystem.out.println(sorted); // [10, 20, 30] — always sorted!\n\n// NavigableSet methods\nTreeSet<Integer> tree = new TreeSet<>(sorted);\ntree.first();              // 10 (smallest)\ntree.last();               // 30 (largest)\ntree.floor(25);            // 20 (≤ 25)\ntree.ceiling(15);          // 20 (≥ 15)\ntree.headSet(20);          // [10] (< 20)\ntree.tailSet(20);          // [20, 30] (≥ 20)\n```\n\n### LinkedHashSet\n\nMaintains **insertion order**.\n\n```java\nSet<String> ordered = new LinkedHashSet<>();\nordered.add(\"C\");\nordered.add(\"A\");\nordered.add(\"B\");\nSystem.out.println(ordered); // [C, A, B] — insertion order\n```\n\n### Set Operations\n\n```java\nSet<Integer> a = new HashSet<>(Set.of(1, 2, 3, 4));\nSet<Integer> b = new HashSet<>(Set.of(3, 4, 5, 6));\n\n// Union\nSet<Integer> union = new HashSet<>(a);\nunion.addAll(b);    // [1, 2, 3, 4, 5, 6]\n\n// Intersection\nSet<Integer> intersection = new HashSet<>(a);\nintersection.retainAll(b);  // [3, 4]\n\n// Difference\nSet<Integer> diff = new HashSet<>(a);\ndiff.removeAll(b);  // [1, 2]\n``` "
       },
       {
-        id: 'map-implementations',
-        title: 'Map: HashMap, TreeMap & More',
-        content: `## Map Implementations
-
-### HashMap Internal Architecture & Mechanics
-
-\`\`\`
-+-----------------------------------------------------------------------------------+
-|                            HASHMAP BUCKET ARRAY (Table)                           |
-+-----------------------------------------------------------------------------------+
-|  Index | Bucket Content                                                           |
-| -------+------------------------------------------------------------------------- |
-|   [0]  | null                                                                     |
-|   [1]  | [ Node: key="Alice", hash=101, val=95 ]                                  |
-|   [2]  | [ Node: key="Bob" ] ---> [ Node: key="Dave" ] (Linked List Collision)    |
-|   ...  |                                                                          |
-|   [7]  | [ TreeNode (Red-Black Tree Root) ]                                       |
-|        |     /                          \                                         |
-|        |  [ TreeNode: "C" ]        [ TreeNode: "Z" ] (Treeified: Threshold >= 8)  |
-+-----------------------------------------------------------------------------------+
-\`\`\`
-
-#### How HashMap Works Internally:
-1. **Hash Calculation**: Computes \`hash = (key.hashCode()) ^ (h >>> 16)\` to spread bits.
-2. **Bucket Indexing**: Computes \`index = hash & (n - 1)\` (where \`n\` is array length, default = 16).
-3. **Collision Handling**:
-   - Uses **Separate Chaining**.
-   - **LinkedList Phase**: When bucket has \`< 8\` elements, collisions form a LinkedList.
-   - **Treeification Phase (Java 8+)**: When bucket size reaches \`TREEIFY_THRESHOLD = 8\` and table capacity \`>= 64\`, the LinkedList converts into a **Red-Black Tree** to improve worst-case search time from **O(n)** to **O(log n)**!
-4. **Load Factor & Resizing**: Default Load Factor = \`0.75\`. When \`size > capacity * 0.75\`, the capacity doubles (e.g. 16 -> 32) and all entries are rehashed.
-
-### Basic HashMap Usage
-
-\`\`\`java
-Map<String, Integer> scores = new HashMap<>();
-scores.put("Alice", 95);
-scores.put("Bob", 87);
-scores.put("Charlie", 92);
-
-scores.get("Alice");         // 95
-scores.getOrDefault("Dave", 0); // 0 (key not found)
-scores.containsKey("Bob");   // true
-scores.containsValue(87);    // true
-scores.size();               // 3
-scores.remove("Charlie");
-
-// Iterate
-for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-    System.out.println(entry.getKey() + " = " + entry.getValue());
-}
-
-scores.forEach((k, v) -> System.out.println(k + ": " + v));
-\`\`\`
-
-### Advanced Map Operations
-
-\`\`\`java
-Map<String, Integer> wordCount = new HashMap<>();
-
-// Counting pattern
-String[] words = {"the", "cat", "sat", "on", "the", "mat"};
-for (String w : words) {
-    wordCount.merge(w, 1, Integer::sum);
-    // Or: wordCount.put(w, wordCount.getOrDefault(w, 0) + 1);
-}
-// {the=2, cat=1, sat=1, on=1, mat=1}
-
-// computeIfAbsent — lazy initialization
-Map<String, List<String>> groups = new HashMap<>();
-groups.computeIfAbsent("fruits", k -> new ArrayList<>()).add("apple");
-groups.computeIfAbsent("fruits", k -> new ArrayList<>()).add("banana");
-// {fruits=[apple, banana]}
-
-// putIfAbsent
-scores.putIfAbsent("Dave", 0); // only puts if key absent
-
-// replaceAll
-scores.replaceAll((key, value) -> value + 5); // boost all scores
-\`\`\`
-
-### TreeMap (Sorted Map)
-
-\`\`\`java
-Map<String, Integer> sorted = new TreeMap<>(scores);
-// Keys are in natural (alphabetical) order
-
-TreeMap<Integer, String> tree = new TreeMap<>();
-tree.put(3, "C");
-tree.put(1, "A");
-tree.put(2, "B");
-
-tree.firstKey();          // 1
-tree.lastKey();           // 3
-tree.floorKey(2);         // 2
-tree.ceilingKey(2);       // 2
-tree.subMap(1, 3);        // {1=A, 2=B} (from 1 inclusive to 3 exclusive)
-\`\`\`
-
-### LinkedHashMap
-
-\`\`\`java
-// Maintains insertion order
-Map<String, Integer> linked = new LinkedHashMap<>();
-linked.put("C", 3);
-linked.put("A", 1);
-linked.put("B", 2);
-System.out.println(linked.keySet()); // [C, A, B]
-
-// LRU Cache with LinkedHashMap
-Map<String, String> lruCache = new LinkedHashMap<>(16, 0.75f, true) {
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-        return size() > 100; // max 100 entries
-    }
-};
-\`\`\``
+        "id": "map-implementations",
+        "title": "Map: HashMap, TreeMap & More",
+        "content": "## Map Implementations\n\n### HashMap Internal Architecture & Mechanics\n\n```\n+-----------------------------------------------------------------------------------+\n|                            HASHMAP BUCKET ARRAY (Table)                           |\n+-----------------------------------------------------------------------------------+\n|  Index | Bucket Content                                                           |\n| -------+------------------------------------------------------------------------- |\n|   [0]  | null                                                                     |\n|   [1]  | [ Node: key=\"Alice\", hash=101, val=95 ]                                  |\n|   [2]  | [ Node: key=\"Bob\" ] ---> [ Node: key=\"Dave\" ] (Linked List Collision)    |\n|   ...  |                                                                          |\n|   [7]  | [ TreeNode (Red-Black Tree Root) ]                                       |\n|        |     /                                                                   |\n|        |  [ TreeNode: \"C\" ]        [ TreeNode: \"Z\" ] (Treeified: Threshold >= 8)  |\n+-----------------------------------------------------------------------------------+\n```\n\n#### How HashMap Works Internally:\n1. **Hash Calculation**: Computes `hash = (key.hashCode()) ^ (h >>> 16)` to spread bits.\n2. **Bucket Indexing**: Computes `index = hash & (n - 1)` (where `n` is array length, default = 16).\n3. **Collision Handling**:\n   - Uses **Separate Chaining**.\n   - **LinkedList Phase**: When bucket has `< 8` elements, collisions form a LinkedList.\n   - **Treeification Phase (Java 8+)**: When bucket size reaches `TREEIFY_THRESHOLD = 8` and table capacity `>= 64`, the LinkedList converts into a **Red-Black Tree** to improve worst-case search time from **O(n)** to **O(log n)**!\n4. **Load Factor & Resizing**: Default Load Factor = `0.75`. When `size > capacity * 0.75`, the capacity doubles (e.g. 16 -> 32) and all entries are rehashed.\n\n### Basic HashMap Usage\n\n```java\nMap<String, Integer> scores = new HashMap<>();\nscores.put(\"Alice\", 95);\nscores.put(\"Bob\", 87);\nscores.put(\"Charlie\", 92);\n\nscores.get(\"Alice\");         // 95\nscores.getOrDefault(\"Dave\", 0); // 0 (key not found)\nscores.containsKey(\"Bob\");   // true\nscores.containsValue(87);    // true\nscores.size();               // 3\nscores.remove(\"Charlie\");\n\n// Iterate\nfor (Map.Entry<String, Integer> entry : scores.entrySet()) {\n    System.out.println(entry.getKey() + \" = \" + entry.getValue());\n}\n\nscores.forEach((k, v) -> System.out.println(k + \": \" + v));\n```\n\n### Advanced Map Operations\n\n```java\nMap<String, Integer> wordCount = new HashMap<>();\n\n// Counting pattern\nString[] words = {\"the\", \"cat\", \"sat\", \"on\", \"the\", \"mat\"};\nfor (String w : words) {\n    wordCount.merge(w, 1, Integer::sum);\n    // Or: wordCount.put(w, wordCount.getOrDefault(w, 0) + 1);\n}\n// {the=2, cat=1, sat=1, on=1, mat=1}\n\n// computeIfAbsent — lazy initialization\nMap<String, List<String>> groups = new HashMap<>();\ngroups.computeIfAbsent(\"fruits\", k -> new ArrayList<>()).add(\"apple\");\ngroups.computeIfAbsent(\"fruits\", k -> new ArrayList<>()).add(\"banana\");\n// {fruits=[apple, banana]}\n\n// putIfAbsent\nscores.putIfAbsent(\"Dave\", 0); // only puts if key absent\n\n// replaceAll\nscores.replaceAll((key, value) -> value + 5); // boost all scores\n```\n\n### TreeMap (Sorted Map)\n\n```java\nMap<String, Integer> sorted = new TreeMap<>(scores);\n// Keys are in natural (alphabetical) order\n\nTreeMap<Integer, String> tree = new TreeMap<>();\ntree.put(3, \"C\");\ntree.put(1, \"A\");\ntree.put(2, \"B\");\n\ntree.firstKey();          // 1\ntree.lastKey();           // 3\ntree.floorKey(2);         // 2\ntree.ceilingKey(2);       // 2\ntree.subMap(1, 3);        // {1=A, 2=B} (from 1 inclusive to 3 exclusive)\n```\n\n### LinkedHashMap\n\n```java\n// Maintains insertion order\nMap<String, Integer> linked = new LinkedHashMap<>();\nlinked.put(\"C\", 3);\nlinked.put(\"A\", 1);\nlinked.put(\"B\", 2);\nSystem.out.println(linked.keySet()); // [C, A, B]\n\n// LRU Cache with LinkedHashMap\nMap<String, String> lruCache = new LinkedHashMap<>(16, 0.75f, true) {\n    @Override\n    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {\n        return size() > 100; // max 100 entries\n    }\n};\n```"
       },
       {
-        id: 'queue-stack',
-        title: 'Queue, Deque & Stack',
-        content: `## Queue, Deque & Stack
-
-### Queue (FIFO)
-
-\`\`\`java
-Queue<String> queue = new LinkedList<>();
-queue.offer("First");   // add to end
-queue.offer("Second");
-queue.offer("Third");
-
-queue.peek();           // "First" (view front, don't remove)
-queue.poll();           // "First" (remove from front)
-queue.size();           // 2
-\`\`\`
-
-### PriorityQueue (Min-Heap)
-
-\`\`\`java
-// Default: Min-Heap (smallest first)
-PriorityQueue<Integer> minHeap = new PriorityQueue<>();
-minHeap.offer(30);
-minHeap.offer(10);
-minHeap.offer(20);
-minHeap.poll();   // 10 (smallest)
-minHeap.poll();   // 20
-minHeap.poll();   // 30
-
-// Max-Heap
-PriorityQueue<Integer> maxHeap = new PriorityQueue<>(
-    Comparator.reverseOrder()
-);
-maxHeap.offer(30);
-maxHeap.offer(10);
-maxHeap.offer(20);
-maxHeap.poll();   // 30 (largest)
-
-// Custom comparator
-PriorityQueue<int[]> pq = new PriorityQueue<>(
-    (a, b) -> a[1] - b[1]  // sort by second element
-);
-\`\`\`
-
-### Deque (Double-Ended Queue)
-
-\`\`\`java
-Deque<String> deque = new ArrayDeque<>();
-
-// Use as Stack (LIFO)
-deque.push("A");     // addFirst
-deque.push("B");
-deque.push("C");
-deque.pop();         // "C" (removeFirst)
-deque.peek();        // "B" (peekFirst)
-
-// Use as Queue (FIFO)
-deque.offerLast("X");
-deque.offerLast("Y");
-deque.pollFirst();   // "X"
-
-// Both ends
-deque.addFirst("front");
-deque.addLast("back");
-deque.peekFirst();   // "front"
-deque.peekLast();    // "back"
-\`\`\`
-
-> ⚠️ **Don't use \`java.util.Stack\`** — it's a legacy class. Use **\`ArrayDeque\`** instead.
-
-### Choosing the Right Collection
-
-| Need | Use |
-|------|-----|
-| Indexed access | \`ArrayList\` |
-| Fast add/remove at ends | \`ArrayDeque\` |
-| Unique elements | \`HashSet\` |
-| Sorted unique elements | \`TreeSet\` |
-| Key-Value lookup | \`HashMap\` |
-| Sorted key-value | \`TreeMap\` |
-| Priority ordering | \`PriorityQueue\` |
-| LIFO stack | \`ArrayDeque\` |
-| FIFO queue | \`ArrayDeque\` or \`LinkedList\` |`
+        "id": "queue-stack",
+        "title": "Queue, Deque & Stack",
+        "content": "## Queue, Deque & Stack\n\n### Queue (FIFO)\n\n```java\nQueue<String> queue = new LinkedList<>();\nqueue.offer(\"First\");   // add to end\nqueue.offer(\"Second\");\nqueue.offer(\"Third\");\n\nqueue.peek();           // \"First\" (view front, don't remove)\nqueue.poll();           // \"First\" (remove from front)\nqueue.size();           // 2\n```\n\n### PriorityQueue (Min-Heap)\n\n```java\n// Default: Min-Heap (smallest first)\nPriorityQueue<Integer> minHeap = new PriorityQueue<>();\nminHeap.offer(30);\nminHeap.offer(10);\nminHeap.offer(20);\nminHeap.poll();   // 10 (smallest)\nminHeap.poll();   // 20\nminHeap.poll();   // 30\n\n// Max-Heap\nPriorityQueue<Integer> maxHeap = new PriorityQueue<>(\n    Comparator.reverseOrder()\n);\nmaxHeap.offer(30);\nmaxHeap.offer(10);\nmaxHeap.offer(20);\nmaxHeap.poll();   // 30 (largest)\n\n// Custom comparator\nPriorityQueue<int[]> pq = new PriorityQueue<>(\n    (a, b) -> a[1] - b[1]  // sort by second element\n);\n```\n\n### Deque (Double-Ended Queue)\n\n```java\nDeque<String> deque = new ArrayDeque<>();\n\n// Use as Stack (LIFO)\ndeque.push(\"A\");     // addFirst\ndeque.push(\"B\");\ndeque.push(\"C\");\ndeque.pop();         // \"C\" (removeFirst)\ndeque.peek();        // \"B\" (peekFirst)\n\n// Use as Queue (FIFO)\ndeque.offerLast(\"X\");\ndeque.offerLast(\"Y\");\ndeque.pollFirst();   // \"X\"\n\n// Both ends\ndeque.addFirst(\"front\");\ndeque.addLast(\"back\");\ndeque.peekFirst();   // \"front\"\ndeque.peekLast();    // \"back\"\n```\n\n> ⚠️ **Don't use `java.util.Stack`** — it's a legacy class. Use **`ArrayDeque`** instead.\n\n### Choosing the Right Collection\n\n| Need | Use |\n|------|-----|\n| Indexed access | `ArrayList` |\n| Fast add/remove at ends | `ArrayDeque` |\n| Unique elements | `HashSet` |\n| Sorted unique elements | `TreeSet` |\n| Key-Value lookup | `HashMap` |\n| Sorted key-value | `TreeMap` |\n| Priority ordering | `PriorityQueue` |\n| LIFO stack | `ArrayDeque` |\n| FIFO queue | `ArrayDeque` or `LinkedList` |"
       }
     ]
   },
   {
-    id: 'modern-java',
-    title: 'Modern Java (8–21)',
-    icon: 'Sparkles',
-    color: '#facc15',
-    chapters: [
+    "id": "modern-java",
+    "title": "Modern Java (8–21)",
+    "icon": "Sparkles",
+    "color": "#facc15",
+    "chapters": [
       {
-        id: 'lambdas-functional',
-        title: 'Lambdas & Functional Interfaces',
-        content: `## Lambda Expressions (Java 8+)
-
-Lambdas enable **functional programming** in Java — passing behavior as arguments.
-
-### Syntax
-
-\`\`\`java
-// Full syntax
-(parameters) -> { statements; return value; }
-
-// Simplified
-(a, b) -> a + b           // expression body (implicit return)
-x -> x * 2                // single param (no parens needed)
-() -> System.out.println("Hello") // no params
-\`\`\`
-
-### Functional Interfaces
-
-A functional interface has **exactly one abstract method** — perfect for lambdas.
-
-\`\`\`java
-// Built-in functional interfaces (java.util.function)
-Function<String, Integer>   fn = s -> s.length();      // T → R
-Predicate<Integer>          p  = n -> n > 0;           // T → boolean
-Consumer<String>            c  = s -> System.out.println(s); // T → void
-Supplier<Double>            s  = () -> Math.random();  // () → T
-BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
-UnaryOperator<String>       upper = s -> s.toUpperCase();
-
-// Using them
-System.out.println(fn.apply("Hello"));   // 5
-System.out.println(p.test(42));          // true
-c.accept("Printed!");                    // Printed!
-System.out.println(s.get());             // 0.7342...
-\`\`\`
-
-### Method References
-
-\`\`\`java
-// Instead of lambdas, reference existing methods:
-Function<String, Integer> len = String::length;       // instance method ref
-Consumer<String> printer = System.out::println;        // static method ref
-Supplier<List<String>> listFactory = ArrayList::new;   // constructor ref
-
-// Example usage
-List<String> names = List.of("Charlie", "Alice", "Bob");
-
-// Lambda
-names.stream().sorted((a, b) -> a.compareTo(b));
-// Method reference (equivalent)
-names.stream().sorted(String::compareTo);
-
-// Print all
-names.forEach(System.out::println);
-\`\`\`
-
-### Custom Functional Interface
-
-\`\`\`java
-@FunctionalInterface
-public interface MathOperation {
-    double compute(double a, double b);
-}
-
-MathOperation add = (a, b) -> a + b;
-MathOperation pow = Math::pow;
-
-System.out.println(add.compute(3, 4)); // 7.0
-System.out.println(pow.compute(2, 10)); // 1024.0
-\`\`\``
+        "id": "lambdas-functional",
+        "title": "Lambdas & Functional Interfaces",
+        "content": "## Lambda Expressions (Java 8+)\n\nLambdas enable **functional programming** in Java — passing behavior as arguments.\n\n### Syntax\n\n```java\n// Full syntax\n(parameters) -> { statements; return value; }\n\n// Simplified\n(a, b) -> a + b           // expression body (implicit return)\nx -> x * 2                // single param (no parens needed)\n() -> System.out.println(\"Hello\") // no params\n```\n\n### Functional Interfaces\n\nA functional interface has **exactly one abstract method** — perfect for lambdas.\n\n```java\n// Built-in functional interfaces (java.util.function)\nFunction<String, Integer>   fn = s -> s.length();      // T → R\nPredicate<Integer>          p  = n -> n > 0;           // T → boolean\nConsumer<String>            c  = s -> System.out.println(s); // T → void\nSupplier<Double>            s  = () -> Math.random();  // () → T\nBiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;\nUnaryOperator<String>       upper = s -> s.toUpperCase();\n\n// Using them\nSystem.out.println(fn.apply(\"Hello\"));   // 5\nSystem.out.println(p.test(42));          // true\nc.accept(\"Printed!\");                    // Printed!\nSystem.out.println(s.get());             // 0.7342...\n```\n\n### Method References\n\n```java\n// Instead of lambdas, reference existing methods:\nFunction<String, Integer> len = String::length;       // instance method ref\nConsumer<String> printer = System.out::println;        // static method ref\nSupplier<List<String>> listFactory = ArrayList::new;   // constructor ref\n\n// Example usage\nList<String> names = List.of(\"Charlie\", \"Alice\", \"Bob\");\n\n// Lambda\nnames.stream().sorted((a, b) -> a.compareTo(b));\n// Method reference (equivalent)\nnames.stream().sorted(String::compareTo);\n\n// Print all\nnames.forEach(System.out::println);\n```\n\n### Custom Functional Interface\n\n```java\n@FunctionalInterface\npublic interface MathOperation {\n    double compute(double a, double b);\n}\n\nMathOperation add = (a, b) -> a + b;\nMathOperation pow = Math::pow;\n\nSystem.out.println(add.compute(3, 4)); // 7.0\nSystem.out.println(pow.compute(2, 10)); // 1024.0\n```\n\n### How Lambda Captures Work (Closures)\n\nA lambda can **capture** variables from its enclosing scope. These captured variables must be **effectively final** — assigned once and never modified.\n\n```\n+------------------------------------------------------+\n|  Enclosing Method Scope                              |\n|                                                      |\n|   int multiplier = 3;  // effectively final ✅       |\n|   int counter = 0;     // modified later ❌           |\n|                                                      |\n|   +----------------------------------------------+   |\n|   |  Lambda Closure                              |   |\n|   |                                              |   |\n|   |  x -> x * multiplier   // ✅ captures copy   |   |\n|   |  x -> x * counter      // ❌ compile error    |   |\n|   +----------------------------------------------+   |\n|                                                      |\n|   counter++;  // mutation makes it non-effectively   |\n|               // final — lambda can't capture it     |\n+------------------------------------------------------+\n```\n\n```java\n// ✅ Effectively final — works\nString prefix = \"Hello\";\nConsumer<String> greeter = name -> System.out.println(prefix + \" \" + name);\ngreeter.accept(\"World\"); // \"Hello World\"\n\n// ❌ NOT effectively final — compile error\nint count = 0;\nRunnable bad = () -> count++; // ERROR: count must be effectively final\n\n// ✅ Workaround: use AtomicInteger or array\nAtomicInteger atomicCount = new AtomicInteger(0);\nRunnable good = () -> atomicCount.incrementAndGet(); // ✅ works\n```\n\n### Functional Composition (Chaining)\n\n```\n+----------+     +----------+     +-----------+\n| Function |     | Function |     | Function  |\n| trim()   | --> | lower()  | --> | length()  |\n+----------+     +----------+     +-----------+\n  Input:           Step 1:          Step 2:       Output:\n \"  HELLO \"  -->  \"hello\"    -->   5            --> 5\n```\n\n```java\n// Compose functions with andThen / compose\nFunction<String, String> trim = String::strip;\nFunction<String, String> lower = String::toLowerCase;\nFunction<String, Integer> len = String::length;\n\n// andThen: trim THEN lower THEN get length\nFunction<String, Integer> pipeline = trim\n    .andThen(lower)\n    .andThen(len);\n\nSystem.out.println(pipeline.apply(\"  HELLO WORLD  \")); // 11\n\n// Predicate composition\nPredicate<Integer> isPositive = n -> n > 0;\nPredicate<Integer> isEven = n -> n % 2 == 0;\n\nPredicate<Integer> isPositiveAndEven = isPositive.and(isEven);\nPredicate<Integer> isPositiveOrEven = isPositive.or(isEven);\nPredicate<Integer> isNotPositive = isPositive.negate();\n\nSystem.out.println(isPositiveAndEven.test(4));  // true\nSystem.out.println(isPositiveAndEven.test(-2)); // false\nSystem.out.println(isNotPositive.test(-5));     // true\n```\n\n### All Built-in Functional Interfaces\n\n| Interface | Signature | Purpose | Example |\n|-----------|-----------|---------|---------|\n| Function<T,R> | R apply(T) | Transform T to R | s -> s.length() |\n| BiFunction<T,U,R> | R apply(T,U) | Two inputs to R | (a,b) -> a+b |\n| Predicate<T> | boolean test(T) | Test condition | n -> n > 0 |\n| BiPredicate<T,U> | boolean test(T,U) | Test two inputs | (s,n) -> s.length() > n |\n| Consumer<T> | void accept(T) | Consume value | System.out::println |\n| BiConsumer<T,U> | void accept(T,U) | Consume two values | map::put |\n| Supplier<T> | T get() | Produce value | Math::random |\n| UnaryOperator<T> | T apply(T) | Transform same type | String::toUpperCase |\n| BinaryOperator<T> | T apply(T,T) | Combine two same | Integer::sum |\n\n> **Key Rule**: Lambdas are NOT anonymous inner classes. They use `invokedynamic` bytecode (JSR 292) for better performance — no extra .class file is generated, and the JVM can inline them aggressively."
       },
       {
-        id: 'streams-api',
-        title: 'Streams API',
-        content: `## Streams API (Java 8+)
-
-Streams provide a **declarative** way to process collections — filter, transform, aggregate.
-
-### Creating Streams
-
-\`\`\`java
-// From collections
-List<String> names = List.of("Alice", "Bob", "Charlie", "Dave");
-Stream<String> stream = names.stream();
-
-// From values
-Stream<Integer> nums = Stream.of(1, 2, 3, 4, 5);
-
-// From arrays
-int[] arr = {1, 2, 3};
-IntStream intStream = Arrays.stream(arr);
-
-// Infinite streams
-Stream<Integer> infinite = Stream.iterate(0, n -> n + 2); // 0, 2, 4, ...
-Stream<Double> randoms = Stream.generate(Math::random);
-\`\`\`
-
-### Intermediate Operations (lazy, return Stream)
-
-\`\`\`java
-List<String> names = List.of("Alice", "Bob", "Charlie", "Dave", "Anna");
-
-names.stream()
-    .filter(s -> s.startsWith("A"))     // [Alice, Anna]
-    .map(String::toUpperCase)           // [ALICE, ANNA]
-    .sorted()                           // [ALICE, ANNA]
-    .distinct()                         // remove duplicates
-    .limit(5)                           // first 5 elements
-    .skip(1)                            // skip first element
-    .peek(System.out::println)          // debug: print each
-    .collect(Collectors.toList());      // terminal operation
-\`\`\`
-
-### Terminal Operations (trigger processing)
-
-\`\`\`java
-List<Integer> nums = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-// Collect
-List<Integer> evens = nums.stream()
-    .filter(n -> n % 2 == 0)
-    .toList(); // Java 16+ shorthand for collect(Collectors.toList())
-
-// Reduce
-int sum = nums.stream().reduce(0, Integer::sum); // 55
-Optional<Integer> max = nums.stream().max(Integer::compareTo);
-
-// Count, min, max
-long count = nums.stream().filter(n -> n > 5).count(); // 5
-
-// forEach
-nums.stream().forEach(System.out::println);
-
-// anyMatch, allMatch, noneMatch
-boolean hasEven = nums.stream().anyMatch(n -> n % 2 == 0);  // true
-boolean allPos = nums.stream().allMatch(n -> n > 0);         // true
-
-// toArray
-Integer[] arr = nums.stream().toArray(Integer[]::new);
-\`\`\`
-
-### Collectors (Grouping & Partitioning)
-
-\`\`\`java
-List<String> words = List.of("apple", "banana", "avocado", "blueberry", "cherry");
-
-// Group by first letter
-Map<Character, List<String>> grouped = words.stream()
-    .collect(Collectors.groupingBy(w -> w.charAt(0)));
-// {a=[apple, avocado], b=[banana, blueberry], c=[cherry]}
-
-// Partition by condition
-Map<Boolean, List<String>> partitioned = words.stream()
-    .collect(Collectors.partitioningBy(w -> w.length() > 5));
-
-// Joining
-String csv = words.stream()
-    .collect(Collectors.joining(", ")); // "apple, banana, avocado, ..."
-
-// Summarizing
-IntSummaryStatistics stats = words.stream()
-    .collect(Collectors.summarizingInt(String::length));
-// count=5, sum=34, min=5, average=6.8, max=9
-
-// toMap
-Map<String, Integer> wordLengths = words.stream()
-    .collect(Collectors.toMap(w -> w, String::length));
-\`\`\``
+        "id": "streams-api",
+        "title": "Streams API",
+        "content": "## Streams API (Java 8+)\n\nStreams provide a **declarative** way to process collections — filter, transform, aggregate.\n\n### Creating Streams\n\n```java\n// From collections\nList<String> names = List.of(\"Alice\", \"Bob\", \"Charlie\", \"Dave\");\nStream<String> stream = names.stream();\n\n// From values\nStream<Integer> nums = Stream.of(1, 2, 3, 4, 5);\n\n// From arrays\nint[] arr = {1, 2, 3};\nIntStream intStream = Arrays.stream(arr);\n\n// Infinite streams\nStream<Integer> infinite = Stream.iterate(0, n -> n + 2); // 0, 2, 4, ...\nStream<Double> randoms = Stream.generate(Math::random);\n```\n\n### Intermediate Operations (lazy, return Stream)\n\n```java\nList<String> names = List.of(\"Alice\", \"Bob\", \"Charlie\", \"Dave\", \"Anna\");\n\nnames.stream()\n    .filter(s -> s.startsWith(\"A\"))     // [Alice, Anna]\n    .map(String::toUpperCase)           // [ALICE, ANNA]\n    .sorted()                           // [ALICE, ANNA]\n    .distinct()                         // remove duplicates\n    .limit(5)                           // first 5 elements\n    .skip(1)                            // skip first element\n    .peek(System.out::println)          // debug: print each\n    .collect(Collectors.toList());      // terminal operation\n```\n\n### Terminal Operations (trigger processing)\n\n```java\nList<Integer> nums = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);\n\n// Collect\nList<Integer> evens = nums.stream()\n    .filter(n -> n % 2 == 0)\n    .toList(); // Java 16+ shorthand for collect(Collectors.toList())\n\n// Reduce\nint sum = nums.stream().reduce(0, Integer::sum); // 55\nOptional<Integer> max = nums.stream().max(Integer::compareTo);\n\n// Count, min, max\nlong count = nums.stream().filter(n -> n > 5).count(); // 5\n\n// forEach\nnums.stream().forEach(System.out::println);\n\n// anyMatch, allMatch, noneMatch\nboolean hasEven = nums.stream().anyMatch(n -> n % 2 == 0);  // true\nboolean allPos = nums.stream().allMatch(n -> n > 0);         // true\n\n// toArray\nInteger[] arr = nums.stream().toArray(Integer[]::new);\n```\n\n### Collectors (Grouping & Partitioning)\n\n```java\nList<String> words = List.of(\"apple\", \"banana\", \"avocado\", \"blueberry\", \"cherry\");\n\n// Group by first letter\nMap<Character, List<String>> grouped = words.stream()\n    .collect(Collectors.groupingBy(w -> w.charAt(0)));\n// {a=[apple, avocado], b=[banana, blueberry], c=[cherry]}\n\n// Partition by condition\nMap<Boolean, List<String>> partitioned = words.stream()\n    .collect(Collectors.partitioningBy(w -> w.length() > 5));\n\n// Joining\nString csv = words.stream()\n    .collect(Collectors.joining(\", \")); // \"apple, banana, avocado, ...\"\n\n// Summarizing\nIntSummaryStatistics stats = words.stream()\n    .collect(Collectors.summarizingInt(String::length));\n// count=5, sum=34, min=5, average=6.8, max=9\n\n// toMap\nMap<String, Integer> wordLengths = words.stream()\n    .collect(Collectors.toMap(w -> w, String::length));\n```\n\n### Stream Pipeline Architecture\n\n```\n+-----------------------------------------------------------+\n|                    STREAM PIPELINE                         |\n+-----------------------------------------------------------+\n|                                                           |\n|  SOURCE          INTERMEDIATE OPS (lazy)    TERMINAL OP   |\n|  ======          =====================      ===========   |\n|                                                           |\n|  Collection  --> filter() --> map() -----> collect()      |\n|  Array            sorted()    flatMap()    reduce()       |\n|  File              peek()     distinct()   forEach()      |\n|  Generator         limit()    skip()       count()        |\n|                                            toArray()      |\n|                                                           |\n|  IMPORTANT: No processing happens until a terminal        |\n|  operation is invoked! Intermediate ops are LAZY.         |\n+-----------------------------------------------------------+\n```\n\n> **Key Insight**: Streams are **consumed once**. After a terminal operation, the stream is closed. You cannot reuse it — create a new stream from the source.\n\n### flatMap — Flattening Nested Structures\n\n```\n+------------------+                  +------------------+\n| Stream<List<T>>  |    flatMap()     | Stream<T>        |\n|                  |  ------------>   |                  |\n| [[1,2], [3,4]]   |                  | [1, 2, 3, 4]    |\n| [[\"a\"], [\"b\",\"c\"]]|                 | [\"a\", \"b\", \"c\"] |\n+------------------+                  +------------------+\n```\n\n```java\n// Flatten nested lists\nList<List<String>> nested = List.of(\n    List.of(\"Alice\", \"Bob\"),\n    List.of(\"Charlie\"),\n    List.of(\"Dave\", \"Eve\")\n);\n\nList<String> flat = nested.stream()\n    .flatMap(Collection::stream)\n    .toList();\n// [Alice, Bob, Charlie, Dave, Eve]\n\n// Real-world: get all unique words from sentences\nList<String> sentences = List.of(\"hello world\", \"java streams rock\");\nList<String> words2 = sentences.stream()\n    .flatMap(s -> Arrays.stream(s.split(\" \")))\n    .distinct()\n    .sorted()\n    .toList();\n// [hello, java, rock, streams, world]\n```\n\n### Parallel Streams\n\n```\n+-----------------------------------------------------+\n|            PARALLEL STREAM EXECUTION                 |\n+-----------------------------------------------------+\n|                                                     |\n|  Source: [1, 2, 3, 4, 5, 6, 7, 8]                  |\n|                                                     |\n|  Split into chunks (ForkJoinPool):                  |\n|  +--------+  +--------+  +--------+  +--------+    |\n|  | [1, 2] |  | [3, 4] |  | [5, 6] |  | [7, 8] |   |\n|  +---+----+  +---+----+  +---+----+  +---+----+    |\n|      |           |           |           |          |\n|   Thread 1    Thread 2    Thread 3    Thread 4      |\n|   (process)   (process)   (process)   (process)     |\n|      |           |           |           |          |\n|      +-----+-----+-----+----+           |          |\n|            |                  |          |          |\n|        Combine            Combine        |          |\n|            +--------+---------+          |          |\n|                     |                               |\n|                Final Result                         |\n+-----------------------------------------------------+\n```\n\n```java\n// Parallel processing — auto-uses ForkJoinPool\nlong count = numbers.parallelStream()\n    .filter(n -> isPrime(n))\n    .count();\n\n// When to use parallel streams:\n// ✅ Large datasets (> 10,000 elements)\n// ✅ CPU-intensive per-element operations\n// ✅ Independent, stateless operations\n// ❌ Small datasets (overhead > benefit)\n// ❌ Operations with shared mutable state\n// ❌ I/O-bound operations (use Virtual Threads instead)\n// ❌ Order-dependent operations (unless using forEachOrdered)\n```\n\n### Teeing Collector (Java 12+)\n\n```java\n// Process stream through TWO collectors simultaneously\nvar result = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).stream()\n    .collect(Collectors.teeing(\n        Collectors.summingInt(Integer::intValue),   // collector 1: sum\n        Collectors.counting(),                       // collector 2: count\n        (sum, count2) -> \"Sum=\" + sum + \", Avg=\" + (sum / count2) // merge\n    ));\n// \"Sum=55, Avg=5\"\n```\n\n### Real-World Stream Patterns\n\n```java\n// 1. Frequency map (word count)\nMap<String, Long> frequency = words.stream()\n    .collect(Collectors.groupingBy(\n        Function.identity(), Collectors.counting()));\n\n// 2. Top-N elements\nList<String> top3Longest = words.stream()\n    .sorted(Comparator.comparingInt(String::length).reversed())\n    .limit(3)\n    .toList();\n\n// 3. CSV line to objects\nList<Person> people = Files.lines(Path.of(\"data.csv\"))\n    .skip(1)  // skip header\n    .map(line -> line.split(\",\"))\n    .map(parts -> new Person(parts[0], Integer.parseInt(parts[1])))\n    .toList();\n\n// 4. Nested grouping\nMap<String, Map<Integer, List<Student>>> grouped = students.stream()\n    .collect(Collectors.groupingBy(\n        Student::department,\n        Collectors.groupingBy(Student::year)));\n\n// 5. Stream to Map with merge function (handle duplicates)\nMap<String, Integer> merged = items.stream()\n    .collect(Collectors.toMap(\n        Item::name, Item::quantity, Integer::sum));\n```\n\n### Stream vs Collection\n\n| Aspect | Collection | Stream |\n|--------|-----------|--------|\n| Storage | Stores elements in memory | Computes elements on-demand |\n| Consumption | Can iterate multiple times | Single-use (consumed once) |\n| Eagerness | Eager (all elements exist) | Lazy (computed when needed) |\n| Modification | Can add/remove elements | Read-only pipeline |\n| Size | Finite | Can be infinite |\n| Parallelism | Manual threading | Built-in .parallelStream() |"
       },
       {
-        id: 'optionals',
-        title: 'Optional<T>',
-        content: `## Optional (Java 8+)
-
-\`Optional\` is a container that may or may not hold a value — eliminates **NullPointerException**.
-
-### Creating Optionals
-
-\`\`\`java
-Optional<String> present = Optional.of("Hello");       // must be non-null
-Optional<String> nullable = Optional.ofNullable(null);  // may be null
-Optional<String> empty = Optional.empty();              // explicitly empty
-\`\`\`
-
-### Using Optionals
-
-\`\`\`java
-Optional<String> name = Optional.of("Karthik");
-
-// Check and get
-if (name.isPresent()) {
-    System.out.println(name.get()); // "Karthik"
-}
-
-// ifPresent — functional style
-name.ifPresent(n -> System.out.println("Name: " + n));
-
-// ifPresentOrElse (Java 9+)
-name.ifPresentOrElse(
-    n -> System.out.println("Found: " + n),
-    () -> System.out.println("Not found")
-);
-
-// Default values
-String result = name.orElse("Unknown");
-String result2 = name.orElseGet(() -> computeDefault());
-String result3 = name.orElseThrow(); // throws NoSuchElementException
-String result4 = name.orElseThrow(
-    () -> new IllegalStateException("Name required!")
-);
-\`\`\`
-
-### Transforming Optionals
-
-\`\`\`java
-Optional<String> name = Optional.of("  karthik  ");
-
-// map — transform value
-Optional<String> upper = name
-    .map(String::strip)
-    .map(String::toUpperCase);
-// Optional["KARTHIK"]
-
-// filter — conditional
-Optional<String> long_name = name
-    .filter(n -> n.strip().length() > 3);
-// Optional["  karthik  "]
-
-// flatMap — when transformation returns Optional
-Optional<Integer> length = name
-    .flatMap(n -> n.isBlank() ? Optional.empty()
-                              : Optional.of(n.strip().length()));
-// Optional[7]
-
-// Chaining with or() (Java 9+)
-Optional<String> fallback = Optional.<String>empty()
-    .or(() -> Optional.of("default"));
-// Optional["default"]
-\`\`\`
-
-### Stream Integration
-
-\`\`\`java
-// Optional.stream() (Java 9+)
-List<Optional<String>> opts = List.of(
-    Optional.of("A"),
-    Optional.empty(),
-    Optional.of("B")
-);
-
-List<String> values = opts.stream()
-    .flatMap(Optional::stream)
-    .toList();
-// ["A", "B"]
-\`\`\``
+        "id": "optionals",
+        "title": "Optional<T>",
+        "content": "## Optional (Java 8+)\n\n`Optional` is a container that may or may not hold a value — eliminates **NullPointerException**.\n\n### Creating Optionals\n\n```java\nOptional<String> present = Optional.of(\"Hello\");       // must be non-null\nOptional<String> nullable = Optional.ofNullable(null);  // may be null\nOptional<String> empty = Optional.empty();              // explicitly empty\n```\n\n### Using Optionals\n\n```java\nOptional<String> name = Optional.of(\"Karthik\");\n\n// Check and get\nif (name.isPresent()) {\n    System.out.println(name.get()); // \"Karthik\"\n}\n\n// ifPresent — functional style\nname.ifPresent(n -> System.out.println(\"Name: \" + n));\n\n// ifPresentOrElse (Java 9+)\nname.ifPresentOrElse(\n    n -> System.out.println(\"Found: \" + n),\n    () -> System.out.println(\"Not found\")\n);\n\n// Default values\nString result = name.orElse(\"Unknown\");\nString result2 = name.orElseGet(() -> computeDefault());\nString result3 = name.orElseThrow(); // throws NoSuchElementException\nString result4 = name.orElseThrow(\n    () -> new IllegalStateException(\"Name required!\")\n);\n```\n\n### Transforming Optionals\n\n```java\nOptional<String> name = Optional.of(\"  karthik  \");\n\n// map — transform value\nOptional<String> upper = name\n    .map(String::strip)\n    .map(String::toUpperCase);\n// Optional[\"KARTHIK\"]\n\n// filter — conditional\nOptional<String> long_name = name\n    .filter(n -> n.strip().length() > 3);\n// Optional[\"  karthik  \"]\n\n// flatMap — when transformation returns Optional\nOptional<Integer> length = name\n    .flatMap(n -> n.isBlank() ? Optional.empty()\n                              : Optional.of(n.strip().length()));\n// Optional[7]\n\n// Chaining with or() (Java 9+)\nOptional<String> fallback = Optional.<String>empty()\n    .or(() -> Optional.of(\"default\"));\n// Optional[\"default\"]\n```\n\n### Stream Integration\n\n```java\n// Optional.stream() (Java 9+)\nList<Optional<String>> opts = List.of(\n    Optional.of(\"A\"),\n    Optional.empty(),\n    Optional.of(\"B\")\n);\n\nList<String> values = opts.stream()\n    .flatMap(Optional::stream)\n    .toList();\n// [\"A\", \"B\"]\n```"
       },
       {
-        id: 'pattern-matching',
-        title: 'Pattern Matching (Java 21)',
-        content: `## Pattern Matching
-
-Java 21 brings **powerful pattern matching** capabilities.
-
-### Pattern Matching for instanceof (Java 16+)
-
-\`\`\`java
-Object obj = "Hello World";
-
-if (obj instanceof String s && s.length() > 5) {
-    System.out.println("Long string: " + s.toUpperCase());
-}
-\`\`\`
-
-### Pattern Matching for switch (Java 21)
-
-\`\`\`java
-// Match on type
-static String describe(Object obj) {
-    return switch (obj) {
-        case Integer i when i > 0 -> "Positive int: " + i;
-        case Integer i            -> "Non-positive int: " + i;
-        case String s             -> "String of length " + s.length();
-        case int[] arr            -> "int array of length " + arr.length;
-        case null                 -> "null value";
-        default                   -> "Unknown: " + obj.getClass();
-    };
-}
-
-describe(42);         // "Positive int: 42"
-describe(-5);         // "Non-positive int: -5"
-describe("Hi");       // "String of length 2"
-describe(null);       // "null value"
-\`\`\`
-
-### Record Patterns (Java 21)
-
-\`\`\`java
-record Point(int x, int y) {}
-record Circle(Point center, double radius) {}
-
-// Destructure nested records!
-static String describeShape(Object shape) {
-    return switch (shape) {
-        case Circle(Point(int x, int y), double r)
-            when r > 10 -> "Large circle at (" + x + "," + y + ")";
-        case Circle(Point(int x, int y), double r)
-            -> "Circle at (" + x + "," + y + ") r=" + r;
-        default -> "Unknown shape";
-    };
-}
-
-var c = new Circle(new Point(3, 4), 15.0);
-describeShape(c); // "Large circle at (3,4)"
-\`\`\`
-
-### Guarded Patterns (when clause)
-
-\`\`\`java
-sealed interface Shape permits Circle, Rectangle {}
-record Circle(double radius) implements Shape {}
-record Rectangle(double w, double h) implements Shape {}
-
-## Virtual Threads (Project Loom)
-
-Virtual Threads are **lightweight threads** managed by the JVM, not the OS — enabling millions of concurrent tasks with minimal memory footprint.
-
-### Virtual Threads Architecture & Mounting/Unmounting
-
-\`\`\`
-+---------------------------------------------------------------------------------------+
-|                                JVM VIRTUAL THREAD POOL                                |
-|  [ VThread 1 ]   [ VThread 2 ]   [ VThread 3 ]   ...   [ VThread 1,000,000 ]           |
-+---------------------------------------------------------------------------------------+
-        |                | (Blocked on I/O)
-        | Mounts         v Unmounts (Yields Carrier)
-+---------------------------------------------------------------------------------------+
-|                       CARRIER THREADS (JVM ForkJoinPool)                             |
-|  [ Carrier Thread #1 ]                    [ Carrier Thread #2 ]                       |
-+---------------------------------------------------------------------------------------+
-        |                                           |
-        v                                           v
-+---------------------------------------------------------------------------------------+
-|                             OS KERNEL THREADS (1:1 with OS)                           |
-|  [ OS Thread A ]                          [ OS Thread B ]                             |
-+---------------------------------------------------------------------------------------+
-\`\`\`
-
-#### How Virtual Threads Work:
-1. **Mounting**: When a Virtual Thread runs CPU operations, the JVM **mounts** it onto an OS Carrier Thread (ForkJoinPool worker).
-2. **Unmounting on Blocking I/O**: When the Virtual Thread makes a blocking call (DB query, HTTP request, socket read), the JVM **unmounts** it from the Carrier Thread and saves its stack in Heap memory.
-3. **Re-mounting**: The Carrier Thread becomes free to process other Virtual Threads immediately. Once the I/O completes, the Virtual Thread is scheduled onto an available Carrier Thread again.
-
-### Creating Virtual Threads
-
-\`\`\`java
-// Start a single virtual thread
-Thread vt = Thread.startVirtualThread(() -> {
-    System.out.println("Running in virtual thread: "
-        + Thread.currentThread());
-});
-vt.join(); // wait for completion
-
-// Using Thread.ofVirtual()
-Thread thread = Thread.ofVirtual()
-    .name("my-vthread")
-    .start(() -> {
-        System.out.println("Named virtual thread");
-    });
-\`\`\`
-
-### Virtual Thread Executor
-
-\`\`\`java
-// Process 10,000 tasks concurrently!
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    List<Future<String>> futures = new ArrayList<>();
-
-    for (int i = 0; i < 10_000; i++) {
-        final int taskId = i;
-        futures.add(executor.submit(() -> {
-            Thread.sleep(Duration.ofSeconds(1)); // simulated I/O
-            return "Result-" + taskId;
-        }));
-    }
-
-    // Collect results
-    for (var future : futures) {
-        System.out.println(future.get());
-    }
-}
-// All 10,000 tasks complete in ~1 second (not 10,000 seconds)
-\`\`\`
-
-### Platform vs Virtual Threads
-
-| Feature | Platform Thread | Virtual Thread |
-|---------|----------------|----------------|
-| Managed by | OS | JVM |
-| Cost | ~1MB stack each | ~few KB |
-| Max count | ~thousands | **millions** |
-| Best for | CPU-bound work | I/O-bound work |
-| Scheduling | OS scheduler | JVM carrier threads |
-
-### Structured Concurrency (Preview)
-
-\`\`\`java
-// Java 21 Preview — manage related tasks as a unit
-try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-    Subtask<String> user = scope.fork(() -> fetchUser(id));
-    Subtask<List<Order>> orders = scope.fork(() -> fetchOrders(id));
-
-    scope.join();           // wait for both
-    scope.throwIfFailed();  // propagate errors
-
-    return new UserProfile(user.get(), orders.get());
-}
-\`\`\`
-
-### When to Use Virtual Threads
-
-✅ **Use for**: HTTP servers, database queries, file I/O, API calls, any blocking I/O
-❌ **Don't use for**: CPU-intensive computation (use platform threads + ForkJoinPool)`
+        "id": "pattern-matching",
+        "title": "Pattern Matching (Java 21)",
+        "content": "## Pattern Matching\n\nJava 21 brings **powerful pattern matching** capabilities.\n\n### Pattern Matching for instanceof (Java 16+)\n\n```java\nObject obj = \"Hello World\";\n\nif (obj instanceof String s && s.length() > 5) {\n    System.out.println(\"Long string: \" + s.toUpperCase());\n}\n```\n\n### Pattern Matching for switch (Java 21)\n\n```java\n// Match on type\nstatic String describe(Object obj) {\n    return switch (obj) {\n        case Integer i when i > 0 -> \"Positive int: \" + i;\n        case Integer i            -> \"Non-positive int: \" + i;\n        case String s             -> \"String of length \" + s.length();\n        case int[] arr            -> \"int array of length \" + arr.length;\n        case null                 -> \"null value\";\n        default                   -> \"Unknown: \" + obj.getClass();\n    };\n}\n\ndescribe(42);         // \"Positive int: 42\"\ndescribe(-5);         // \"Non-positive int: -5\"\ndescribe(\"Hi\");       // \"String of length 2\"\ndescribe(null);       // \"null value\"\n```\n\n### Record Patterns (Java 21)\n\n```java\nrecord Point(int x, int y) {}\nrecord Circle(Point center, double radius) {}\n\n// Destructure nested records!\nstatic String describeShape(Object shape) {\n    return switch (shape) {\n        case Circle(Point(int x, int y), double r)\n            when r > 10 -> \"Large circle at (\" + x + \",\" + y + \")\";\n        case Circle(Point(int x, int y), double r)\n            -> \"Circle at (\" + x + \",\" + y + \") r=\" + r;\n        default -> \"Unknown shape\";\n    };\n}\n\nvar c = new Circle(new Point(3, 4), 15.0);\ndescribeShape(c); // \"Large circle at (3,4)\"\n```\n\n### Guarded Patterns (when clause)\n\n```java\nsealed interface Shape permits Circle, Rectangle {}\nrecord Circle(double radius) implements Shape {}\nrecord Rectangle(double w, double h) implements Shape {}\n\n## Virtual Threads (Project Loom)\n\nVirtual Threads are **lightweight threads** managed by the JVM, not the OS — enabling millions of concurrent tasks with minimal memory footprint.\n\n### Virtual Threads Architecture & Mounting/Unmounting\n\n```\n+---------------------------------------------------------------------------------------+\n|                                JVM VIRTUAL THREAD POOL                                |\n|  [ VThread 1 ]   [ VThread 2 ]   [ VThread 3 ]   ...   [ VThread 1,000,000 ]           |\n+---------------------------------------------------------------------------------------+\n        |                | (Blocked on I/O)\n        | Mounts         v Unmounts (Yields Carrier)\n+---------------------------------------------------------------------------------------+\n|                       CARRIER THREADS (JVM ForkJoinPool)                             |\n|  [ Carrier Thread #1 ]                    [ Carrier Thread #2 ]                       |\n+---------------------------------------------------------------------------------------+\n        |                                           |\n        v                                           v\n+---------------------------------------------------------------------------------------+\n|                             OS KERNEL THREADS (1:1 with OS)                           |\n|  [ OS Thread A ]                          [ OS Thread B ]                             |\n+---------------------------------------------------------------------------------------+\n```\n\n#### How Virtual Threads Work:\n1. **Mounting**: When a Virtual Thread runs CPU operations, the JVM **mounts** it onto an OS Carrier Thread (ForkJoinPool worker).\n2. **Unmounting on Blocking I/O**: When the Virtual Thread makes a blocking call (DB query, HTTP request, socket read), the JVM **unmounts** it from the Carrier Thread and saves its stack in Heap memory.\n3. **Re-mounting**: The Carrier Thread becomes free to process other Virtual Threads immediately. Once the I/O completes, the Virtual Thread is scheduled onto an available Carrier Thread again.\n\n### Creating Virtual Threads\n\n```java\n// Start a single virtual thread\nThread vt = Thread.startVirtualThread(() -> {\n    System.out.println(\"Running in virtual thread: \"\n        + Thread.currentThread());\n});\nvt.join(); // wait for completion\n\n// Using Thread.ofVirtual()\nThread thread = Thread.ofVirtual()\n    .name(\"my-vthread\")\n    .start(() -> {\n        System.out.println(\"Named virtual thread\");\n    });\n```\n\n### Virtual Thread Executor\n\n```java\n// Process 10,000 tasks concurrently!\ntry (var executor = Executors.newVirtualThreadPerTaskExecutor()) {\n    List<Future<String>> futures = new ArrayList<>();\n\n    for (int i = 0; i < 10_000; i++) {\n        final int taskId = i;\n        futures.add(executor.submit(() -> {\n            Thread.sleep(Duration.ofSeconds(1)); // simulated I/O\n            return \"Result-\" + taskId;\n        }));\n    }\n\n    // Collect results\n    for (var future : futures) {\n        System.out.println(future.get());\n    }\n}\n// All 10,000 tasks complete in ~1 second (not 10,000 seconds)\n```\n\n### Platform vs Virtual Threads\n\n| Feature | Platform Thread | Virtual Thread |\n|---------|----------------|----------------|\n| Managed by | OS | JVM |\n| Cost | ~1MB stack each | ~few KB |\n| Max count | ~thousands | **millions** |\n| Best for | CPU-bound work | I/O-bound work |\n| Scheduling | OS scheduler | JVM carrier threads |\n\n### Structured Concurrency (Preview)\n\n```java\n// Java 21 Preview — manage related tasks as a unit\ntry (var scope = new StructuredTaskScope.ShutdownOnFailure()) {\n    Subtask<String> user = scope.fork(() -> fetchUser(id));\n    Subtask<List<Order>> orders = scope.fork(() -> fetchOrders(id));\n\n    scope.join();           // wait for both\n    scope.throwIfFailed();  // propagate errors\n\n    return new UserProfile(user.get(), orders.get());\n}\n```\n\n### When to Use Virtual Threads\n\n✅ **Use for**: HTTP servers, database queries, file I/O, API calls, any blocking I/O\n❌ **Don't use for**: CPU-intensive computation (use platform threads + ForkJoinPool)"
+      },
+      {
+        "id": "var-type-inference",
+        "title": "var — Local Type Inference (Java 10+)",
+        "content": "## Local Variable Type Inference (var)\n\nSince Java 10, you can use \\`var\\` to let the compiler infer the type of local variables. This is **not dynamic typing** — Java remains statically typed. The compiler determines the type at compile time.\n\n### How var Works\n\n\\`\\`\\`\n+-----------------------------------------------+\n|  COMPILE TIME TYPE INFERENCE                  |\n+-----------------------------------------------+\n|                                               |\n|  Source Code:                                 |\n|    var name = \"Hello\";                        |\n|                                               |\n|  Compiler sees:                               |\n|    String name = \"Hello\";  // inferred type   |\n|                                               |\n|  Bytecode: IDENTICAL to explicit declaration  |\n+-----------------------------------------------+\n\\`\\`\\`\n\n### Valid Uses of var\n\n\\`\\`\\`java\n// Simple declarations\nvar name = \"Karthik\";           // String\nvar age = 25;                    // int\nvar pi = 3.14;                   // double\nvar list = new ArrayList<String>();  // ArrayList<String>\nvar map = Map.of(\"a\", 1, \"b\", 2);   // Map<String, Integer>\n\n// Enhanced for loops\nvar numbers = List.of(1, 2, 3, 4, 5);\nfor (var n : numbers) {\n    System.out.println(n);  // n is Integer\n}\n\n// try-with-resources\ntry (var reader = new BufferedReader(new FileReader(\"file.txt\"))) {\n    var line = reader.readLine();\n}\n\n// Particularly useful for complex generic types\nvar entrySet = map.entrySet();\n// Instead of: Set<Map.Entry<String, Integer>> entrySet = map.entrySet();\n\\`\\`\\`\n\n### Where var CANNOT Be Used\n\n\\`\\`\\`java\n// ❌ Method parameters\nvoid process(var data) { }  // ERROR\n\n// ❌ Return types\nvar getName() { return \"Hi\"; }  // ERROR\n\n// ❌ Fields (instance or static)\nclass MyClass { var x = 10; }  // ERROR\n\n// ❌ Without initializer\nvar x;  // ERROR — compiler can't infer type\n\n// ❌ With null\nvar x = null;  // ERROR — null has no type\n\n// ❌ Lambda without explicit target type\nvar fn = (x) -> x * 2;  // ERROR\n\\`\\`\\`\n\n### Best Practices\n\n| Use var when... | Avoid var when... |\n|-----------------|-------------------|\n| Type is obvious from RHS | Type is not clear from context |\n| Complex generic types | Primitive numeric types (int, long) |\n| Local iteration variables | Public API boundaries |\n| var improves readability | var hurts readability |\n\n> **Remember**: \\`var\\` is a **reserved type name**, not a keyword. You can still have a variable named \\`var\\` (but please don't)."
+      },
+      {
+        "id": "switch-expressions",
+        "title": "Switch Expressions (Java 14+)",
+        "content": "## Switch Expressions\n\nJava 14 finalized **switch as an expression** — it can return a value, use arrow syntax, and provides exhaustiveness checking.\n\n### Old vs New Switch\n\n\\`\\`\\`java\n// ❌ Old switch (statement, verbose, fall-through bugs)\nString day = \"MONDAY\";\nString type;\nswitch (day) {\n    case \"MONDAY\":\n    case \"TUESDAY\":\n    case \"WEDNESDAY\":\n    case \"THURSDAY\":\n    case \"FRIDAY\":\n        type = \"Weekday\";\n        break;  // forget this = bug!\n    case \"SATURDAY\":\n    case \"SUNDAY\":\n        type = \"Weekend\";\n        break;\n    default:\n        type = \"Unknown\";\n}\n\n// ✅ New switch expression (Java 14+)\nString type2 = switch (day) {\n    case \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\", \"THURSDAY\", \"FRIDAY\"\n        -> \"Weekday\";\n    case \"SATURDAY\", \"SUNDAY\"\n        -> \"Weekend\";\n    default -> \"Unknown\";\n};\n\\`\\`\\`\n\n### Arrow Labels (No Fall-Through!)\n\n\\`\\`\\`\n+-------------------------------------------+\n|  OLD SWITCH (fall-through by default)     |\n|                                           |\n|  case A:        <-- executes             |\n|    doA();       <-- runs                  |\n|  case B:        <-- FALLS THROUGH! 😱    |\n|    doB();       <-- also runs!            |\n|    break;       <-- must add explicitly   |\n+-------------------------------------------+\n\n+-------------------------------------------+\n|  NEW SWITCH (arrow = no fall-through)     |\n|                                           |\n|  case A -> doA();  <-- ONLY doA runs ✅   |\n|  case B -> doB();  <-- separate block     |\n+-------------------------------------------+\n\\`\\`\\`\n\n### yield — Multi-Statement Blocks\n\n\\`\\`\\`java\nint numLetters = switch (day) {\n    case \"MONDAY\", \"FRIDAY\", \"SUNDAY\" -> 6;\n    case \"TUESDAY\" -> 7;\n    case \"WEDNESDAY\" -> 9;\n    case \"THURSDAY\", \"SATURDAY\" -> 8;\n    default -> {\n        // Multi-line logic needs yield\n        System.out.println(\"Unknown day: \" + day);\n        yield -1;  // return value from block\n    }\n};\n\\`\\`\\`\n\n### Exhaustiveness with Enums & Sealed Types\n\n\\`\\`\\`java\nenum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n// Compiler ensures ALL enum values are covered — no default needed!\nString clothing = switch (season) {\n    case SPRING -> \"Light jacket\";\n    case SUMMER -> \"T-shirt\";\n    case AUTUMN -> \"Sweater\";\n    case WINTER -> \"Heavy coat\";\n};\n\n// With sealed types (Java 21)\nsealed interface Shape permits Circle, Square {}\nrecord Circle(double r) implements Shape {}\nrecord Square(double s) implements Shape {}\n\ndouble area = switch (shape) {\n    case Circle c -> Math.PI * c.r() * c.r();\n    case Square s -> s.s() * s.s();\n    // No default needed — sealed types are exhaustive!\n};\n\\`\\`\\`"
+      },
+      {
+        "id": "text-blocks",
+        "title": "Text Blocks (Java 15+)",
+        "content": "## Text Blocks\n\nText Blocks provide a clean way to write **multi-line strings** without escape sequences.\n\n### Basic Syntax\n\n\\`\\`\\`java\n// ❌ Old way — painful escaping\nString json = \"{\\n\" +\n    \"  \\\"name\\\": \\\"Alice\\\",\\n\" +\n    \"  \\\"age\\\": 30\\n\" +\n    \"}\";\n\n// ✅ Text Block — clean!\nString json2 = \"\"\"\n        {\n          \"name\": \"Alice\",\n          \"age\": 30\n        }\n        \"\"\";\n\n// SQL query\nString sql = \"\"\"\n        SELECT u.name, u.email\n        FROM users u\n        JOIN orders o ON u.id = o.user_id\n        WHERE o.total > 100\n        ORDER BY u.name\n        \"\"\";\n\n// HTML\nString html = \"\"\"\n        <html>\n          <body>\n            <h1>Hello, World!</h1>\n          </body>\n        </html>\n        \"\"\";\n\\`\\`\\`\n\n### Indentation Rules\n\n\\`\\`\\`\n+--------------------------------------------------+\n|  TEXT BLOCK INDENTATION                          |\n|                                                  |\n|  The CLOSING \"\"\" determines the left margin:    |\n|                                                  |\n|  String s = \"\"\"                                  |\n|          Hello      <-- 10 spaces from left      |\n|          World      <-- 10 spaces from left      |\n|          \"\"\";       <-- closing at col 10         |\n|                                                  |\n|  Result: \"Hello\\nWorld\" (no leading spaces!)     |\n|                                                  |\n|  Move closing \"\"\" LEFT = add indentation:       |\n|  String s = \"\"\"                                  |\n|          Hello                                   |\n|          World                                   |\n|      \"\"\";           <-- closing at col 6          |\n|                                                  |\n|  Result: \"    Hello\\n    World\" (4 spaces each)  |\n+--------------------------------------------------+\n\\`\\`\\`\n\n### String Interpolation with formatted()\n\n\\`\\`\\`java\nString name = \"Alice\";\nint age = 30;\n\n// Using formatted() on text blocks\nString message = \"\"\"\n        Dear %s,\n        You are %d years old.\n        Welcome to Java %d!\n        \"\"\".formatted(name, age, 21);\n\n// Using String.format()\nString query = String.format(\"\"\"\n        SELECT * FROM users\n        WHERE name = '%s'\n        AND age > %d\n        \"\"\", name, age);\n\\`\\`\\`"
+      },
+      {
+        "id": "primitive-streams",
+        "title": "Primitive Streams (IntStream, LongStream) & Performance",
+        "content": "## Primitive Streams & Performance Optimization\n\nWhen processing large numeric sequences with `Stream<Integer>`, Java creates thousands of wrapper objects (`Integer` instances) via **autoboxing**, which puts heavy pressure on the Garbage Collector and degrades cache locality.\n\n### Autoboxing Penalty vs Primitive Streams\n\n```\nStream<Integer> (Boxed):\n  [ Pointer ] ---> [ Integer Object: 24 bytes overhead ] (Scattered across Heap)\n  [ Pointer ] ---> [ Integer Object: 24 bytes overhead ]\n\nIntStream (Unboxed):\n  [ 4-byte int ][ 4-byte int ][ 4-byte int ] (Continuous Primitive Array in CPU Cache)\n```\n\n### Specialized Primitive Stream Types\n\nJava provides three primitive stream specializations in `java.util.stream`:\n1. **`IntStream`** (for `int`, `short`, `byte`, `char`)\n2. **`LongStream`** (for `long`)\n3. **`DoubleStream`** (for `double`, `float`)\n\n```java\nimport java.util.stream.IntStream;\nimport java.util.stream.LongStream;\n\n// 1. Range generation\nIntStream.range(1, 100);       // 1 to 99 (exclusive)\nIntStream.rangeClosed(1, 100); // 1 to 100 (inclusive)\n\n// 2. Direct numeric aggregations (No boxing!)\nint sum = IntStream.rangeClosed(1, 1000).sum();          // 500500\ndouble avg = IntStream.of(10, 20, 30, 40).average().orElse(0.0); // 25.0\nint max = IntStream.of(5, 8, 2, 9).max().orElse(0);      // 9\nlong count = IntStream.range(0, 1000).filter(n -> n % 2 == 0).count(); // 500\n\n// 3. Converting between Object Streams and Primitive Streams\nList<String> words = List.of(\"apple\", \"banana\", \"cherry\");\n\n// mapToInt avoids boxing Integer\nint totalLength = words.stream()\n    .mapToInt(String::length)\n    .sum();\n\n// boxed() converts IntStream back to Stream<Integer>\nList<Integer> numbers = IntStream.rangeClosed(1, 10)\n    .boxed()\n    .toList();\n```\n\n### Performance Comparison: `Stream<Integer>` vs `IntStream`\n\n| Stream Type | 10,000,000 Numbers Sum Time | Memory Allocation | GC Pauses |\n|-------------|-----------------------------|-------------------|-----------|\n| `Stream<Integer>` | ~120 ms | ~240 MB (Objects) | High |\n| `IntStream` | **~8 ms** (15x faster!) | **0 MB** (Stack / Cache) | **Zero** |"
+      },
+      {
+        "id": "advanced-collectors",
+        "title": "Advanced Custom Collectors & Downstream Reductions",
+        "content": "## Advanced Collectors & Downstream Reductions\n\nThe `Collectors` utility class provides deep composition tools to group, transform, and aggregate collections in complex business applications.\n\n### 1. Multi-Level Grouping with Downstream Collectors\n\n```java\nrecord Employee(String name, String department, String city, int salary) {}\n\nList<Employee> employees = List.of(\n    new Employee(\"Alice\", \"Engineering\", \"New York\", 120000),\n    new Employee(\"Bob\", \"Engineering\", \"London\", 110000),\n    new Employee(\"Charlie\", \"HR\", \"New York\", 85000),\n    new Employee(\"Dave\", \"Engineering\", \"New York\", 130000),\n    new Employee(\"Eve\", \"HR\", \"London\", 90000)\n);\n\n// Group by Department -> Count employees\nMap<String, Long> countByDept = employees.stream()\n    .collect(Collectors.groupingBy(Employee::department, Collectors.counting()));\n// {Engineering=3, HR=2}\n\n// Group by Department -> Average salary\nMap<String, Double> avgSalaryByDept = employees.stream()\n    .collect(Collectors.groupingBy(\n        Employee::department, \n        Collectors.averagingInt(Employee::salary)\n    ));\n// {Engineering=120000.0, HR=87500.0}\n\n// Group by Department -> Highest earner in each department\nMap<String, Optional<Employee>> topEarnerByDept = employees.stream()\n    .collect(Collectors.groupingBy(\n        Employee::department,\n        Collectors.maxBy(Comparator.comparingInt(Employee::salary))\n    ));\n\n// Group by Department -> List of names only (using mapping downstream collector)\nMap<String, List<String>> namesByDept = employees.stream()\n    .collect(Collectors.groupingBy(\n        Employee::department,\n        Collectors.mapping(Employee::name, Collectors.toList())\n    ));\n// {Engineering=[Alice, Bob, Dave], HR=[Charlie, Eve]}\n```\n\n### 2. `collectingAndThen` (Post-processing results)\n\n```java\n// Extract top earner without returning Optional:\nMap<String, Employee> topEarners = employees.stream()\n    .collect(Collectors.groupingBy(\n        Employee::department,\n        Collectors.collectingAndThen(\n            Collectors.maxBy(Comparator.comparingInt(Employee::salary)),\n            Optional::get\n        )\n    ));\n```\n\n### 3. Custom Collector using `Collector.of()`\n\n```java\n// Custom Collector that concatenates strings with brackets: [a, b, c]\nCollector<String, StringJoiner, String> bracketCollector = Collector.of(\n    () -> new StringJoiner(\", \", \"[\", \"]\"), // supplier\n    StringJoiner::add,                      // accumulator\n    StringJoiner::merge,                    // combiner (for parallel streams)\n    StringJoiner::toString                  // finisher\n);\n\nString result = List.of(\"Java\", \"Kotlin\", \"Scala\").stream()\n    .collect(bracketCollector);\nSystem.out.println(result); // [Java, Kotlin, Scala]\n```"
       }
     ]
   },
   {
-    id: 'exception-handling',
-    title: 'Exception Handling',
-    icon: 'ShieldAlert',
-    color: '#f87171',
-    chapters: [
+    "id": "annotations-reflection",
+    "title": "Annotations & Reflection",
+    "icon": "Tag",
+    "color": "#c084fc",
+    "chapters": [
       {
-        id: 'exceptions',
-        title: 'Exceptions & Error Handling',
-        content: `## Exception Handling
-
-### Exception Hierarchy
-
-\`\`\`
-Throwable
-├── Error (don't catch these)
-│   ├── OutOfMemoryError
-│   ├── StackOverflowError
-│   └── ...
-└── Exception
-    ├── IOException (checked)
-    ├── SQLException (checked)
-    ├── RuntimeException (unchecked)
-    │   ├── NullPointerException
-    │   ├── ArrayIndexOutOfBoundsException
-    │   ├── IllegalArgumentException
-    │   ├── ArithmeticException
-    │   └── ClassCastException
-    └── ...
-\`\`\`
-
-### try-catch-finally
-
-\`\`\`java
-try {
-    int result = 10 / 0;
-} catch (ArithmeticException e) {
-    System.out.println("Cannot divide by zero: " + e.getMessage());
-} catch (Exception e) {
-    System.out.println("General error: " + e);
-} finally {
-    System.out.println("Always executes (cleanup)");
-}
-\`\`\`
-
-### Multi-catch (Java 7+)
-
-\`\`\`java
-try {
-    // risky code
-} catch (IOException | SQLException e) {
-    System.out.println("I/O or DB error: " + e.getMessage());
-}
-\`\`\`
-
-### try-with-resources (Java 7+)
-
-\`\`\`java
-// AutoCloseable resources are automatically closed
-try (
-    var reader = new BufferedReader(new FileReader("data.txt"));
-    var writer = new BufferedWriter(new FileWriter("output.txt"))
-) {
-    String line;
-    while ((line = reader.readLine()) != null) {
-        writer.write(line.toUpperCase());
-        writer.newLine();
-    }
-} catch (IOException e) {
-    System.out.println("File error: " + e.getMessage());
-}
-// reader & writer are auto-closed even if exception occurs
-\`\`\`
-
-### Custom Exceptions
-
-\`\`\`java
-// Checked exception
-public class InsufficientFundsException extends Exception {
-    private final double amount;
-
-    public InsufficientFundsException(double amount) {
-        super("Insufficient funds: need " + amount + " more");
-        this.amount = amount;
-    }
-
-    public double getAmount() { return amount; }
-}
-
-// Unchecked exception
-public class InvalidUserException extends RuntimeException {
-    public InvalidUserException(String userId) {
-        super("Invalid user: " + userId);
-    }
-}
-
-// Using custom exceptions
-public void withdraw(double amount) throws InsufficientFundsException {
-    if (amount > balance) {
-        throw new InsufficientFundsException(amount - balance);
-    }
-    balance -= amount;
-}
-\`\`\`
-
-### Best Practices
-
-\`\`\`java
-// ❌ Don't catch generic Exception
-try { } catch (Exception e) { }
-
-// ✅ Catch specific exceptions
-try { } catch (FileNotFoundException e) { }
-
-// ❌ Don't swallow exceptions silently
-try { } catch (IOException e) { /* empty */ }
-
-// ✅ Log or rethrow
-try { } catch (IOException e) {
-    logger.error("Failed to read file", e);
-    throw new ServiceException("File processing failed", e);
-}
-\`\`\``
-      }
-    ]
-  },
-  {
-    id: 'generics',
-    title: 'Generics',
-    icon: 'Shapes',
-    color: '#34d399',
-    chapters: [
-      {
-        id: 'generics-basics',
-        title: 'Generics & Type Safety',
-        content: `## Generics
-
-Generics enable **type-safe** code that works with any type, caught at compile time rather than runtime.
-
-### Generic Class
-
-\`\`\`java
-public class Box<T> {
-    private T content;
-
-    public Box(T content) {
-        this.content = content;
-    }
-
-    public T getContent() { return content; }
-    public void setContent(T content) { this.content = content; }
-}
-
-Box<String> stringBox = new Box<>("Hello");
-String value = stringBox.getContent(); // no casting needed!
-
-Box<Integer> intBox = new Box<>(42);
-int num = intBox.getContent();
-\`\`\`
-
-### Generic Method
-
-\`\`\`java
-public class Util {
-    public static <T> T firstNonNull(T a, T b) {
-        return a != null ? a : b;
-    }
-
-    public static <T extends Comparable<T>> T max(T a, T b) {
-        return a.compareTo(b) >= 0 ? a : b;
-    }
-}
-
-String s = Util.firstNonNull(null, "default"); // "default"
-int m = Util.max(10, 20);                      // 20
-\`\`\`
-
-### Bounded Type Parameters
-
-\`\`\`java
-// Upper bound: T must be a Number or subclass
-public static <T extends Number> double sum(List<T> list) {
-    double total = 0;
-    for (T item : list) {
-        total += item.doubleValue();
-    }
-    return total;
-}
-
-// Multiple bounds
-public static <T extends Comparable<T> & Serializable> void process(T item) {
-    // T must implement BOTH Comparable AND Serializable
-}
-\`\`\`
-
-### Wildcards
-
-\`\`\`java
-// ? — unknown type
-void printAll(List<?> list) {
-    for (Object item : list) {
-        System.out.println(item);
-    }
-}
-
-// ? extends T — upper bound (read-only)
-double sum(List<? extends Number> nums) {
-    double total = 0;
-    for (Number n : nums) total += n.doubleValue();
-    return total;
-    // nums.add(42); // ❌ Cannot add — type unknown
-}
-
-// ? super T — lower bound (write)
-void addIntegers(List<? super Integer> list) {
-    list.add(1);
-    list.add(2);
-    // Integer i = list.get(0); // ❌ Cannot read as Integer
-}
-\`\`\`
-
-### PECS Principle
-
-> **P**roducer **E**xtends, **C**onsumer **S**uper
-
-\`\`\`java
-// If you READ from a generic collection → use extends
-// If you WRITE to a generic collection → use super
-
-public static <T> void copy(
-    List<? extends T> source,  // producer (read from)
-    List<? super T> dest       // consumer (write to)
-) {
-    for (T item : source) {
-        dest.add(item);
-    }
-}
-\`\`\``
-      }
-    ]
-  },
-  {
-    id: 'io-files',
-    title: 'I/O & File Handling',
-    icon: 'FileText',
-    color: '#fb923c',
-    chapters: [
-      {
-        id: 'file-io',
-        title: 'File I/O (NIO.2)',
-        content: `## File I/O with java.nio.file
-
-### Reading Files
-
-\`\`\`java
-import java.nio.file.*;
-
-// Read entire file as string
-String content = Files.readString(Path.of("data.txt"));
-
-// Read all lines
-List<String> lines = Files.readAllLines(Path.of("data.txt"));
-
-// Stream lines (lazy, memory-efficient for large files)
-try (Stream<String> stream = Files.lines(Path.of("data.txt"))) {
-    stream
-        .filter(line -> !line.isBlank())
-        .map(String::strip)
-        .forEach(System.out::println);
-}
-\`\`\`
-
-### Writing Files
-
-\`\`\`java
-// Write string
-Files.writeString(Path.of("output.txt"), "Hello, Java 21!");
-
-// Write with options
-Files.writeString(
-    Path.of("log.txt"),
-    "New log entry\\n",
-    StandardOpenOption.CREATE,
-    StandardOpenOption.APPEND
-);
-
-// Write lines
-List<String> lines = List.of("Line 1", "Line 2", "Line 3");
-Files.write(Path.of("output.txt"), lines);
-\`\`\`
-
-### Path Operations
-
-\`\`\`java
-Path path = Path.of("src", "main", "java", "App.java");
-
-path.getFileName();    // App.java
-path.getParent();      // src/main/java
-path.toAbsolutePath(); // /home/user/project/src/main/java/App.java
-path.getNameCount();   // 4
-
-// Check file properties
-Files.exists(path);
-Files.isRegularFile(path);
-Files.isDirectory(path);
-Files.size(path);            // bytes
-Files.getLastModifiedTime(path);
-\`\`\`
-
-### Directory Operations
-
-\`\`\`java
-// Create directory
-Files.createDirectory(Path.of("newDir"));
-Files.createDirectories(Path.of("a/b/c")); // creates parents too
-
-// List directory
-try (Stream<Path> entries = Files.list(Path.of("."))) {
-    entries.forEach(System.out::println);
-}
-
-// Walk directory tree (recursive)
-try (Stream<Path> walk = Files.walk(Path.of("src"))) {
-    walk.filter(p -> p.toString().endsWith(".java"))
-        .forEach(System.out::println);
-}
-
-// Copy, Move, Delete
-Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);
-Files.delete(path); // throws if not exists
-Files.deleteIfExists(path);
-\`\`\``
-      }
-    ]
-  },
-  {
-    id: 'concurrency',
-    title: 'Concurrency',
-    icon: 'Layers',
-    color: '#60a5fa',
-    chapters: [
-      {
-        id: 'threads-basics',
-        title: 'Threads & Synchronization',
-        content: `## Concurrency in Java
-
-### Creating Threads
-
-\`\`\`java
-// 1. Implementing Runnable (preferred)
-Runnable task = () -> {
-    System.out.println("Thread: " + Thread.currentThread().getName());
-};
-Thread t = new Thread(task, "worker-1");
-t.start();
-
-// 2. Extending Thread
-class MyThread extends Thread {
-    @Override
-    public void run() {
-        System.out.println("Running in " + getName());
-    }
-}
-new MyThread().start();
-
-// 3. Virtual Threads (Java 21)
-Thread.startVirtualThread(() -> {
-    System.out.println("Virtual thread!");
-});
-\`\`\`
-
-### ExecutorService
-
-\`\`\`java
-// Thread pool — reuse threads
-ExecutorService pool = Executors.newFixedThreadPool(4);
-
-// Submit tasks
-Future<String> future = pool.submit(() -> {
-    Thread.sleep(1000);
-    return "Done!";
-});
-
-String result = future.get();       // blocks until complete
-String result2 = future.get(5, TimeUnit.SECONDS); // with timeout
-
-// Shutdown
-pool.shutdown();                    // graceful
-pool.awaitTermination(10, TimeUnit.SECONDS);
-\`\`\`
-
-### Synchronization
-
-\`\`\`java
-public class BankAccount {
-    private double balance;
-
-    // Synchronized method — only one thread at a time
-    public synchronized void deposit(double amount) {
-        balance += amount;
-    }
-
-    public synchronized void withdraw(double amount) {
-        if (balance >= amount) {
-            balance -= amount;
-        }
-    }
-
-    // Synchronized block — finer control
-    public void transfer(BankAccount to, double amount) {
-        synchronized (this) {
-            if (this.balance >= amount) {
-                this.balance -= amount;
-                synchronized (to) {
-                    to.balance += amount;
-                }
-            }
-        }
-    }
-}
-\`\`\`
-
-### Concurrent Collections
-
-\`\`\`java
-// Thread-safe collections
-ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
-map.put("key", 1);
-map.computeIfAbsent("key2", k -> 42);
-
-CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
-BlockingQueue<String> queue = new LinkedBlockingQueue<>(100);
-
-// Atomic variables
-AtomicInteger counter = new AtomicInteger(0);
-counter.incrementAndGet();     // thread-safe ++
-counter.addAndGet(5);          // thread-safe += 5
-counter.compareAndSet(6, 10);  // CAS operation
-\`\`\`
-
-### CompletableFuture
-
-\`\`\`java
-// Async pipeline
-CompletableFuture<String> future = CompletableFuture
-    .supplyAsync(() -> fetchUserFromDB(userId))
-    .thenApply(user -> user.getName())
-    .thenApply(String::toUpperCase)
-    .exceptionally(ex -> "UNKNOWN");
-
-String name = future.join(); // blocks for result
-
-// Combine multiple futures
-CompletableFuture<String> userFuture = CompletableFuture
-    .supplyAsync(() -> fetchUser(id));
-CompletableFuture<List<Order>> orderFuture = CompletableFuture
-    .supplyAsync(() -> fetchOrders(id));
-
-CompletableFuture<UserProfile> combined = userFuture
-    .thenCombine(orderFuture, (user, orders) ->
-        new UserProfile(user, orders));
-\`\`\``
-      }
-    ]
-  },
-  {
-    id: 'dsa-java',
-    title: 'DSA in Java',
-    icon: 'GitBranch',
-    color: '#2dd4bf',
-    chapters: [
-      {
-        id: 'big-o',
-        title: 'Big-O Notation & Complexity',
-        content: `## Big-O Notation
-
-Big-O describes how an algorithm's time or space grows as input size \`n\` increases.
-
-### Common Complexities
-
-| Big-O | Name | Example |
-|-------|------|---------|
-| O(1) | Constant | Array access, HashMap get |
-| O(log n) | Logarithmic | Binary search |
-| O(n) | Linear | Linear search, single loop |
-| O(n log n) | Linearithmic | Merge sort, Tim sort |
-| O(n²) | Quadratic | Nested loops, bubble sort |
-| O(2ⁿ) | Exponential | Recursive fibonacci |
-| O(n!) | Factorial | Permutations |
-
-### Analyzing Code
-
-\`\`\`java
-// O(1) — constant
-int first = arr[0];
-
-// O(n) — linear
-for (int i = 0; i < n; i++) {
-    // constant work
-}
-
-// O(n²) — quadratic
-for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-        // constant work
-    }
-}
-
-// O(log n) — logarithmic
-while (n > 0) {
-    n /= 2;
-}
-
-// O(n log n)
-Arrays.sort(arr); // Tim Sort
-\`\`\`
-
-### Space Complexity
-
-\`\`\`java
-// O(1) space — in-place
-void swap(int[] arr, int i, int j) {
-    int temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
-
-// O(n) space — new array
-int[] doubled = new int[n];
-for (int i = 0; i < n; i++) {
-    doubled[i] = arr[i] * 2;
-}
-
-// O(n) space — recursion call stack
-int factorial(int n) {
-    if (n <= 1) return 1;
-    return n * factorial(n - 1); // n stack frames
-}
-\`\`\``
+        "id": "annotations",
+        "title": "Annotations",
+        "content": "## Annotations\n\nAnnotations provide **metadata** about code — they don't directly affect execution but are used by the compiler, frameworks, and runtime tools.\n\n### Built-in Annotations\n\n\\`\\`\\`java\n// @Override — compile-time check that method overrides parent\n@Override\npublic String toString() { return \"MyClass\"; }\n\n// @Deprecated — marks API as obsolete\n@Deprecated(since = \"17\", forRemoval = true)\npublic void oldMethod() { }\n\n// @SuppressWarnings — silence compiler warnings\n@SuppressWarnings(\"unchecked\")\nList<String> list = (List) rawList;\n\n// @FunctionalInterface — compile-time check for single abstract method\n@FunctionalInterface\ninterface Processor { void process(); }\n\n// @SafeVarargs — suppress unchecked warnings for varargs\n@SafeVarargs\nstatic <T> List<T> asList(T... elements) {\n    return List.of(elements);\n}\n\\`\\`\\`\n\n### Custom Annotations\n\n\\`\\`\\`java\n// Define a custom annotation\n@Retention(RetentionPolicy.RUNTIME)  // available at runtime\n@Target(ElementType.METHOD)          // can only be on methods\npublic @interface Cacheable {\n    int ttlSeconds() default 300;\n    String key() default \"\";\n}\n\n// Use it\npublic class UserService {\n    @Cacheable(ttlSeconds = 600, key = \"user\")\n    public User findUser(String id) {\n        return database.query(id);\n    }\n}\n\\`\\`\\`\n\n### Retention Policies\n\n| Policy | Available At | Use Case |\n|--------|-------------|----------|\n| SOURCE | Compile time only | @Override, @SuppressWarnings |\n| CLASS | In .class file (default) | Bytecode analysis tools |\n| RUNTIME | Via Reflection at runtime | Frameworks (Spring, JPA) |\n\n### Common Framework Annotations\n\n| Annotation | Framework | Purpose |\n|-----------|-----------|---------|\n| @Component | Spring | Bean registration |\n| @Autowired | Spring | Dependency injection |\n| @Entity | JPA | Database table mapping |\n| @Test | JUnit | Test method marker |\n| @GetMapping | Spring MVC | HTTP GET endpoint |\n| @JsonProperty | Jackson | JSON field mapping |\n\\"
       },
       {
-        id: 'sorting-algorithms',
-        title: 'Sorting Algorithms',
-        content: `## Sorting Algorithms in Java
-
-### Built-in Sorting
-
-\`\`\`java
-int[] arr = {5, 2, 8, 1, 9};
-Arrays.sort(arr); // Tim Sort — O(n log n)
-
-List<String> names = new ArrayList<>(List.of("Charlie", "Alice", "Bob"));
-Collections.sort(names); // Tim Sort
-
-// Custom comparator
-names.sort(Comparator.comparingInt(String::length));
-names.sort(Comparator.comparing(String::length).reversed());
-\`\`\`
-
-### Merge Sort Implementation
-
-\`\`\`java
-public static void mergeSort(int[] arr, int left, int right) {
-    if (left >= right) return;
-
-    int mid = left + (right - left) / 2;
-    mergeSort(arr, left, mid);
-    mergeSort(arr, mid + 1, right);
-    merge(arr, left, mid, right);
-}
-
-private static void merge(int[] arr, int left, int mid, int right) {
-    int[] temp = new int[right - left + 1];
-    int i = left, j = mid + 1, k = 0;
-
-    while (i <= mid && j <= right) {
-        if (arr[i] <= arr[j]) temp[k++] = arr[i++];
-        else temp[k++] = arr[j++];
-    }
-    while (i <= mid) temp[k++] = arr[i++];
-    while (j <= right) temp[k++] = arr[j++];
-
-    System.arraycopy(temp, 0, arr, left, temp.length);
-}
-\`\`\`
-
-### Quick Sort Implementation
-
-\`\`\`java
-public static void quickSort(int[] arr, int low, int high) {
-    if (low >= high) return;
-
-    int pivotIdx = partition(arr, low, high);
-    quickSort(arr, low, pivotIdx - 1);
-    quickSort(arr, pivotIdx + 1, high);
-}
-
-private static int partition(int[] arr, int low, int high) {
-    int pivot = arr[high];
-    int i = low - 1;
-
-    for (int j = low; j < high; j++) {
-        if (arr[j] <= pivot) {
-            i++;
-            int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
-        }
-    }
-
-    int temp = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = temp;
-    return i + 1;
-}
-\`\`\`
-
-### Sorting Comparison
-
-| Algorithm | Best | Average | Worst | Space | Stable |
-|-----------|------|---------|-------|-------|--------|
-| Bubble Sort | O(n) | O(n²) | O(n²) | O(1) | ✅ |
-| Selection Sort | O(n²) | O(n²) | O(n²) | O(1) | ❌ |
-| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) | ✅ |
-| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) | ✅ |
-| Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) | ❌ |
-| Tim Sort | O(n) | O(n log n) | O(n log n) | O(n) | ✅ |`
+        "id": "reflection",
+        "title": "Reflection API",
+        "content": "## Reflection\n\nReflection lets you **inspect and modify** classes, methods, and fields at runtime — powerful but use with care.\n\n### Inspecting Classes\n\n\\`\\`\\`java\n// Get Class object\nClass<?> clazz = String.class;\nClass<?> clazz2 = \"Hello\".getClass();\nClass<?> clazz3 = Class.forName(\"java.lang.String\");\n\n// Inspect\nSystem.out.println(clazz.getName());        // java.lang.String\nSystem.out.println(clazz.getSimpleName());   // String\nSystem.out.println(clazz.getPackageName());  // java.lang\nSystem.out.println(clazz.getSuperclass());   // java.lang.Object\n\n// Get all public methods\nfor (Method m : clazz.getMethods()) {\n    System.out.println(m.getName() + \" -> \" + m.getReturnType());\n}\n\n// Get all declared fields (including private)\nfor (Field f : clazz.getDeclaredFields()) {\n    System.out.println(f.getName() + \": \" + f.getType());\n}\n\\`\\`\\`\n\n### Dynamic Invocation\n\n\\`\\`\\`java\n// Create instance dynamically\nClass<?> clazz = Class.forName(\"com.app.UserService\");\nObject instance = clazz.getDeclaredConstructor().newInstance();\n\n// Invoke method dynamically\nMethod method = clazz.getMethod(\"findUser\", String.class);\nObject result = method.invoke(instance, \"user-123\");\n\n// Access private fields\nField field = clazz.getDeclaredField(\"cache\");\nfield.setAccessible(true);  // bypass access control\nObject value = field.get(instance);\n\\`\\`\\`\n\n### Reading Annotations at Runtime\n\n\\`\\`\\`java\n// Check and read annotations\nMethod method = UserService.class.getMethod(\"findUser\", String.class);\n\nif (method.isAnnotationPresent(Cacheable.class)) {\n    Cacheable cache = method.getAnnotation(Cacheable.class);\n    System.out.println(\"TTL: \" + cache.ttlSeconds()); // 600\n    System.out.println(\"Key: \" + cache.key());         // \"user\"\n}\n\\`\\`\\`\n\n> **⚠️ Performance Warning**: Reflection is **10-100x slower** than direct calls. Use it for framework initialization, not hot paths. Modern frameworks use compile-time annotation processing when possible."
+      }
+    ]
+  },
+  {
+    "id": "memory-gc",
+    "title": "Memory Management & GC",
+    "icon": "HardDrive",
+    "color": "#fb923c",
+    "chapters": [
+      {
+        "id": "memory-model",
+        "title": "JVM Memory Model Deep Dive",
+        "content": "## JVM Memory Model\n\n### Memory Areas Explained\n\n\\`\\`\\`\n+=====================================================================+\n|                          JVM PROCESS MEMORY                         |\n+=====================================================================+\n|                                                                     |\n|  +-------------------------------+  +----------------------------+  |\n|  |         HEAP MEMORY           |  |    NON-HEAP MEMORY         |  |\n|  |  (shared across all threads)  |  |                            |  |\n|  |                               |  |  Metaspace:                |  |\n|  |  Young Generation:            |  |    Class metadata          |  |\n|  |  +--------+------+------+    |  |    Method bytecode         |  |\n|  |  | Eden   |  S0  |  S1  |    |  |    Constant pool           |  |\n|  |  | Space  | (from)| (to) |    |  |    (grows as needed)      |  |\n|  |  +--------+------+------+    |  |                            |  |\n|  |                               |  |  Code Cache:               |  |\n|  |  Old Generation:              |  |    JIT compiled code       |  |\n|  |  +---------------------------+|  |                            |  |\n|  |  | Long-lived objects        ||  |  Thread Stacks:            |  |\n|  |  | (survived multiple GCs)   ||  |    Local variables         |  |\n|  |  +---------------------------+|  |    Method call frames      |  |\n|  +-------------------------------+  +----------------------------+  |\n+=====================================================================+\n\\`\\`\\`\n\n### Object Lifecycle in Memory\n\n\\`\\`\\`\n                    Object Lifecycle\n    +----------+     Minor GC      +----------+\n    |  Eden    | ----------------> | Survivor |\n    |  (new)   |   (if alive)      |  Space   |\n    +----------+                   +----------+\n                                       |\n                                       | After N minor GCs\n                                       | (age threshold)\n                                       v\n                                  +----------+     Major GC\n                                  |   Old    | ---------> Deallocated\n                                  |   Gen    |  (if dead)\n                                  +----------+\n\\`\\`\\`\n\n### Stack vs Heap\n\n| Feature | Stack | Heap |\n|---------|-------|------|\n| Stores | Primitives, references | Objects, arrays |\n| Thread safety | Thread-private | Shared (needs sync) |\n| Speed | Very fast (LIFO) | Slower (GC managed) |\n| Size | Small (~512KB-1MB) | Large (configurable) |\n| Cleanup | Auto on method return | Garbage Collector |\n| Error | StackOverflowError | OutOfMemoryError |\n\n\\`\\`\\`java\nvoid example() {\n    int x = 42;              // x on Stack\n    String s = \"Hello\";      // s (ref) on Stack, \"Hello\" in String Pool\n    int[] arr = new int[10]; // arr (ref) on Stack, array object on Heap\n    Person p = new Person(); // p (ref) on Stack, Person object on Heap\n}\n// Method returns -> Stack frame popped -> x, s, arr, p refs removed\n// Heap objects become eligible for GC if no other references exist\n\\`\\`\\`"
       },
       {
-        id: 'common-patterns',
-        title: 'Common DSA Patterns',
-        content: `## Common DSA Patterns in Java
-
-### Visual Algorithmic Patterns
-
-#### 1. Two Pointers (Inward Convergence)
-\`\`\`
-  [ 1,  2,  4,  6,  8,  11 ]   Target = 10
-    ^                    ^
-   Left                Right    (Sum = 12 > 10 -> Right--)
-
-  [ 1,  2,  4,  6,  8,  11 ]
-    ^               ^
-   Left           Right         (Sum = 9 < 10 -> Left++)
-
-  [ 1,  2,  4,  6,  8,  11 ]
-        ^           ^
-       Left       Right         (Sum = 10 == 10 -> Found [2, 8]!)
-\`\`\`
-
-#### 2. Sliding Window (Dynamic Expansion & Contraction)
-\`\`\`
-Subarray Sum / Frequency Window:
-   Step 1: [ 2,  1,  5,  1 ], k = 3   Window = [2, 1, 5] (Sum = 8)
-             L       R
-
-   Step 2: [ 2,  1,  5,  1,  3 ]       Window = [1, 5, 1] (Sum = 7)
-                 L       R
-
-   Step 3: [ 2,  1,  5,  1,  3 ]       Window = [5, 1, 3] (Sum = 9 -> Max!)
-                     L       R
-\`\`\`
-
-#### 3. Tree Traversal Mechanics (BFS vs DFS)
-\`\`\`
-          ( 1 )                 BFS (Level Order): [1] -> [2, 3] -> [4, 5, 6]
-         /     \                Queue: Front -> 4, 5, 6 -> Back
-       ( 2 )   ( 3 )
-      /    \      \             DFS (Pre-order):  Root -> Left -> Right (1, 2, 4, 5, 3, 6)
-    ( 4 ) ( 5 )   ( 6 )         DFS (In-order):   Left -> Root -> Right (4, 2, 5, 1, 3, 6)
-                                DFS (Post-order): Left -> Right -> Root (4, 5, 2, 6, 3, 1)
-\`\`\`
-
-#### 4. Dynamic Programming State Transitions
-\`\`\`
-   Staircase Problem: dp[i] = dp[i-1] + dp[i-2]
-
-   +-------+-------+-------+-------+-------+
-   | dp[0] | dp[1] | dp[2] | dp[3] | dp[4] |
-   |   1   |   1   |   2   |   3   |   5   |
-   +-------+-------+-------+-------+-------+
-                       ^       ^       ^
-                       |       |       +-- dp[2] + dp[3] = 5
-                       +-------+---------- dp[1] + dp[2] = 3
-\`\`\`
-
-### Two Pointers
-
-\`\`\`java
-// Check if sorted array has pair summing to target
-public boolean twoSum(int[] sorted, int target) {
-    int left = 0, right = sorted.length - 1;
-    while (left < right) {
-        int sum = sorted[left] + sorted[right];
-        if (sum == target) return true;
-        else if (sum < target) left++;
-        else right--;
-    }
-    return false;
-}
-\`\`\`
-
-### Sliding Window
-
-\`\`\`java
-// Max sum of subarray of size k
-public int maxSumSubarray(int[] arr, int k) {
-    int windowSum = 0, maxSum = 0;
-    for (int i = 0; i < arr.length; i++) {
-        windowSum += arr[i];
-        if (i >= k) windowSum -= arr[i - k];
-        if (i >= k - 1) maxSum = Math.max(maxSum, windowSum);
-    }
-    return maxSum;
-}
-\`\`\`
-
-### Binary Search Template
-
-\`\`\`java
-public int binarySearch(int[] arr, int target) {
-    int low = 0, high = arr.length - 1;
-    while (low <= high) {
-        int mid = low + (high - low) / 2; // avoids overflow
-        if (arr[mid] == target) return mid;
-        else if (arr[mid] < target) low = mid + 1;
-        else high = mid - 1;
-    }
-    return -1; // not found
-}
-\`\`\`
-
-### BFS Template (Graph/Tree)
-
-\`\`\`java
-public void bfs(Map<Integer, List<Integer>> graph, int start) {
-    Queue<Integer> queue = new LinkedList<>();
-    Set<Integer> visited = new HashSet<>();
-    queue.offer(start);
-    visited.add(start);
-
-    while (!queue.isEmpty()) {
-        int node = queue.poll();
-        System.out.println("Visit: " + node);
-
-        for (int neighbor : graph.getOrDefault(node, List.of())) {
-            if (!visited.contains(neighbor)) {
-                visited.add(neighbor);
-                queue.offer(neighbor);
-            }
-        }
-    }
-}
-\`\`\`
-
-### DFS Template (Graph/Tree)
-
-\`\`\`java
-public void dfs(Map<Integer, List<Integer>> graph, int node, Set<Integer> visited) {
-    visited.add(node);
-    System.out.println("Visit: " + node);
-
-    for (int neighbor : graph.getOrDefault(node, List.of())) {
-        if (!visited.contains(neighbor)) {
-            dfs(graph, neighbor, visited);
-        }
-    }
-}
-\`\`\`
-
-### Backtracking Template
-
-\`\`\`java
-public void backtrack(List<List<Integer>> result, List<Integer> current,
-                      int[] nums, int start) {
-    result.add(new ArrayList<>(current)); // save snapshot
-
-    for (int i = start; i < nums.length; i++) {
-        current.add(nums[i]);             // choose
-        backtrack(result, current, nums, i + 1); // explore
-        current.remove(current.size() - 1); // un-choose
-    }
-}
-\`\`\`
-
-### Dynamic Programming Template
-
-\`\`\`java
-// Bottom-up (tabulation)
-public int climbStairs(int n) {
-    if (n <= 2) return n;
-    int[] dp = new int[n + 1];
-    dp[1] = 1;
-    dp[2] = 2;
-    for (int i = 3; i <= n; i++) {
-        dp[i] = dp[i - 1] + dp[i - 2];
-    }
-    return dp[n];
-}
-
-// Space-optimized
-public int climbStairsOptimized(int n) {
-    if (n <= 2) return n;
-    int a = 1, b = 2;
-    for (int i = 3; i <= n; i++) {
-        int temp = a + b;
-        a = b;
-        b = temp;
-    }
-    return b;
-}
-\`\`\``
+        "id": "garbage-collection",
+        "title": "Garbage Collection",
+        "content": "## Garbage Collection (GC)\n\nThe JVM automatically reclaims memory from objects that are no longer reachable. You never manually free memory in Java.\n\n### GC Roots & Reachability\n\n\\`\\`\\`\n+----------------------------------+\n|         GC ROOTS                 |\n|  (starting points for marking)  |\n+----------------------------------+\n|  - Local variables on Stack     |\n|  - Active threads               |\n|  - Static fields                |\n|  - JNI references               |\n+----------------------------------+\n          |\n          v\n  +-----------+       +-----------+\n  | Object A  | ----> | Object B  |  <- reachable (alive)\n  +-----------+       +-----------+\n                            |\n                            v\n                      +-----------+\n                      | Object C  |  <- reachable (alive)\n                      +-----------+\n\n  +-----------+       +-----------+\n  | Object D  | ----> | Object E  |  <- UNREACHABLE (garbage!)\n  +-----------+       +-----------+\n  (no GC root path)\n\\`\\`\\`\n\n### GC Algorithms in Java\n\n| GC | Best For | Key Feature |\n|----|----------|-------------|\n| **G1 GC** (default) | General purpose | Low-pause, region-based |\n| **ZGC** | Ultra-low latency | Sub-millisecond pauses |\n| **Shenandoah** | Low latency | Concurrent compaction |\n| **Parallel GC** | Throughput | Max throughput, longer pauses |\n| **Serial GC** | Small apps | Single-threaded, simple |\n\n### Tuning JVM Memory\n\n\\`\\`\\`java\n// JVM flags\n// -Xms512m        Initial heap size\n// -Xmx4g          Maximum heap size\n// -XX:+UseG1GC    Use G1 garbage collector\n// -XX:+UseZGC     Use ZGC (Java 15+)\n// -XX:MaxGCPauseMillis=200  Target max GC pause\n// -Xss512k        Thread stack size\n// -XX:+PrintGCDetails  Print GC activity\n\n// Common memory leaks in Java:\n// 1. Static collections that grow unbounded\nstatic List<Object> cache = new ArrayList<>(); // ❌ never cleared\n\n// 2. Unclosed resources\n// ❌ Connection conn = getConnection(); // never closed\n// ✅ try (var conn = getConnection()) { ... }\n\n// 3. Inner class references\n// Non-static inner classes hold reference to outer class\n\n// 4. ThreadLocal not removed\nThreadLocal<byte[]> buffer = new ThreadLocal<>();\n// ❌ Never call buffer.remove() after use\n\\`\\`\\`\n\n### Best Practices\n\n- **Prefer short-lived objects** — they get collected in cheap minor GCs\n- **Avoid finalizers** — use \\\\\\`try-with-resources\\\\\\` instead\n- **Nullify large objects** when done (helps GC in long-lived scopes)\n- **Use WeakReference / SoftReference** for caches\n- **Monitor with tools**: \\\\\\`jvisualvm\\\\\\`, \\\\\\`jconsole\\\\\\`, \\\\\\`jstat -gc\\\\\\`"
+      }
+    ]
+  },
+  {
+    "id": "design-patterns",
+    "title": "Design Patterns",
+    "icon": "Puzzle",
+    "color": "#a78bfa",
+    "chapters": [
+      {
+        "id": "creational-patterns",
+        "title": "Creational Patterns",
+        "content": "## Creational Design Patterns\n\n### Singleton — One Instance Only\n\n\\`\\`\\`java\n// Thread-safe Singleton (enum-based — Joshua Bloch recommended)\npublic enum DatabaseConnection {\n    INSTANCE;\n\n    private Connection conn;\n\n    DatabaseConnection() {\n        conn = DriverManager.getConnection(\"jdbc:...\");\n    }\n\n    public Connection getConnection() { return conn; }\n}\n\n// Usage\nDatabaseConnection.INSTANCE.getConnection();\n\\`\\`\\`\n\n### Builder — Step-by-Step Construction\n\n\\`\\`\\`java\npublic class User {\n    private final String name;\n    private final String email;\n    private final int age;\n    private final String phone;\n\n    private User(Builder builder) {\n        this.name = builder.name;\n        this.email = builder.email;\n        this.age = builder.age;\n        this.phone = builder.phone;\n    }\n\n    public static class Builder {\n        private final String name;   // required\n        private String email;        // optional\n        private int age;\n        private String phone;\n\n        public Builder(String name) { this.name = name; }\n\n        public Builder email(String email) {\n            this.email = email; return this;\n        }\n        public Builder age(int age) {\n            this.age = age; return this;\n        }\n        public Builder phone(String phone) {\n            this.phone = phone; return this;\n        }\n        public User build() { return new User(this); }\n    }\n}\n\n// Fluent API\nUser user = new User.Builder(\"Alice\")\n    .email(\"alice@example.com\")\n    .age(30)\n    .build();\n\\`\\`\\`\n\n### Factory Method\n\n\\`\\`\\`java\n// Define product interface\ninterface Notification {\n    void send(String message);\n}\n\n// Concrete products\nclass EmailNotification implements Notification {\n    public void send(String msg) { /* send email */ }\n}\nclass SMSNotification implements Notification {\n    public void send(String msg) { /* send SMS */ }\n}\nclass PushNotification implements Notification {\n    public void send(String msg) { /* push notification */ }\n}\n\n// Factory\nclass NotificationFactory {\n    public static Notification create(String type) {\n        return switch (type.toUpperCase()) {\n            case \"EMAIL\" -> new EmailNotification();\n            case \"SMS\"   -> new SMSNotification();\n            case \"PUSH\"  -> new PushNotification();\n            default -> throw new IllegalArgumentException(\"Unknown: \" + type);\n        };\n    }\n}\n\nNotification n = NotificationFactory.create(\"EMAIL\");\nn.send(\"Hello!\");\n\\`\\`\\`"
+      },
+      {
+        "id": "behavioral-patterns",
+        "title": "Behavioral Patterns",
+        "content": "## Behavioral Design Patterns\n\n### Strategy — Swap Algorithms at Runtime\n\n\\`\\`\\`\n+----------------------------+\n|        Context             |\n|  (uses a Strategy)         |\n|                            |\n|  strategy.execute(data)    |\n+------------+---------------+\n             |\n             | (interface)\n             v\n+----------------------------+\n|     Strategy Interface     |\n|  execute(data)             |\n+----------------------------+\n    ^          ^          ^\n    |          |          |\n+-------+  +-------+  +-------+\n| Strat |  | Strat |  | Strat |\n|   A   |  |   B   |  |   C   |\n+-------+  +-------+  +-------+\n\\`\\`\\`\n\n\\`\\`\\`java\n// Using lambdas (modern approach)\n@FunctionalInterface\ninterface SortStrategy {\n    void sort(List<Integer> list);\n}\n\nclass Sorter {\n    private SortStrategy strategy;\n\n    public Sorter(SortStrategy strategy) {\n        this.strategy = strategy;\n    }\n\n    public void sort(List<Integer> data) {\n        strategy.sort(data);\n    }\n}\n\n// Usage — strategies as lambdas\nvar sorter = new Sorter(list -> Collections.sort(list));\nsorter.sort(myList);\n\n// Swap strategy at runtime\nsorter = new Sorter(list -> list.sort(Comparator.reverseOrder()));\n\\`\\`\\`\n\n### Observer — Event Notification\n\n\\`\\`\\`java\n// Modern Observer with functional interfaces\nclass EventBus<T> {\n    private final List<Consumer<T>> listeners = new ArrayList<>();\n\n    public void subscribe(Consumer<T> listener) {\n        listeners.add(listener);\n    }\n\n    public void publish(T event) {\n        listeners.forEach(l -> l.accept(event));\n    }\n}\n\n// Usage\nvar bus = new EventBus<String>();\nbus.subscribe(msg -> System.out.println(\"Logger: \" + msg));\nbus.subscribe(msg -> System.out.println(\"Analytics: \" + msg));\nbus.publish(\"User signed up!\");\n// Logger: User signed up!\n// Analytics: User signed up!\n\\`\\`\\`\n\n### Iterator — Traverse Collections\n\n\\`\\`\\`java\n// Java's for-each loop uses Iterator internally\nList<String> names = List.of(\"Alice\", \"Bob\", \"Charlie\");\n\n// These are equivalent:\nfor (String name : names) { }\n\n// Under the hood:\nIterator<String> it = names.iterator();\nwhile (it.hasNext()) {\n    String name = it.next();\n}\n\\`\\`\\`"
+      },
+      {
+        "id": "structural-patterns",
+        "title": "Structural Patterns",
+        "content": "## Structural Design Patterns\n\n### Decorator — Add Behavior Dynamically\n\n\\`\\`\\`\n+-------------------+\n|   Component       |  <-- Base interface\n|   operation()     |\n+-------------------+\n        ^\n        |\n+-------------------+     +-------------------------+\n| ConcreteComponent |     |      Decorator          |\n| operation()       |     |  wraps a Component      |\n+-------------------+     |  operation() {          |\n                          |    wrapped.operation(); |\n                          |    // + extra behavior  |\n                          |  }                      |\n                          +-------------------------+\n\\`\\`\\`\n\n\\`\\`\\`java\n// Using Java I/O streams — classic Decorator pattern\nInputStream raw = new FileInputStream(\"data.gz\");\nInputStream buffered = new BufferedInputStream(raw);        // adds buffering\nInputStream unzipped = new GZIPInputStream(buffered);      // adds decompression\nReader reader = new InputStreamReader(unzipped, \"UTF-8\");   // adds char decoding\n\n// Functional decorator with lambdas\nFunction<String, String> trim = String::strip;\nFunction<String, String> lower = String::toLowerCase;\nFunction<String, String> decorated = trim.andThen(lower);\n\nSystem.out.println(decorated.apply(\"  HELLO  \")); // \"hello\"\n\\`\\`\\`\n\n### Adapter — Bridge Incompatible Interfaces\n\n\\`\\`\\`java\n// Legacy system uses XML\ninterface LegacyXMLParser {\n    String parseXML(String xml);\n}\n\n// New system expects JSON\ninterface JsonParser {\n    String parseJson(String json);\n}\n\n// Adapter bridges the gap\nclass XmlToJsonAdapter implements JsonParser {\n    private final LegacyXMLParser xmlParser;\n\n    XmlToJsonAdapter(LegacyXMLParser xmlParser) {\n        this.xmlParser = xmlParser;\n    }\n\n    @Override\n    public String parseJson(String json) {\n        String xml = convertJsonToXml(json); // conversion logic\n        return xmlParser.parseXML(xml);\n    }\n}\n\\`\\`\\`\n\n### Common Patterns Quick Reference\n\n| Pattern | Type | Purpose | Java Example |\n|---------|------|---------|--------------|\n| Singleton | Creational | One instance | Runtime.getRuntime() |\n| Builder | Creational | Complex construction | StringBuilder |\n| Factory | Creational | Delegate instantiation | Calendar.getInstance() |\n| Strategy | Behavioral | Swap algorithms | Comparator |\n| Observer | Behavioral | Event notification | PropertyChangeListener |\n| Iterator | Behavioral | Traverse collection | java.util.Iterator |\n| Decorator | Structural | Add behavior | BufferedInputStream |\n| Adapter | Structural | Bridge interfaces | InputStreamReader |\n| Proxy | Structural | Control access | java.lang.reflect.Proxy |"
+      }
+    ]
+  },
+  {
+    "id": "string-apis",
+    "title": "String APIs & Regex",
+    "icon": "Type",
+    "color": "#22d3ee",
+    "chapters": [
+      {
+        "id": "string-methods",
+        "title": "Essential String Methods",
+        "content": "## Comprehensive String API\n\n### String Immutability\n\n\\`\\`\\`\n+--------------------------------------------------+\n|  STRING IMMUTABILITY IN JAVA                     |\n|                                                  |\n|  String s1 = \"Hello\";                            |\n|  String s2 = s1.concat(\" World\");                |\n|                                                  |\n|  Heap:                                           |\n|  +----------+     +---------------+              |\n|  | \"Hello\"  |     | \"Hello World\" | <- NEW obj   |\n|  +----------+     +---------------+              |\n|       ^                  ^                       |\n|       |                  |                       |\n|     s1 (unchanged)     s2 (points to new)        |\n|                                                  |\n|  Original \"Hello\" is NEVER modified.             |\n|  Every \"modification\" creates a NEW String.      |\n+--------------------------------------------------+\n\\`\\`\\`\n\n### Modern String Methods (Java 11-21)\n\n\\`\\`\\`java\n// Java 11+ methods\n\"  hello  \".strip();         // \"hello\" (Unicode-aware trim)\n\"  hello  \".stripLeading();  // \"hello  \"\n\"  hello  \".stripTrailing(); // \"  hello\"\n\"  \".isBlank();              // true (empty or whitespace)\n\"Hi\\nWorld\".lines().toList();// [\"Hi\", \"World\"]\n\"Ha\".repeat(3);              // \"HaHaHa\"\n\n// Java 12+\n\"hello\".indent(4);           // \"    hello\\n\"\n\"hello\".transform(s -> s.toUpperCase());  // \"HELLO\"\n\n// Java 15+ Text Block methods\n\"Hello World\".translateEscapes();  // process \\n, \\t etc.\n\"Hello World\".stripIndent();       // remove incidental whitespace\n\n// Java 21+ Template (Preview)\n// String template = STR.\"Hello \\{name}, you are \\{age}.\";\n\\`\\`\\`\n\n### StringBuilder vs StringBuffer vs String\n\n| Feature | String | StringBuilder | StringBuffer |\n|---------|--------|---------------|--------------|\n| Mutable | ❌ No | ✅ Yes | ✅ Yes |\n| Thread-safe | ✅ (immutable) | ❌ No | ✅ Yes (synchronized) |\n| Performance | Slow for concat | **Fastest** | Slower (sync overhead) |\n| Use when | Few modifications | Single-threaded building | Multi-threaded building |\n\n\\`\\`\\`java\n// ❌ Slow — creates N intermediate String objects\nString result = \"\";\nfor (int i = 0; i < 10000; i++) {\n    result += i;  // O(n^2) — copies entire string each time!\n}\n\n// ✅ Fast — modifies internal buffer\nStringBuilder sb = new StringBuilder();\nfor (int i = 0; i < 10000; i++) {\n    sb.append(i);  // O(1) amortized\n}\nString result2 = sb.toString();\n\\`\\`\\`\n\n### String Comparison Deep Dive\n\n\\`\\`\\`java\nString a = \"Hello\";          // String Pool\nString b = \"Hello\";          // Same pool reference\nString c = new String(\"Hello\"); // New Heap object\n\nSystem.out.println(a == b);      // true  (same pool reference)\nSystem.out.println(a == c);      // false (different objects!)\nSystem.out.println(a.equals(c)); // true  (same content) ✅\n\n// ALWAYS use .equals() for String comparison, NEVER ==\n\\`\\`\\`"
+      },
+      {
+        "id": "regex",
+        "title": "Regular Expressions (Regex)",
+        "content": "## Regular Expressions in Java\n\n### Common Regex Patterns\n\n| Pattern | Matches | Example |\n|---------|---------|---------|\n| \\\\\\\\d | Any digit | \"5\" |\n| \\\\\\\\D | Non-digit | \"a\" |\n| \\\\\\\\w | Word char [a-zA-Z0-9_] | \"k\" |\n| \\\\\\\\s | Whitespace | \" \" |\n| . | Any char (except newline) | \"x\" |\n| [abc] | a, b, or c | \"b\" |\n| [^abc] | NOT a, b, or c | \"z\" |\n| a{2,4} | 2 to 4 'a's | \"aaa\" |\n| ^...$ | Start to end of line | Full match |\n| (group) | Capture group | Extract sub-match |\n\n### Using Regex in Java\n\n\\`\\`\\`java\n// Simple matching\nboolean isEmail = \"user@example.com\"\n    .matches(\"[\\\\w.]+@[\\\\w.]+\\\\.[a-z]{2,}\");  // true\n\n// Pattern + Matcher (reusable, better performance)\nPattern emailPattern = Pattern.compile(\n    \"([\\\\w.]+)@([\\\\w.]+)\\\\.([a-z]{2,})\"\n);\nMatcher matcher = emailPattern.matcher(\"alice@gmail.com\");\n\nif (matcher.matches()) {\n    System.out.println(\"User: \" + matcher.group(1));   // alice\n    System.out.println(\"Domain: \" + matcher.group(2)); // gmail\n    System.out.println(\"TLD: \" + matcher.group(3));    // com\n}\n\n// Find all matches\nString text = \"Call 123-4567 or 987-6543\";\nPattern phonePattern = Pattern.compile(\"\\\\d{3}-\\\\d{4}\");\nMatcher m = phonePattern.matcher(text);\nwhile (m.find()) {\n    System.out.println(\"Found: \" + m.group());\n}\n// Found: 123-4567\n// Found: 987-6543\n\n// Replace\nString cleaned = \"Hello   World\".replaceAll(\"\\\\s+\", \" \");\n// \"Hello World\"\n\n// Split\nString[] parts = \"a,b,,c\".split(\",\", -1);\n// [\"a\", \"b\", \"\", \"c\"]\n\\`\\`\\`\n\n### Named Groups (Java 7+)\n\n\\`\\`\\`java\nPattern datePattern = Pattern.compile(\n    \"(?<year>\\\\d{4})-(?<month>\\\\d{2})-(?<day>\\\\d{2})\"\n);\nMatcher m2 = datePattern.matcher(\"2024-12-25\");\nif (m2.matches()) {\n    System.out.println(\"Year: \" + m2.group(\"year\"));   // 2024\n    System.out.println(\"Month: \" + m2.group(\"month\")); // 12\n    System.out.println(\"Day: \" + m2.group(\"day\"));     // 25\n}\n\\`\\`\\`\n\n### Common Validation Patterns\n\n\\`\\`\\`java\n// Email validation\nstatic final Pattern EMAIL = Pattern.compile(\n    \"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}$\"\n);\n\n// Phone number (US format)\nstatic final Pattern PHONE = Pattern.compile(\n    \"^\\\\(?\\\\d{3}\\\\)?[-.\\\\s]?\\\\d{3}[-.\\\\s]?\\\\d{4}$\"\n);\n\n// Password: 8+ chars, 1 upper, 1 lower, 1 digit, 1 special\nstatic final Pattern STRONG_PASSWORD = Pattern.compile(\n    \"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)(?=.*[@#$%^&+=]).{8,}$\"\n);\n\n// IP address\nstatic final Pattern IPV4 = Pattern.compile(\n    \"^((25[0-5]|2[0-4]\\\\d|[01]?\\\\d\\\\d?)\\\\.){3}(25[0-5]|2[0-4]\\\\d|[01]?\\\\d\\\\d?)$\"\n);\n\\`\\`\\`"
+      }
+    ]
+  },
+  {
+    "id": "exception-handling",
+    "title": "Exception Handling",
+    "icon": "ShieldAlert",
+    "color": "#f87171",
+    "chapters": [
+      {
+        "id": "exceptions",
+        "title": "Exceptions & Error Handling",
+        "content": "## Exception Handling\n\n### Exception Hierarchy\n\n```\nThrowable\n├── Error (don't catch these)\n│   ├── OutOfMemoryError\n│   ├── StackOverflowError\n│   └── ...\n└── Exception\n    ├── IOException (checked)\n    ├── SQLException (checked)\n    ├── RuntimeException (unchecked)\n    │   ├── NullPointerException\n    │   ├── ArrayIndexOutOfBoundsException\n    │   ├── IllegalArgumentException\n    │   ├── ArithmeticException\n    │   └── ClassCastException\n    └── ...\n```\n\n### try-catch-finally\n\n```java\ntry {\n    int result = 10 / 0;\n} catch (ArithmeticException e) {\n    System.out.println(\"Cannot divide by zero: \" + e.getMessage());\n} catch (Exception e) {\n    System.out.println(\"General error: \" + e);\n} finally {\n    System.out.println(\"Always executes (cleanup)\");\n}\n```\n\n### Multi-catch (Java 7+)\n\n```java\ntry {\n    // risky code\n} catch (IOException | SQLException e) {\n    System.out.println(\"I/O or DB error: \" + e.getMessage());\n}\n```\n\n### try-with-resources (Java 7+)\n\n```java\n// AutoCloseable resources are automatically closed\ntry (\n    var reader = new BufferedReader(new FileReader(\"data.txt\"));\n    var writer = new BufferedWriter(new FileWriter(\"output.txt\"))\n) {\n    String line;\n    while ((line = reader.readLine()) != null) {\n        writer.write(line.toUpperCase());\n        writer.newLine();\n    }\n} catch (IOException e) {\n    System.out.println(\"File error: \" + e.getMessage());\n}\n// reader & writer are auto-closed even if exception occurs\n```\n\n### Custom Exceptions\n\n```java\n// Checked exception\npublic class InsufficientFundsException extends Exception {\n    private final double amount;\n\n    public InsufficientFundsException(double amount) {\n        super(\"Insufficient funds: need \" + amount + \" more\");\n        this.amount = amount;\n    }\n\n    public double getAmount() { return amount; }\n}\n\n// Unchecked exception\npublic class InvalidUserException extends RuntimeException {\n    public InvalidUserException(String userId) {\n        super(\"Invalid user: \" + userId);\n    }\n}\n\n// Using custom exceptions\npublic void withdraw(double amount) throws InsufficientFundsException {\n    if (amount > balance) {\n        throw new InsufficientFundsException(amount - balance);\n    }\n    balance -= amount;\n}\n```\n\n### Best Practices\n\n```java\n// ❌ Don't catch generic Exception\ntry { } catch (Exception e) { }\n\n// ✅ Catch specific exceptions\ntry { } catch (FileNotFoundException e) { }\n\n// ❌ Don't swallow exceptions silently\ntry { } catch (IOException e) { /* empty */ }\n\n// ✅ Log or rethrow\ntry { } catch (IOException e) {\n    logger.error(\"Failed to read file\", e);\n    throw new ServiceException(\"File processing failed\", e);\n}\n```"
+      }
+    ]
+  },
+  {
+    "id": "generics",
+    "title": "Generics",
+    "icon": "Shapes",
+    "color": "#34d399",
+    "chapters": [
+      {
+        "id": "generics-basics",
+        "title": "Generics & Type Safety",
+        "content": "## Generics\n\nGenerics enable **type-safe** code that works with any type, caught at compile time rather than runtime.\n\n### Generic Class\n\n```java\npublic class Box<T> {\n    private T content;\n\n    public Box(T content) {\n        this.content = content;\n    }\n\n    public T getContent() { return content; }\n    public void setContent(T content) { this.content = content; }\n}\n\nBox<String> stringBox = new Box<>(\"Hello\");\nString value = stringBox.getContent(); // no casting needed!\n\nBox<Integer> intBox = new Box<>(42);\nint num = intBox.getContent();\n```\n\n### Generic Method\n\n```java\npublic class Util {\n    public static <T> T firstNonNull(T a, T b) {\n        return a != null ? a : b;\n    }\n\n    public static <T extends Comparable<T>> T max(T a, T b) {\n        return a.compareTo(b) >= 0 ? a : b;\n    }\n}\n\nString s = Util.firstNonNull(null, \"default\"); // \"default\"\nint m = Util.max(10, 20);                      // 20\n```\n\n### Bounded Type Parameters\n\n```java\n// Upper bound: T must be a Number or subclass\npublic static <T extends Number> double sum(List<T> list) {\n    double total = 0;\n    for (T item : list) {\n        total += item.doubleValue();\n    }\n    return total;\n}\n\n// Multiple bounds\npublic static <T extends Comparable<T> & Serializable> void process(T item) {\n    // T must implement BOTH Comparable AND Serializable\n}\n```\n\n### Wildcards\n\n```java\n// ? — unknown type\nvoid printAll(List<?> list) {\n    for (Object item : list) {\n        System.out.println(item);\n    }\n}\n\n// ? extends T — upper bound (read-only)\ndouble sum(List<? extends Number> nums) {\n    double total = 0;\n    for (Number n : nums) total += n.doubleValue();\n    return total;\n    // nums.add(42); // ❌ Cannot add — type unknown\n}\n\n// ? super T — lower bound (write)\nvoid addIntegers(List<? super Integer> list) {\n    list.add(1);\n    list.add(2);\n    // Integer i = list.get(0); // ❌ Cannot read as Integer\n}\n```\n\n### PECS Principle\n\n> **P**roducer **E**xtends, **C**onsumer **S**uper\n\n```java\n// If you READ from a generic collection → use extends\n// If you WRITE to a generic collection → use super\n\npublic static <T> void copy(\n    List<? extends T> source,  // producer (read from)\n    List<? super T> dest       // consumer (write to)\n) {\n    for (T item : source) {\n        dest.add(item);\n    }\n}\n```"
+      }
+    ]
+  },
+  {
+    "id": "io-files",
+    "title": "I/O & File Handling",
+    "icon": "FileText",
+    "color": "#fb923c",
+    "chapters": [
+      {
+        "id": "file-io",
+        "title": "File I/O (NIO.2)",
+        "content": "## File I/O with java.nio.file\n\n### Reading Files\n\n```java\nimport java.nio.file.*;\n\n// Read entire file as string\nString content = Files.readString(Path.of(\"data.txt\"));\n\n// Read all lines\nList<String> lines = Files.readAllLines(Path.of(\"data.txt\"));\n\n// Stream lines (lazy, memory-efficient for large files)\ntry (Stream<String> stream = Files.lines(Path.of(\"data.txt\"))) {\n    stream\n        .filter(line -> !line.isBlank())\n        .map(String::strip)\n        .forEach(System.out::println);\n}\n```\n\n### Writing Files\n\n```java\n// Write string\nFiles.writeString(Path.of(\"output.txt\"), \"Hello, Java 21!\");\n\n// Write with options\nFiles.writeString(\n    Path.of(\"log.txt\"),\n    \"New log entry\\n\",\n    StandardOpenOption.CREATE,\n    StandardOpenOption.APPEND\n);\n\n// Write lines\nList<String> lines = List.of(\"Line 1\", \"Line 2\", \"Line 3\");\nFiles.write(Path.of(\"output.txt\"), lines);\n```\n\n### Path Operations\n\n```java\nPath path = Path.of(\"src\", \"main\", \"java\", \"App.java\");\n\npath.getFileName();    // App.java\npath.getParent();      // src/main/java\npath.toAbsolutePath(); // /home/user/project/src/main/java/App.java\npath.getNameCount();   // 4\n\n// Check file properties\nFiles.exists(path);\nFiles.isRegularFile(path);\nFiles.isDirectory(path);\nFiles.size(path);            // bytes\nFiles.getLastModifiedTime(path);\n```\n\n### Directory Operations\n\n```java\n// Create directory\nFiles.createDirectory(Path.of(\"newDir\"));\nFiles.createDirectories(Path.of(\"a/b/c\")); // creates parents too\n\n// List directory\ntry (Stream<Path> entries = Files.list(Path.of(\".\"))) {\n    entries.forEach(System.out::println);\n}\n\n// Walk directory tree (recursive)\ntry (Stream<Path> walk = Files.walk(Path.of(\"src\"))) {\n    walk.filter(p -> p.toString().endsWith(\".java\"))\n        .forEach(System.out::println);\n}\n\n// Copy, Move, Delete\nFiles.copy(source, target, StandardCopyOption.REPLACE_EXISTING);\nFiles.move(source, target, StandardCopyOption.ATOMIC_MOVE);\nFiles.delete(path); // throws if not exists\nFiles.deleteIfExists(path);\n```"
+      }
+    ]
+  },
+  {
+    "id": "database-networking",
+    "title": "Networking, HTTP & JDBC",
+    "icon": "Globe",
+    "color": "#38bdf8",
+    "chapters": [
+      {
+        "id": "http-client",
+        "title": "Modern HTTP Client (Java 11-21)",
+        "content": "## Modern HTTP Client (`java.net.http`)\n\nJava 11 introduced a modern, non-blocking, HTTP/2-compliant **HttpClient** that replaces outdated `HttpURLConnection` and external libraries like Apache HttpClient for standard REST calls.\n\n### Core Architecture\n\n```\n+---------------------+      +---------------------+      +---------------------+\n|     HttpClient      | ---> |     HttpRequest     | ---> |    HttpResponse<T>  |\n|  (Client Instance)  |      |  (URI, Method, Body)|      | (Status, Body, Head)|\n+---------------------+      +---------------------+      +---------------------+\n```\n\n### Synchronous GET & POST Requests\n\n```java\nimport java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\nimport java.time.Duration;\n\n// 1. Create client (reusable, thread-safe)\nHttpClient client = HttpClient.newBuilder()\n    .version(HttpClient.Version.HTTP_2)\n    .connectTimeout(Duration.ofSeconds(10))\n    .followRedirects(HttpClient.Redirect.NORMAL)\n    .build();\n\n// 2. Build GET Request\nHttpRequest getRequest = HttpRequest.newBuilder()\n    .uri(URI.create(\"https://api.github.com/users/octocat\"))\n    .header(\"Accept\", \"application/json\")\n    .GET()\n    .build();\n\n// Send synchronously\nHttpResponse<String> response = client.send(\n    getRequest, \n    HttpResponse.BodyHandlers.ofString()\n);\n\nSystem.out.println(\"Status: \" + response.statusCode());\nSystem.out.println(\"Body: \" + response.body());\n\n// 3. Build POST Request with JSON body\nString jsonPayload = \"\"\"\n    {\n      \"title\": \"Learn Java 21\",\n      \"completed\": false\n    }\n    \"\"\";\n\nHttpRequest postRequest = HttpRequest.newBuilder()\n    .uri(URI.create(\"https://jsonplaceholder.typicode.com/todos\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))\n    .build();\n\nHttpResponse<String> postResponse = client.send(\n    postRequest, \n    HttpResponse.BodyHandlers.ofString()\n);\nSystem.out.println(\"Created Status: \" + postResponse.statusCode());\n```\n\n### Asynchronous Non-Blocking Requests (`CompletableFuture`)\n\n```java\n// Send request asynchronously without blocking caller thread:\nclient.sendAsync(getRequest, HttpResponse.BodyHandlers.ofString())\n    .thenApply(HttpResponse::body)\n    .thenAccept(body -> System.out.println(\"Async Body: \" + body))\n    .exceptionally(err -> {\n        System.err.println(\"Request failed: \" + err.getMessage());\n        return null;\n    });\n```"
+      },
+      {
+        "id": "jdbc-database",
+        "title": "JDBC & Database Persistence",
+        "content": "## JDBC (Java Database Connectivity)\n\nJDBC is the standard Java API for connecting to relational databases (PostgreSQL, MySQL, Oracle, SQLite, H2).\n\n### Complete CRUD Lifecycle with `PreparedStatement`\n\n```java\nimport java.sql.*;\n\npublic class DatabaseExample {\n    private static final String URL = \"jdbc:postgresql://localhost:5432/mydb\";\n    private static final String USER = \"postgres\";\n    private static final String PASS = \"secret\";\n\n    public static void main(String[] args) {\n        // SQL query with parameterized placeholders (?) to prevent SQL Injection!\n        String insertSql = \"INSERT INTO users (name, email, age) VALUES (?, ?, ?)\";\n        String selectSql = \"SELECT id, name, email, age FROM users WHERE age >= ?\";\n\n        // Always use try-with-resources for Connection, Statement & ResultSet!\n        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);\n             PreparedStatement insertStmt = conn.prepareStatement(insertSql);\n             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {\n\n            // 1. Insert Record\n            insertStmt.setString(1, \"Karthik\");\n            insertStmt.setString(2, \"karthik@example.com\");\n            insertStmt.setInt(3, 25);\n            int rowsAffected = insertStmt.executeUpdate();\n            System.out.println(\"Rows inserted: \" + rowsAffected);\n\n            // 2. Query Records\n            selectStmt.setInt(1, 18);\n            try (ResultSet rs = selectStmt.executeQuery()) {\n                while (rs.next()) {\n                    long id = rs.getLong(\"id\");\n                    String name = rs.getString(\"name\");\n                    String email = rs.getString(\"email\");\n                    int age = rs.getInt(\"age\");\n                    System.out.printf(\"User #%d: %s (%s, age %d)%n\", id, name, email, age);\n                }\n            }\n\n        } catch (SQLException e) {\n            System.err.println(\"Database error: \" + e.getMessage());\n            e.printStackTrace();\n        }\n    }\n}\n```\n\n### ACID Transactions in JDBC\n\n```java\ntry (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {\n    // Disable auto-commit to start a transaction\n    conn.setAutoCommit(false);\n\n    try (PreparedStatement debit = conn.prepareStatement(\n             \"UPDATE accounts SET balance = balance - ? WHERE id = ?\");\n         PreparedStatement credit = conn.prepareStatement(\n             \"UPDATE accounts SET balance = balance + ? WHERE id = ?\")) {\n\n        // Debit Account A\n        debit.setDouble(1, 500.0);\n        debit.setInt(2, 101);\n        debit.executeUpdate();\n\n        // Credit Account B\n        credit.setDouble(1, 500.0);\n        credit.setInt(2, 202);\n        credit.executeUpdate();\n\n        // Commit both operations together atomically\n        conn.commit();\n        System.out.println(\"Transfer successful!\");\n\n    } catch (SQLException e) {\n        // Rollback on any failure to preserve consistency\n        conn.rollback();\n        System.err.println(\"Transaction rolled back: \" + e.getMessage());\n    } finally {\n        conn.setAutoCommit(true);\n    }\n}\n```"
+      }
+    ]
+  },
+  {
+    "id": "concurrency",
+    "title": "Concurrency",
+    "icon": "Layers",
+    "color": "#60a5fa",
+    "chapters": [
+      {
+        "id": "threads-basics",
+        "title": "Threads & Synchronization",
+        "content": "## Concurrency in Java\n\n### Creating Threads\n\n```java\n// 1. Implementing Runnable (preferred)\nRunnable task = () -> {\n    System.out.println(\"Thread: \" + Thread.currentThread().getName());\n};\nThread t = new Thread(task, \"worker-1\");\nt.start();\n\n// 2. Extending Thread\nclass MyThread extends Thread {\n    @Override\n    public void run() {\n        System.out.println(\"Running in \" + getName());\n    }\n}\nnew MyThread().start();\n\n// 3. Virtual Threads (Java 21)\nThread.startVirtualThread(() -> {\n    System.out.println(\"Virtual thread!\");\n});\n```\n\n### ExecutorService\n\n```java\n// Thread pool — reuse threads\nExecutorService pool = Executors.newFixedThreadPool(4);\n\n// Submit tasks\nFuture<String> future = pool.submit(() -> {\n    Thread.sleep(1000);\n    return \"Done!\";\n});\n\nString result = future.get();       // blocks until complete\nString result2 = future.get(5, TimeUnit.SECONDS); // with timeout\n\n// Shutdown\npool.shutdown();                    // graceful\npool.awaitTermination(10, TimeUnit.SECONDS);\n```\n\n### Synchronization\n\n```java\npublic class BankAccount {\n    private double balance;\n\n    // Synchronized method — only one thread at a time\n    public synchronized void deposit(double amount) {\n        balance += amount;\n    }\n\n    public synchronized void withdraw(double amount) {\n        if (balance >= amount) {\n            balance -= amount;\n        }\n    }\n\n    // Synchronized block — finer control\n    public void transfer(BankAccount to, double amount) {\n        synchronized (this) {\n            if (this.balance >= amount) {\n                this.balance -= amount;\n                synchronized (to) {\n                    to.balance += amount;\n                }\n            }\n        }\n    }\n}\n```\n\n### Concurrent Collections\n\n```java\n// Thread-safe collections\nConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();\nmap.put(\"key\", 1);\nmap.computeIfAbsent(\"key2\", k -> 42);\n\nCopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();\nBlockingQueue<String> queue = new LinkedBlockingQueue<>(100);\n\n// Atomic variables\nAtomicInteger counter = new AtomicInteger(0);\ncounter.incrementAndGet();     // thread-safe ++\ncounter.addAndGet(5);          // thread-safe += 5\ncounter.compareAndSet(6, 10);  // CAS operation\n```\n\n### CompletableFuture\n\n```java\n// Async pipeline\nCompletableFuture<String> future = CompletableFuture\n    .supplyAsync(() -> fetchUserFromDB(userId))\n    .thenApply(user -> user.getName())\n    .thenApply(String::toUpperCase)\n    .exceptionally(ex -> \"UNKNOWN\");\n\nString name = future.join(); // blocks for result\n\n// Combine multiple futures\nCompletableFuture<String> userFuture = CompletableFuture\n    .supplyAsync(() -> fetchUser(id));\nCompletableFuture<List<Order>> orderFuture = CompletableFuture\n    .supplyAsync(() -> fetchOrders(id));\n\nCompletableFuture<UserProfile> combined = userFuture\n    .thenCombine(orderFuture, (user, orders) ->\n        new UserProfile(user, orders));\n```"
+      }
+    ]
+  },
+  {
+    "id": "bit-manipulation",
+    "title": "Bit Manipulation & Theory",
+    "icon": "Binary",
+    "color": "#10b981",
+    "chapters": [
+      {
+        "id": "bitwise-basics",
+        "title": "Bitwise Operators & 2's Complement",
+        "content": "## Bitwise Operations & Binary Representation\n\nAt the hardware level, all data is stored as binary digits (**bits**: `0` or `1`). Understanding bit manipulation allows you to write ultra-fast, memory-efficient code with **O(1) time and O(1) space**.\n\n### Java Primitive Integer Bit Widths\n\n| Type | Bit Width | Bytes | Value Range |\n|------|-----------|-------|-------------|\n| `byte` | 8 bits | 1 byte | -128 to 127 ($-2^7$ to $2^7-1$) |\n| `short` | 16 bits | 2 bytes | -32,768 to 32,767 ($-2^{15}$ to $2^{15}-1$) |\n| `int` | 32 bits | 4 bytes | -2,147,483,648 to 2,147,483,647 ($-2^{31}$ to $2^{31}-1$) |\n| `long` | 64 bits | 8 bytes | $-2^{63}$ to $2^{63}-1$ |\n\n### Two's Complement Representation (Signed Integers)\n\nJava represents all signed integers using **Two's Complement**.\n\n```\n+-------------------------------------------------------------------------------+\n|                        TWO'S COMPLEMENT (32-bit int)                          |\n+-------------------------------------------------------------------------------+\n|  Bit 31 (MSB) | Bits 30 - 0                                                   |\n|  Sign Bit     | Magnitude Bits                                                |\n|  0 = Positive | Value = + (binary value)                                      |\n|  1 = Negative | Value = - (~binary value + 1)                                 |\n+-------------------------------------------------------------------------------+\n\nExample: \n  +5 in binary:  0000 0000 0000 0000 0000 0000 0000 0101\n  Invert bits (~5): 1111 1111 1111 1111 1111 1111 1111 1010\n  Add 1 (+1):       1111 1111 1111 1111 1111 1111 1111 1011  (= -5 in Two's Complement)\n```\n\n### Fundamental Bitwise Operators\n\n```\n1. AND (&)         2. OR (|)          3. XOR (^)         4. NOT (~)\n   0 & 0 = 0          0 | 0 = 0          0 ^ 0 = 0          ~0 = 1\n   0 & 1 = 0          0 | 1 = 1          0 ^ 1 = 1          ~1 = 0\n   1 & 0 = 0          1 | 0 = 1          1 ^ 0 = 1\n   1 & 1 = 1          1 | 1 = 1          1 ^ 1 = 0 (same=0)\n```\n\n### Bitwise Shift Operators\n\n```\n+-------------------------------------------------------------------------------+\n|                              BIT SHIFT MECHANICS                              |\n+-------------------------------------------------------------------------------+\n|  Operation        | Symbol | Behavior                                         |\n|-------------------+--------+--------------------------------------------------|\n| Left Shift        | a << k | Shifts bits left by k, fills right with 0s.      |\n|                   |        | Math equivalent: a * 2^k                         |\n|-------------------+--------+--------------------------------------------------|\n| Arithmetic Right  | a >> k | Shifts bits right by k, preserves SIGN bit (MSB).|\n| Shift (Signed)    |        | Math equivalent: a / 2^k                         |\n|-------------------+--------+--------------------------------------------------|\n| Logical Right     | a >>> k| Shifts bits right by k, ALWAYS fills left with 0s|\n| Shift (Unsigned)  |        | Unsigned shift (useful for bitmasks & hashing)   |\n+-------------------------------------------------------------------------------+\n```\n\n```java\nint a = 5;       //  ...00000101 (binary)\nint b = 3;       //  ...00000011 (binary)\n\nSystem.out.println(a & b);   // 1  (AND:  ...00000001)\nSystem.out.println(a | b);   // 7  (OR:   ...00000111)\nSystem.out.println(a ^ b);   // 6  (XOR:  ...00000110)\nSystem.out.println(~a);      // -6 (NOT:  -(5+1) = -6)\n\n// Shift examples:\nint x = 4;       // ...00000100\nSystem.out.println(x << 2);  // 16 (4 * 2^2)\nSystem.out.println(x >> 1);  // 2  (4 / 2^1)\n\nint neg = -8;    // 11111111 11111111 11111111 11111000\nSystem.out.println(neg >> 1);   // -4 (sign preserved)\nSystem.out.println(neg >>> 1);  // 2147483644 (sign NOT preserved, 0 inserted)\n```"
+      },
+      {
+        "id": "bit-tricks",
+        "title": "Essential Bit Manipulation Hacks & Tricks",
+        "content": "## Essential Bit Manipulation Tricks & Hacks\n\nMastering these bit formulas is essential for solving FAANG-level algorithmic challenges in O(1) time.\n\n### 1. Check, Set, Clear, and Toggle $i$-th Bit\n\n```\n     Bit Index:   7   6   5   4   3   2   1   0\n     Number n:    0   0   1   0   1   1   0   1\n                                      ^\n                                  Target i=2\n```\n\n```java\n// 1. Check if i-th bit is set (1) or unset (0)\npublic boolean isBitSet(int n, int i) {\n    return (n & (1 << i)) != 0;\n}\n\n// 2. Set the i-th bit to 1\npublic int setBit(int n, int i) {\n    return n | (1 << i);\n}\n\n// 3. Clear the i-th bit to 0\npublic int clearBit(int n, int i) {\n    return n & ~(1 << i);\n}\n\n// 4. Toggle the i-th bit (0 -> 1 or 1 -> 0)\npublic int toggleBit(int n, int i) {\n    return n ^ (1 << i);\n}\n```\n\n### 2. Brian Kernighan's Algorithm (Clear Lowest Set Bit)\n\n`n & (n - 1)` clears the **lowest (rightmost) set bit** of `n`.\n\n```\nExample: n = 12 (binary 1100)\n  n     = 1100 (12)\n  n - 1 = 1011 (11)\n  n & (n-1) = 1000 (8)  <-- lowest set bit cleared!\n```\n\n```java\n// Count number of set bits (Hamming Weight) in O(number of 1s) time:\npublic int countSetBits(int n) {\n    int count = 0;\n    while (n != 0) {\n        n = n & (n - 1); // Clears the lowest set bit in 1 operation!\n        count++;\n    }\n    return count;\n}\n// Note: Built-in method: Integer.bitCount(n);\n```\n\n### 3. Power of Two Check\n\nA positive number is a power of 2 if and only if it has **exactly one set bit**.\n\n```java\npublic boolean isPowerOfTwo(int n) {\n    return n > 0 && (n & (n - 1)) == 0;\n}\n// Examples:\n// 8 (1000) & 7 (0111) = 0000 -> true\n// 6 (0110) & 5 (0101) = 0100 != 0 -> false\n```\n\n### 4. Extract Lowest Set Bit (LSB)\n\n`n & (-n)` isolates the lowest set bit of `n`.\n\n```\nExample: n = 12 (0000 1100)\n  -n = ~n + 1 = (1111 0011) + 1 = (1111 0100)\n  n & (-n) = (0000 1100) & (1111 0100) = 0000 0100 (4)\n```\n\n```java\nint lsb = n & (-n); // Used extensively in Fenwick Trees (Binary Indexed Trees)!\n```\n\n### 5. XOR Properties & Single Number Problem\n\n```\nXOR Properties:\n1. a ^ 0 = a\n2. a ^ a = 0 (self-cancellation)\n3. a ^ b ^ a = b (commutative & associative)\n```\n\n```java\n// Find single non-duplicate number in array where every other element appears twice:\npublic int singleNumber(int[] nums) {\n    int unique = 0;\n    for (int num : nums) {\n        unique ^= num; // Duplicate pairs cancel out to 0!\n    }\n    return unique;\n}\n\n// Swap two variables without temporary variable:\npublic void swap(int a, int b) {\n    a ^= b;\n    b ^= a;\n    a ^= b;\n}\n```"
+      },
+      {
+        "id": "bit-masking",
+        "title": "Bitmasking, State Compression & Subsets",
+        "content": "## Bitmasking & State Compression\n\nA **Bitmask** uses an integer's binary representation to represent a **set of boolean flags** or a **subset of elements**.\n\n### 1. Generating All $2^n$ Subsets (Power Set)\n\nIf a set has $n$ elements, there are $2^n$ total subsets. We can map numbers from $0$ to $2^n - 1$ directly to subsets!\n\n```\nArray: [\"A\", \"B\", \"C\"]  (n = 3, Total subsets = 2^3 = 8)\n\nMask (Binary) | Included Elements | Subset\n--------------+-------------------+------------\n 000 (0)      | None              | []\n 001 (1)      | Index 0 (A)       | [A]\n 010 (2)      | Index 1 (B)       | [B]\n 011 (3)      | Index 0, 1 (A, B) | [A, B]\n 100 (4)      | Index 2 (C)       | [C]\n 101 (5)      | Index 0, 2 (A, C) | [A, C]\n 110 (6)      | Index 1, 2 (B, C) | [B, C]\n 111 (7)      | Index 0, 1, 2     | [A, B, C]\n```\n\n```java\npublic List<List<Integer>> subsets(int[] nums) {\n    int n = nums.length;\n    int totalSubsets = 1 << n; // 2^n\n    List<List<Integer>> result = new ArrayList<>();\n\n    for (int mask = 0; mask < totalSubsets; mask++) {\n        List<Integer> current = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            // Check if i-th bit is set in mask\n            if ((mask & (1 << i)) != 0) {\n                current.add(nums[i]);\n            }\n        }\n        result.add(current);\n    }\n    return result;\n}\n```\n\n### 2. Fast Character Set Representation (Alphabet Bitmask)\n\nInstead of using a `HashSet<Character>` or `boolean[26]` array, use a single 32-bit `int` bitmask!\n\n```java\n// Check if word contains all unique lowercase letters ('a'-'z'):\npublic boolean hasAllUniqueChars(String s) {\n    int mask = 0;\n    for (char c : s.toCharArray()) {\n        int bit = c - 'a';\n        if ((mask & (1 << bit)) != 0) {\n            return false; // Character already seen!\n        }\n        mask |= (1 << bit); // Mark character as seen\n    }\n    return true;\n}\n```\n\n### 3. Java `BitSet` Class\n\nFor sets larger than 64 bits, use Java's built-in `java.util.BitSet`:\n\n```java\nBitSet bs1 = new BitSet(100);\nBitSet bs2 = new BitSet(100);\n\nbs1.set(2);\nbs1.set(5);\nbs1.set(10);\n\nbs2.set(5);\nbs2.set(20);\n\n// Bitwise operations directly on BitSets:\nbs1.and(bs2);      // Intersection: keeps only common bits (bit 5)\nbs1.or(bs2);       // Union: combines all set bits\nbs1.xor(bs2);      // Symmetric difference\nSystem.out.println(bs1.get(5)); // true\nSystem.out.println(bs1.cardinality()); // count of set bits\n```"
+      }
+    ]
+  },
+  {
+    "id": "dsa-java",
+    "title": "DSA in Java",
+    "icon": "GitBranch",
+    "color": "#2dd4bf",
+    "chapters": [
+      {
+        "id": "big-o",
+        "title": "Big-O Notation & Complexity",
+        "content": "## Big-O Notation\n\nBig-O describes how an algorithm's time or space grows as input size `n` increases.\n\n### Common Complexities\n\n| Big-O | Name | Example |\n|-------|------|---------|\n| O(1) | Constant | Array access, HashMap get |\n| O(log n) | Logarithmic | Binary search |\n| O(n) | Linear | Linear search, single loop |\n| O(n log n) | Linearithmic | Merge sort, Tim sort |\n| O(n²) | Quadratic | Nested loops, bubble sort |\n| O(2ⁿ) | Exponential | Recursive fibonacci |\n| O(n!) | Factorial | Permutations |\n\n### Analyzing Code\n\n```java\n// O(1) — constant\nint first = arr[0];\n\n// O(n) — linear\nfor (int i = 0; i < n; i++) {\n    // constant work\n}\n\n// O(n²) — quadratic\nfor (int i = 0; i < n; i++) {\n    for (int j = 0; j < n; j++) {\n        // constant work\n    }\n}\n\n// O(log n) — logarithmic\nwhile (n > 0) {\n    n /= 2;\n}\n\n// O(n log n)\nArrays.sort(arr); // Tim Sort\n```\n\n### Space Complexity\n\n```java\n// O(1) space — in-place\nvoid swap(int[] arr, int i, int j) {\n    int temp = arr[i];\n    arr[i] = arr[j];\n    arr[j] = temp;\n}\n\n// O(n) space — new array\nint[] doubled = new int[n];\nfor (int i = 0; i < n; i++) {\n    doubled[i] = arr[i] * 2;\n}\n\n// O(n) space — recursion call stack\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1); // n stack frames\n}\n```"
+      },
+      {
+        "id": "sorting-algorithms",
+        "title": "Sorting Algorithms",
+        "content": "## Sorting Algorithms in Java\n\n### Built-in Sorting\n\n```java\nint[] arr = {5, 2, 8, 1, 9};\nArrays.sort(arr); // Tim Sort — O(n log n)\n\nList<String> names = new ArrayList<>(List.of(\"Charlie\", \"Alice\", \"Bob\"));\nCollections.sort(names); // Tim Sort\n\n// Custom comparator\nnames.sort(Comparator.comparingInt(String::length));\nnames.sort(Comparator.comparing(String::length).reversed());\n```\n\n### Merge Sort Implementation\n\n```java\npublic static void mergeSort(int[] arr, int left, int right) {\n    if (left >= right) return;\n\n    int mid = left + (right - left) / 2;\n    mergeSort(arr, left, mid);\n    mergeSort(arr, mid + 1, right);\n    merge(arr, left, mid, right);\n}\n\nprivate static void merge(int[] arr, int left, int mid, int right) {\n    int[] temp = new int[right - left + 1];\n    int i = left, j = mid + 1, k = 0;\n\n    while (i <= mid && j <= right) {\n        if (arr[i] <= arr[j]) temp[k++] = arr[i++];\n        else temp[k++] = arr[j++];\n    }\n    while (i <= mid) temp[k++] = arr[i++];\n    while (j <= right) temp[k++] = arr[j++];\n\n    System.arraycopy(temp, 0, arr, left, temp.length);\n}\n```\n\n### Quick Sort Implementation\n\n```java\npublic static void quickSort(int[] arr, int low, int high) {\n    if (low >= high) return;\n\n    int pivotIdx = partition(arr, low, high);\n    quickSort(arr, low, pivotIdx - 1);\n    quickSort(arr, pivotIdx + 1, high);\n}\n\nprivate static int partition(int[] arr, int low, int high) {\n    int pivot = arr[high];\n    int i = low - 1;\n\n    for (int j = low; j < high; j++) {\n        if (arr[j] <= pivot) {\n            i++;\n            int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;\n        }\n    }\n\n    int temp = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = temp;\n    return i + 1;\n}\n```\n\n### Sorting Comparison\n\n| Algorithm | Best | Average | Worst | Space | Stable |\n|-----------|------|---------|-------|-------|--------|\n| Bubble Sort | O(n) | O(n²) | O(n²) | O(1) | ✅ |\n| Selection Sort | O(n²) | O(n²) | O(n²) | O(1) | ❌ |\n| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) | ✅ |\n| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) | ✅ |\n| Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) | ❌ |\n| Tim Sort | O(n) | O(n log n) | O(n log n) | O(n) | ✅ |"
+      },
+      {
+        "id": "common-patterns",
+        "title": "Common DSA Patterns",
+        "content": "## Common DSA Patterns in Java\n\n### Visual Algorithmic Patterns\n\n#### 1. Two Pointers (Inward Convergence)\n```\n  [ 1,  2,  4,  6,  8,  11 ]   Target = 10\n    ^                    ^\n   Left                Right    (Sum = 12 > 10 -> Right--)\n\n  [ 1,  2,  4,  6,  8,  11 ]\n    ^               ^\n   Left           Right         (Sum = 9 < 10 -> Left++)\n\n  [ 1,  2,  4,  6,  8,  11 ]\n        ^           ^\n       Left       Right         (Sum = 10 == 10 -> Found [2, 8]!)\n```\n\n#### 2. Sliding Window (Dynamic Expansion & Contraction)\n```\nSubarray Sum / Frequency Window:\n   Step 1: [ 2,  1,  5,  1 ], k = 3   Window = [2, 1, 5] (Sum = 8)\n             L       R\n\n   Step 2: [ 2,  1,  5,  1,  3 ]       Window = [1, 5, 1] (Sum = 7)\n                 L       R\n\n   Step 3: [ 2,  1,  5,  1,  3 ]       Window = [5, 1, 3] (Sum = 9 -> Max!)\n                     L       R\n```\n\n#### 3. Tree Traversal Mechanics (BFS vs DFS)\n```\n          ( 1 )                 BFS (Level Order): [1] -> [2, 3] -> [4, 5, 6]\n         /                     Queue: Front -> 4, 5, 6 -> Back\n       ( 2 )   ( 3 )\n      /                       DFS (Pre-order):  Root -> Left -> Right (1, 2, 4, 5, 3, 6)\n    ( 4 ) ( 5 )   ( 6 )         DFS (In-order):   Left -> Root -> Right (4, 2, 5, 1, 3, 6)\n                                DFS (Post-order): Left -> Right -> Root (4, 5, 2, 6, 3, 1)\n```\n\n#### 4. Dynamic Programming State Transitions\n```\n   Staircase Problem: dp[i] = dp[i-1] + dp[i-2]\n\n   +-------+-------+-------+-------+-------+\n   | dp[0] | dp[1] | dp[2] | dp[3] | dp[4] |\n   |   1   |   1   |   2   |   3   |   5   |\n   +-------+-------+-------+-------+-------+\n                       ^       ^       ^\n                       |       |       +-- dp[2] + dp[3] = 5\n                       +-------+---------- dp[1] + dp[2] = 3\n```\n\n### Two Pointers\n\n```java\n// Check if sorted array has pair summing to target\npublic boolean twoSum(int[] sorted, int target) {\n    int left = 0, right = sorted.length - 1;\n    while (left < right) {\n        int sum = sorted[left] + sorted[right];\n        if (sum == target) return true;\n        else if (sum < target) left++;\n        else right--;\n    }\n    return false;\n}\n```\n\n### Sliding Window\n\n```java\n// Max sum of subarray of size k\npublic int maxSumSubarray(int[] arr, int k) {\n    int windowSum = 0, maxSum = 0;\n    for (int i = 0; i < arr.length; i++) {\n        windowSum += arr[i];\n        if (i >= k) windowSum -= arr[i - k];\n        if (i >= k - 1) maxSum = Math.max(maxSum, windowSum);\n    }\n    return maxSum;\n}\n```\n\n### Binary Search Template\n\n```java\npublic int binarySearch(int[] arr, int target) {\n    int low = 0, high = arr.length - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2; // avoids overflow\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1; // not found\n}\n```\n\n### BFS Template (Graph/Tree)\n\n```java\npublic void bfs(Map<Integer, List<Integer>> graph, int start) {\n    Queue<Integer> queue = new LinkedList<>();\n    Set<Integer> visited = new HashSet<>();\n    queue.offer(start);\n    visited.add(start);\n\n    while (!queue.isEmpty()) {\n        int node = queue.poll();\n        System.out.println(\"Visit: \" + node);\n\n        for (int neighbor : graph.getOrDefault(node, List.of())) {\n            if (!visited.contains(neighbor)) {\n                visited.add(neighbor);\n                queue.offer(neighbor);\n            }\n        }\n    }\n}\n```\n\n### DFS Template (Graph/Tree)\n\n```java\npublic void dfs(Map<Integer, List<Integer>> graph, int node, Set<Integer> visited) {\n    visited.add(node);\n    System.out.println(\"Visit: \" + node);\n\n    for (int neighbor : graph.getOrDefault(node, List.of())) {\n        if (!visited.contains(neighbor)) {\n            dfs(graph, neighbor, visited);\n        }\n    }\n}\n```\n\n### Backtracking Template\n\n```java\npublic void backtrack(List<List<Integer>> result, List<Integer> current,\n                      int[] nums, int start) {\n    result.add(new ArrayList<>(current)); // save snapshot\n\n    for (int i = start; i < nums.length; i++) {\n        current.add(nums[i]);             // choose\n        backtrack(result, current, nums, i + 1); // explore\n        current.remove(current.size() - 1); // un-choose\n    }\n}\n```\n\n### Dynamic Programming Template\n\n```java\n// Bottom-up (tabulation)\npublic int climbStairs(int n) {\n    if (n <= 2) return n;\n    int[] dp = new int[n + 1];\n    dp[1] = 1;\n    dp[2] = 2;\n    for (int i = 3; i <= n; i++) {\n        dp[i] = dp[i - 1] + dp[i - 2];\n    }\n    return dp[n];\n}\n\n// Space-optimized\npublic int climbStairsOptimized(int n) {\n    if (n <= 2) return n;\n    int a = 1, b = 2;\n    for (int i = 3; i <= n; i++) {\n        int temp = a + b;\n        a = b;\n        b = temp;\n    }\n    return b;\n}\n```"
       }
     ]
   }
