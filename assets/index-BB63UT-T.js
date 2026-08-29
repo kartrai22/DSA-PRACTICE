@@ -3471,7 +3471,98 @@ MathOperation pow = Math::pow;
 
 System.out.println(add.compute(3, 4)); // 7.0
 System.out.println(pow.compute(2, 10)); // 1024.0
-\`\`\``},{id:`streams-api`,title:`Streams API`,content:`## Streams API (Java 8+)
+\`\`\`
+
+### How Lambda Captures Work (Closures)
+
+A lambda can **capture** variables from its enclosing scope. These captured variables must be **effectively final** — assigned once and never modified.
+
+\`\`\`
++------------------------------------------------------+
+|  Enclosing Method Scope                              |
+|                                                      |
+|   int multiplier = 3;  // effectively final ✅       |
+|   int counter = 0;     // modified later ❌           |
+|                                                      |
+|   +----------------------------------------------+   |
+|   |  Lambda Closure                              |   |
+|   |                                              |   |
+|   |  x -> x * multiplier   // ✅ captures copy   |   |
+|   |  x -> x * counter      // ❌ compile error    |   |
+|   +----------------------------------------------+   |
+|                                                      |
+|   counter++;  // mutation makes it non-effectively   |
+|               // final — lambda can't capture it     |
++------------------------------------------------------+
+\`\`\`
+
+\`\`\`java
+// ✅ Effectively final — works
+String prefix = "Hello";
+Consumer<String> greeter = name -> System.out.println(prefix + " " + name);
+greeter.accept("World"); // "Hello World"
+
+// ❌ NOT effectively final — compile error
+int count = 0;
+Runnable bad = () -> count++; // ERROR: count must be effectively final
+
+// ✅ Workaround: use AtomicInteger or array
+AtomicInteger atomicCount = new AtomicInteger(0);
+Runnable good = () -> atomicCount.incrementAndGet(); // ✅ works
+\`\`\`
+
+### Functional Composition (Chaining)
+
+\`\`\`
++----------+     +----------+     +-----------+
+| Function |     | Function |     | Function  |
+| trim()   | --> | lower()  | --> | length()  |
++----------+     +----------+     +-----------+
+  Input:           Step 1:          Step 2:       Output:
+ "  HELLO "  -->  "hello"    -->   5            --> 5
+\`\`\`
+
+\`\`\`java
+// Compose functions with andThen / compose
+Function<String, String> trim = String::strip;
+Function<String, String> lower = String::toLowerCase;
+Function<String, Integer> len = String::length;
+
+// andThen: trim THEN lower THEN get length
+Function<String, Integer> pipeline = trim
+    .andThen(lower)
+    .andThen(len);
+
+System.out.println(pipeline.apply("  HELLO WORLD  ")); // 11
+
+// Predicate composition
+Predicate<Integer> isPositive = n -> n > 0;
+Predicate<Integer> isEven = n -> n % 2 == 0;
+
+Predicate<Integer> isPositiveAndEven = isPositive.and(isEven);
+Predicate<Integer> isPositiveOrEven = isPositive.or(isEven);
+Predicate<Integer> isNotPositive = isPositive.negate();
+
+System.out.println(isPositiveAndEven.test(4));  // true
+System.out.println(isPositiveAndEven.test(-2)); // false
+System.out.println(isNotPositive.test(-5));     // true
+\`\`\`
+
+### All Built-in Functional Interfaces
+
+| Interface | Signature | Purpose | Example |
+|-----------|-----------|---------|---------|
+| Function<T,R> | R apply(T) | Transform T to R | s -> s.length() |
+| BiFunction<T,U,R> | R apply(T,U) | Two inputs to R | (a,b) -> a+b |
+| Predicate<T> | boolean test(T) | Test condition | n -> n > 0 |
+| BiPredicate<T,U> | boolean test(T,U) | Test two inputs | (s,n) -> s.length() > n |
+| Consumer<T> | void accept(T) | Consume value | System.out::println |
+| BiConsumer<T,U> | void accept(T,U) | Consume two values | map::put |
+| Supplier<T> | T get() | Produce value | Math::random |
+| UnaryOperator<T> | T apply(T) | Transform same type | String::toUpperCase |
+| BinaryOperator<T> | T apply(T,T) | Combine two same | Integer::sum |
+
+> **Key Rule**: Lambdas are NOT anonymous inner classes. They use \`invokedynamic\` bytecode (JSR 292) for better performance — no extra .class file is generated, and the JVM can inline them aggressively.`},{id:`streams-api`,title:`Streams API`,content:`## Streams API (Java 8+)
 
 Streams provide a **declarative** way to process collections — filter, transform, aggregate.
 
@@ -3564,7 +3655,163 @@ IntSummaryStatistics stats = words.stream()
 // toMap
 Map<String, Integer> wordLengths = words.stream()
     .collect(Collectors.toMap(w -> w, String::length));
-\`\`\``},{id:`optionals`,title:`Optional<T>`,content:`## Optional (Java 8+)
+\`\`\`
+
+### Stream Pipeline Architecture
+
+\`\`\`
++-----------------------------------------------------------+
+|                    STREAM PIPELINE                         |
++-----------------------------------------------------------+
+|                                                           |
+|  SOURCE          INTERMEDIATE OPS (lazy)    TERMINAL OP   |
+|  ======          =====================      ===========   |
+|                                                           |
+|  Collection  --> filter() --> map() -----> collect()      |
+|  Array            sorted()    flatMap()    reduce()       |
+|  File              peek()     distinct()   forEach()      |
+|  Generator         limit()    skip()       count()        |
+|                                            toArray()      |
+|                                                           |
+|  IMPORTANT: No processing happens until a terminal        |
+|  operation is invoked! Intermediate ops are LAZY.         |
++-----------------------------------------------------------+
+\`\`\`
+
+> **Key Insight**: Streams are **consumed once**. After a terminal operation, the stream is closed. You cannot reuse it — create a new stream from the source.
+
+### flatMap — Flattening Nested Structures
+
+\`\`\`
++------------------+                  +------------------+
+| Stream<List<T>>  |    flatMap()     | Stream<T>        |
+|                  |  ------------>   |                  |
+| [[1,2], [3,4]]   |                  | [1, 2, 3, 4]    |
+| [["a"], ["b","c"]]|                 | ["a", "b", "c"] |
++------------------+                  +------------------+
+\`\`\`
+
+\`\`\`java
+// Flatten nested lists
+List<List<String>> nested = List.of(
+    List.of("Alice", "Bob"),
+    List.of("Charlie"),
+    List.of("Dave", "Eve")
+);
+
+List<String> flat = nested.stream()
+    .flatMap(Collection::stream)
+    .toList();
+// [Alice, Bob, Charlie, Dave, Eve]
+
+// Real-world: get all unique words from sentences
+List<String> sentences = List.of("hello world", "java streams rock");
+List<String> words2 = sentences.stream()
+    .flatMap(s -> Arrays.stream(s.split(" ")))
+    .distinct()
+    .sorted()
+    .toList();
+// [hello, java, rock, streams, world]
+\`\`\`
+
+### Parallel Streams
+
+\`\`\`
++-----------------------------------------------------+
+|            PARALLEL STREAM EXECUTION                 |
++-----------------------------------------------------+
+|                                                     |
+|  Source: [1, 2, 3, 4, 5, 6, 7, 8]                  |
+|                                                     |
+|  Split into chunks (ForkJoinPool):                  |
+|  +--------+  +--------+  +--------+  +--------+    |
+|  | [1, 2] |  | [3, 4] |  | [5, 6] |  | [7, 8] |   |
+|  +---+----+  +---+----+  +---+----+  +---+----+    |
+|      |           |           |           |          |
+|   Thread 1    Thread 2    Thread 3    Thread 4      |
+|   (process)   (process)   (process)   (process)     |
+|      |           |           |           |          |
+|      +-----+-----+-----+----+           |          |
+|            |                  |          |          |
+|        Combine            Combine        |          |
+|            +--------+---------+          |          |
+|                     |                               |
+|                Final Result                         |
++-----------------------------------------------------+
+\`\`\`
+
+\`\`\`java
+// Parallel processing — auto-uses ForkJoinPool
+long count = numbers.parallelStream()
+    .filter(n -> isPrime(n))
+    .count();
+
+// When to use parallel streams:
+// ✅ Large datasets (> 10,000 elements)
+// ✅ CPU-intensive per-element operations
+// ✅ Independent, stateless operations
+// ❌ Small datasets (overhead > benefit)
+// ❌ Operations with shared mutable state
+// ❌ I/O-bound operations (use Virtual Threads instead)
+// ❌ Order-dependent operations (unless using forEachOrdered)
+\`\`\`
+
+### Teeing Collector (Java 12+)
+
+\`\`\`java
+// Process stream through TWO collectors simultaneously
+var result = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).stream()
+    .collect(Collectors.teeing(
+        Collectors.summingInt(Integer::intValue),   // collector 1: sum
+        Collectors.counting(),                       // collector 2: count
+        (sum, count2) -> "Sum=" + sum + ", Avg=" + (sum / count2) // merge
+    ));
+// "Sum=55, Avg=5"
+\`\`\`
+
+### Real-World Stream Patterns
+
+\`\`\`java
+// 1. Frequency map (word count)
+Map<String, Long> frequency = words.stream()
+    .collect(Collectors.groupingBy(
+        Function.identity(), Collectors.counting()));
+
+// 2. Top-N elements
+List<String> top3Longest = words.stream()
+    .sorted(Comparator.comparingInt(String::length).reversed())
+    .limit(3)
+    .toList();
+
+// 3. CSV line to objects
+List<Person> people = Files.lines(Path.of("data.csv"))
+    .skip(1)  // skip header
+    .map(line -> line.split(","))
+    .map(parts -> new Person(parts[0], Integer.parseInt(parts[1])))
+    .toList();
+
+// 4. Nested grouping
+Map<String, Map<Integer, List<Student>>> grouped = students.stream()
+    .collect(Collectors.groupingBy(
+        Student::department,
+        Collectors.groupingBy(Student::year)));
+
+// 5. Stream to Map with merge function (handle duplicates)
+Map<String, Integer> merged = items.stream()
+    .collect(Collectors.toMap(
+        Item::name, Item::quantity, Integer::sum));
+\`\`\`
+
+### Stream vs Collection
+
+| Aspect | Collection | Stream |
+|--------|-----------|--------|
+| Storage | Stores elements in memory | Computes elements on-demand |
+| Consumption | Can iterate multiple times | Single-use (consumed once) |
+| Eagerness | Eager (all elements exist) | Lazy (computed when needed) |
+| Modification | Can add/remove elements | Read-only pipeline |
+| Size | Finite | Can be infinite |
+| Parallelism | Manual threading | Built-in .parallelStream() |`},{id:`optionals`,title:`Optional<T>`,content:`## Optional (Java 8+)
 
 \`Optional\` is a container that may or may not hold a value — eliminates **NullPointerException**.
 
@@ -3808,7 +4055,1106 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 ### When to Use Virtual Threads
 
 ✅ **Use for**: HTTP servers, database queries, file I/O, API calls, any blocking I/O
-❌ **Don't use for**: CPU-intensive computation (use platform threads + ForkJoinPool)`}]},{id:`exception-handling`,title:`Exception Handling`,icon:`ShieldAlert`,color:`#f87171`,chapters:[{id:`exceptions`,title:`Exceptions & Error Handling`,content:`## Exception Handling
+❌ **Don't use for**: CPU-intensive computation (use platform threads + ForkJoinPool)`},{id:`var-type-inference`,title:`var — Local Type Inference (Java 10+)`,content:`## Local Variable Type Inference (var)
+
+Since Java 10, you can use \\\`var\\\` to let the compiler infer the type of local variables. This is **not dynamic typing** — Java remains statically typed. The compiler determines the type at compile time.
+
+### How var Works
+
+\\\`\\\`\\\`
++-----------------------------------------------+
+|  COMPILE TIME TYPE INFERENCE                  |
++-----------------------------------------------+
+|                                               |
+|  Source Code:                                 |
+|    var name = "Hello";                        |
+|                                               |
+|  Compiler sees:                               |
+|    String name = "Hello";  // inferred type   |
+|                                               |
+|  Bytecode: IDENTICAL to explicit declaration  |
++-----------------------------------------------+
+\\\`\\\`\\\`
+
+### Valid Uses of var
+
+\\\`\\\`\\\`java
+// Simple declarations
+var name = "Karthik";           // String
+var age = 25;                    // int
+var pi = 3.14;                   // double
+var list = new ArrayList<String>();  // ArrayList<String>
+var map = Map.of("a", 1, "b", 2);   // Map<String, Integer>
+
+// Enhanced for loops
+var numbers = List.of(1, 2, 3, 4, 5);
+for (var n : numbers) {
+    System.out.println(n);  // n is Integer
+}
+
+// try-with-resources
+try (var reader = new BufferedReader(new FileReader("file.txt"))) {
+    var line = reader.readLine();
+}
+
+// Particularly useful for complex generic types
+var entrySet = map.entrySet();
+// Instead of: Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
+\\\`\\\`\\\`
+
+### Where var CANNOT Be Used
+
+\\\`\\\`\\\`java
+// ❌ Method parameters
+void process(var data) { }  // ERROR
+
+// ❌ Return types
+var getName() { return "Hi"; }  // ERROR
+
+// ❌ Fields (instance or static)
+class MyClass { var x = 10; }  // ERROR
+
+// ❌ Without initializer
+var x;  // ERROR — compiler can't infer type
+
+// ❌ With null
+var x = null;  // ERROR — null has no type
+
+// ❌ Lambda without explicit target type
+var fn = (x) -> x * 2;  // ERROR
+\\\`\\\`\\\`
+
+### Best Practices
+
+| Use var when... | Avoid var when... |
+|-----------------|-------------------|
+| Type is obvious from RHS | Type is not clear from context |
+| Complex generic types | Primitive numeric types (int, long) |
+| Local iteration variables | Public API boundaries |
+| var improves readability | var hurts readability |
+
+> **Remember**: \\\`var\\\` is a **reserved type name**, not a keyword. You can still have a variable named \\\`var\\\` (but please don't).`},{id:`switch-expressions`,title:`Switch Expressions (Java 14+)`,content:`## Switch Expressions
+
+Java 14 finalized **switch as an expression** — it can return a value, use arrow syntax, and provides exhaustiveness checking.
+
+### Old vs New Switch
+
+\\\`\\\`\\\`java
+// ❌ Old switch (statement, verbose, fall-through bugs)
+String day = "MONDAY";
+String type;
+switch (day) {
+    case "MONDAY":
+    case "TUESDAY":
+    case "WEDNESDAY":
+    case "THURSDAY":
+    case "FRIDAY":
+        type = "Weekday";
+        break;  // forget this = bug!
+    case "SATURDAY":
+    case "SUNDAY":
+        type = "Weekend";
+        break;
+    default:
+        type = "Unknown";
+}
+
+// ✅ New switch expression (Java 14+)
+String type2 = switch (day) {
+    case "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"
+        -> "Weekday";
+    case "SATURDAY", "SUNDAY"
+        -> "Weekend";
+    default -> "Unknown";
+};
+\\\`\\\`\\\`
+
+### Arrow Labels (No Fall-Through!)
+
+\\\`\\\`\\\`
++-------------------------------------------+
+|  OLD SWITCH (fall-through by default)     |
+|                                           |
+|  case A:        <-- executes             |
+|    doA();       <-- runs                  |
+|  case B:        <-- FALLS THROUGH! 😱    |
+|    doB();       <-- also runs!            |
+|    break;       <-- must add explicitly   |
++-------------------------------------------+
+
++-------------------------------------------+
+|  NEW SWITCH (arrow = no fall-through)     |
+|                                           |
+|  case A -> doA();  <-- ONLY doA runs ✅   |
+|  case B -> doB();  <-- separate block     |
++-------------------------------------------+
+\\\`\\\`\\\`
+
+### yield — Multi-Statement Blocks
+
+\\\`\\\`\\\`java
+int numLetters = switch (day) {
+    case "MONDAY", "FRIDAY", "SUNDAY" -> 6;
+    case "TUESDAY" -> 7;
+    case "WEDNESDAY" -> 9;
+    case "THURSDAY", "SATURDAY" -> 8;
+    default -> {
+        // Multi-line logic needs yield
+        System.out.println("Unknown day: " + day);
+        yield -1;  // return value from block
+    }
+};
+\\\`\\\`\\\`
+
+### Exhaustiveness with Enums & Sealed Types
+
+\\\`\\\`\\\`java
+enum Season { SPRING, SUMMER, AUTUMN, WINTER }
+
+// Compiler ensures ALL enum values are covered — no default needed!
+String clothing = switch (season) {
+    case SPRING -> "Light jacket";
+    case SUMMER -> "T-shirt";
+    case AUTUMN -> "Sweater";
+    case WINTER -> "Heavy coat";
+};
+
+// With sealed types (Java 21)
+sealed interface Shape permits Circle, Square {}
+record Circle(double r) implements Shape {}
+record Square(double s) implements Shape {}
+
+double area = switch (shape) {
+    case Circle c -> Math.PI * c.r() * c.r();
+    case Square s -> s.s() * s.s();
+    // No default needed — sealed types are exhaustive!
+};
+\\\`\\\`\\\``},{id:`text-blocks`,title:`Text Blocks (Java 15+)`,content:`## Text Blocks
+
+Text Blocks provide a clean way to write **multi-line strings** without escape sequences.
+
+### Basic Syntax
+
+\\\`\\\`\\\`java
+// ❌ Old way — painful escaping
+String json = "{\\n" +
+    "  \\"name\\": \\"Alice\\",\\n" +
+    "  \\"age\\": 30\\n" +
+    "}";
+
+// ✅ Text Block — clean!
+String json2 = """
+        {
+          "name": "Alice",
+          "age": 30
+        }
+        """;
+
+// SQL query
+String sql = """
+        SELECT u.name, u.email
+        FROM users u
+        JOIN orders o ON u.id = o.user_id
+        WHERE o.total > 100
+        ORDER BY u.name
+        """;
+
+// HTML
+String html = """
+        <html>
+          <body>
+            <h1>Hello, World!</h1>
+          </body>
+        </html>
+        """;
+\\\`\\\`\\\`
+
+### Indentation Rules
+
+\\\`\\\`\\\`
++--------------------------------------------------+
+|  TEXT BLOCK INDENTATION                          |
+|                                                  |
+|  The CLOSING """ determines the left margin:    |
+|                                                  |
+|  String s = """                                  |
+|          Hello      <-- 10 spaces from left      |
+|          World      <-- 10 spaces from left      |
+|          """;       <-- closing at col 10         |
+|                                                  |
+|  Result: "Hello\\nWorld" (no leading spaces!)     |
+|                                                  |
+|  Move closing """ LEFT = add indentation:       |
+|  String s = """                                  |
+|          Hello                                   |
+|          World                                   |
+|      """;           <-- closing at col 6          |
+|                                                  |
+|  Result: "    Hello\\n    World" (4 spaces each)  |
++--------------------------------------------------+
+\\\`\\\`\\\`
+
+### String Interpolation with formatted()
+
+\\\`\\\`\\\`java
+String name = "Alice";
+int age = 30;
+
+// Using formatted() on text blocks
+String message = """
+        Dear %s,
+        You are %d years old.
+        Welcome to Java %d!
+        """.formatted(name, age, 21);
+
+// Using String.format()
+String query = String.format("""
+        SELECT * FROM users
+        WHERE name = '%s'
+        AND age > %d
+        """, name, age);
+\\\`\\\`\\\``},{id:`primitive-streams`,title:`Primitive Streams (IntStream, LongStream) & Performance`,content:`## Primitive Streams & Performance Optimization
+
+When processing large numeric sequences with \`Stream<Integer>\`, Java creates thousands of wrapper objects (\`Integer\` instances) via **autoboxing**, which puts heavy pressure on the Garbage Collector and degrades cache locality.
+
+### Autoboxing Penalty vs Primitive Streams
+
+\`\`\`
+Stream<Integer> (Boxed):
+  [ Pointer ] ---> [ Integer Object: 24 bytes overhead ] (Scattered across Heap)
+  [ Pointer ] ---> [ Integer Object: 24 bytes overhead ]
+
+IntStream (Unboxed):
+  [ 4-byte int ][ 4-byte int ][ 4-byte int ] (Continuous Primitive Array in CPU Cache)
+\`\`\`
+
+### Specialized Primitive Stream Types
+
+Java provides three primitive stream specializations in \`java.util.stream\`:
+1. **\`IntStream\`** (for \`int\`, \`short\`, \`byte\`, \`char\`)
+2. **\`LongStream\`** (for \`long\`)
+3. **\`DoubleStream\`** (for \`double\`, \`float\`)
+
+\`\`\`java
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
+// 1. Range generation
+IntStream.range(1, 100);       // 1 to 99 (exclusive)
+IntStream.rangeClosed(1, 100); // 1 to 100 (inclusive)
+
+// 2. Direct numeric aggregations (No boxing!)
+int sum = IntStream.rangeClosed(1, 1000).sum();          // 500500
+double avg = IntStream.of(10, 20, 30, 40).average().orElse(0.0); // 25.0
+int max = IntStream.of(5, 8, 2, 9).max().orElse(0);      // 9
+long count = IntStream.range(0, 1000).filter(n -> n % 2 == 0).count(); // 500
+
+// 3. Converting between Object Streams and Primitive Streams
+List<String> words = List.of("apple", "banana", "cherry");
+
+// mapToInt avoids boxing Integer
+int totalLength = words.stream()
+    .mapToInt(String::length)
+    .sum();
+
+// boxed() converts IntStream back to Stream<Integer>
+List<Integer> numbers = IntStream.rangeClosed(1, 10)
+    .boxed()
+    .toList();
+\`\`\`
+
+### Performance Comparison: \`Stream<Integer>\` vs \`IntStream\`
+
+| Stream Type | 10,000,000 Numbers Sum Time | Memory Allocation | GC Pauses |
+|-------------|-----------------------------|-------------------|-----------|
+| \`Stream<Integer>\` | ~120 ms | ~240 MB (Objects) | High |
+| \`IntStream\` | **~8 ms** (15x faster!) | **0 MB** (Stack / Cache) | **Zero** |`},{id:`advanced-collectors`,title:`Advanced Custom Collectors & Downstream Reductions`,content:`## Advanced Collectors & Downstream Reductions
+
+The \`Collectors\` utility class provides deep composition tools to group, transform, and aggregate collections in complex business applications.
+
+### 1. Multi-Level Grouping with Downstream Collectors
+
+\`\`\`java
+record Employee(String name, String department, String city, int salary) {}
+
+List<Employee> employees = List.of(
+    new Employee("Alice", "Engineering", "New York", 120000),
+    new Employee("Bob", "Engineering", "London", 110000),
+    new Employee("Charlie", "HR", "New York", 85000),
+    new Employee("Dave", "Engineering", "New York", 130000),
+    new Employee("Eve", "HR", "London", 90000)
+);
+
+// Group by Department -> Count employees
+Map<String, Long> countByDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::department, Collectors.counting()));
+// {Engineering=3, HR=2}
+
+// Group by Department -> Average salary
+Map<String, Double> avgSalaryByDept = employees.stream()
+    .collect(Collectors.groupingBy(
+        Employee::department, 
+        Collectors.averagingInt(Employee::salary)
+    ));
+// {Engineering=120000.0, HR=87500.0}
+
+// Group by Department -> Highest earner in each department
+Map<String, Optional<Employee>> topEarnerByDept = employees.stream()
+    .collect(Collectors.groupingBy(
+        Employee::department,
+        Collectors.maxBy(Comparator.comparingInt(Employee::salary))
+    ));
+
+// Group by Department -> List of names only (using mapping downstream collector)
+Map<String, List<String>> namesByDept = employees.stream()
+    .collect(Collectors.groupingBy(
+        Employee::department,
+        Collectors.mapping(Employee::name, Collectors.toList())
+    ));
+// {Engineering=[Alice, Bob, Dave], HR=[Charlie, Eve]}
+\`\`\`
+
+### 2. \`collectingAndThen\` (Post-processing results)
+
+\`\`\`java
+// Extract top earner without returning Optional:
+Map<String, Employee> topEarners = employees.stream()
+    .collect(Collectors.groupingBy(
+        Employee::department,
+        Collectors.collectingAndThen(
+            Collectors.maxBy(Comparator.comparingInt(Employee::salary)),
+            Optional::get
+        )
+    ));
+\`\`\`
+
+### 3. Custom Collector using \`Collector.of()\`
+
+\`\`\`java
+// Custom Collector that concatenates strings with brackets: [a, b, c]
+Collector<String, StringJoiner, String> bracketCollector = Collector.of(
+    () -> new StringJoiner(", ", "[", "]"), // supplier
+    StringJoiner::add,                      // accumulator
+    StringJoiner::merge,                    // combiner (for parallel streams)
+    StringJoiner::toString                  // finisher
+);
+
+String result = List.of("Java", "Kotlin", "Scala").stream()
+    .collect(bracketCollector);
+System.out.println(result); // [Java, Kotlin, Scala]
+\`\`\``}]},{id:`annotations-reflection`,title:`Annotations & Reflection`,icon:`Tag`,color:`#c084fc`,chapters:[{id:`annotations`,title:`Annotations`,content:`## Annotations
+
+Annotations provide **metadata** about code — they don't directly affect execution but are used by the compiler, frameworks, and runtime tools.
+
+### Built-in Annotations
+
+\\\`\\\`\\\`java
+// @Override — compile-time check that method overrides parent
+@Override
+public String toString() { return "MyClass"; }
+
+// @Deprecated — marks API as obsolete
+@Deprecated(since = "17", forRemoval = true)
+public void oldMethod() { }
+
+// @SuppressWarnings — silence compiler warnings
+@SuppressWarnings("unchecked")
+List<String> list = (List) rawList;
+
+// @FunctionalInterface — compile-time check for single abstract method
+@FunctionalInterface
+interface Processor { void process(); }
+
+// @SafeVarargs — suppress unchecked warnings for varargs
+@SafeVarargs
+static <T> List<T> asList(T... elements) {
+    return List.of(elements);
+}
+\\\`\\\`\\\`
+
+### Custom Annotations
+
+\\\`\\\`\\\`java
+// Define a custom annotation
+@Retention(RetentionPolicy.RUNTIME)  // available at runtime
+@Target(ElementType.METHOD)          // can only be on methods
+public @interface Cacheable {
+    int ttlSeconds() default 300;
+    String key() default "";
+}
+
+// Use it
+public class UserService {
+    @Cacheable(ttlSeconds = 600, key = "user")
+    public User findUser(String id) {
+        return database.query(id);
+    }
+}
+\\\`\\\`\\\`
+
+### Retention Policies
+
+| Policy | Available At | Use Case |
+|--------|-------------|----------|
+| SOURCE | Compile time only | @Override, @SuppressWarnings |
+| CLASS | In .class file (default) | Bytecode analysis tools |
+| RUNTIME | Via Reflection at runtime | Frameworks (Spring, JPA) |
+
+### Common Framework Annotations
+
+| Annotation | Framework | Purpose |
+|-----------|-----------|---------|
+| @Component | Spring | Bean registration |
+| @Autowired | Spring | Dependency injection |
+| @Entity | JPA | Database table mapping |
+| @Test | JUnit | Test method marker |
+| @GetMapping | Spring MVC | HTTP GET endpoint |
+| @JsonProperty | Jackson | JSON field mapping |
+\\`},{id:`reflection`,title:`Reflection API`,content:`## Reflection
+
+Reflection lets you **inspect and modify** classes, methods, and fields at runtime — powerful but use with care.
+
+### Inspecting Classes
+
+\\\`\\\`\\\`java
+// Get Class object
+Class<?> clazz = String.class;
+Class<?> clazz2 = "Hello".getClass();
+Class<?> clazz3 = Class.forName("java.lang.String");
+
+// Inspect
+System.out.println(clazz.getName());        // java.lang.String
+System.out.println(clazz.getSimpleName());   // String
+System.out.println(clazz.getPackageName());  // java.lang
+System.out.println(clazz.getSuperclass());   // java.lang.Object
+
+// Get all public methods
+for (Method m : clazz.getMethods()) {
+    System.out.println(m.getName() + " -> " + m.getReturnType());
+}
+
+// Get all declared fields (including private)
+for (Field f : clazz.getDeclaredFields()) {
+    System.out.println(f.getName() + ": " + f.getType());
+}
+\\\`\\\`\\\`
+
+### Dynamic Invocation
+
+\\\`\\\`\\\`java
+// Create instance dynamically
+Class<?> clazz = Class.forName("com.app.UserService");
+Object instance = clazz.getDeclaredConstructor().newInstance();
+
+// Invoke method dynamically
+Method method = clazz.getMethod("findUser", String.class);
+Object result = method.invoke(instance, "user-123");
+
+// Access private fields
+Field field = clazz.getDeclaredField("cache");
+field.setAccessible(true);  // bypass access control
+Object value = field.get(instance);
+\\\`\\\`\\\`
+
+### Reading Annotations at Runtime
+
+\\\`\\\`\\\`java
+// Check and read annotations
+Method method = UserService.class.getMethod("findUser", String.class);
+
+if (method.isAnnotationPresent(Cacheable.class)) {
+    Cacheable cache = method.getAnnotation(Cacheable.class);
+    System.out.println("TTL: " + cache.ttlSeconds()); // 600
+    System.out.println("Key: " + cache.key());         // "user"
+}
+\\\`\\\`\\\`
+
+> **⚠️ Performance Warning**: Reflection is **10-100x slower** than direct calls. Use it for framework initialization, not hot paths. Modern frameworks use compile-time annotation processing when possible.`}]},{id:`memory-gc`,title:`Memory Management & GC`,icon:`HardDrive`,color:`#fb923c`,chapters:[{id:`memory-model`,title:`JVM Memory Model Deep Dive`,content:`## JVM Memory Model
+
+### Memory Areas Explained
+
+\\\`\\\`\\\`
++=====================================================================+
+|                          JVM PROCESS MEMORY                         |
++=====================================================================+
+|                                                                     |
+|  +-------------------------------+  +----------------------------+  |
+|  |         HEAP MEMORY           |  |    NON-HEAP MEMORY         |  |
+|  |  (shared across all threads)  |  |                            |  |
+|  |                               |  |  Metaspace:                |  |
+|  |  Young Generation:            |  |    Class metadata          |  |
+|  |  +--------+------+------+    |  |    Method bytecode         |  |
+|  |  | Eden   |  S0  |  S1  |    |  |    Constant pool           |  |
+|  |  | Space  | (from)| (to) |    |  |    (grows as needed)      |  |
+|  |  +--------+------+------+    |  |                            |  |
+|  |                               |  |  Code Cache:               |  |
+|  |  Old Generation:              |  |    JIT compiled code       |  |
+|  |  +---------------------------+|  |                            |  |
+|  |  | Long-lived objects        ||  |  Thread Stacks:            |  |
+|  |  | (survived multiple GCs)   ||  |    Local variables         |  |
+|  |  +---------------------------+|  |    Method call frames      |  |
+|  +-------------------------------+  +----------------------------+  |
++=====================================================================+
+\\\`\\\`\\\`
+
+### Object Lifecycle in Memory
+
+\\\`\\\`\\\`
+                    Object Lifecycle
+    +----------+     Minor GC      +----------+
+    |  Eden    | ----------------> | Survivor |
+    |  (new)   |   (if alive)      |  Space   |
+    +----------+                   +----------+
+                                       |
+                                       | After N minor GCs
+                                       | (age threshold)
+                                       v
+                                  +----------+     Major GC
+                                  |   Old    | ---------> Deallocated
+                                  |   Gen    |  (if dead)
+                                  +----------+
+\\\`\\\`\\\`
+
+### Stack vs Heap
+
+| Feature | Stack | Heap |
+|---------|-------|------|
+| Stores | Primitives, references | Objects, arrays |
+| Thread safety | Thread-private | Shared (needs sync) |
+| Speed | Very fast (LIFO) | Slower (GC managed) |
+| Size | Small (~512KB-1MB) | Large (configurable) |
+| Cleanup | Auto on method return | Garbage Collector |
+| Error | StackOverflowError | OutOfMemoryError |
+
+\\\`\\\`\\\`java
+void example() {
+    int x = 42;              // x on Stack
+    String s = "Hello";      // s (ref) on Stack, "Hello" in String Pool
+    int[] arr = new int[10]; // arr (ref) on Stack, array object on Heap
+    Person p = new Person(); // p (ref) on Stack, Person object on Heap
+}
+// Method returns -> Stack frame popped -> x, s, arr, p refs removed
+// Heap objects become eligible for GC if no other references exist
+\\\`\\\`\\\``},{id:`garbage-collection`,title:`Garbage Collection`,content:`## Garbage Collection (GC)
+
+The JVM automatically reclaims memory from objects that are no longer reachable. You never manually free memory in Java.
+
+### GC Roots & Reachability
+
+\\\`\\\`\\\`
++----------------------------------+
+|         GC ROOTS                 |
+|  (starting points for marking)  |
++----------------------------------+
+|  - Local variables on Stack     |
+|  - Active threads               |
+|  - Static fields                |
+|  - JNI references               |
++----------------------------------+
+          |
+          v
+  +-----------+       +-----------+
+  | Object A  | ----> | Object B  |  <- reachable (alive)
+  +-----------+       +-----------+
+                            |
+                            v
+                      +-----------+
+                      | Object C  |  <- reachable (alive)
+                      +-----------+
+
+  +-----------+       +-----------+
+  | Object D  | ----> | Object E  |  <- UNREACHABLE (garbage!)
+  +-----------+       +-----------+
+  (no GC root path)
+\\\`\\\`\\\`
+
+### GC Algorithms in Java
+
+| GC | Best For | Key Feature |
+|----|----------|-------------|
+| **G1 GC** (default) | General purpose | Low-pause, region-based |
+| **ZGC** | Ultra-low latency | Sub-millisecond pauses |
+| **Shenandoah** | Low latency | Concurrent compaction |
+| **Parallel GC** | Throughput | Max throughput, longer pauses |
+| **Serial GC** | Small apps | Single-threaded, simple |
+
+### Tuning JVM Memory
+
+\\\`\\\`\\\`java
+// JVM flags
+// -Xms512m        Initial heap size
+// -Xmx4g          Maximum heap size
+// -XX:+UseG1GC    Use G1 garbage collector
+// -XX:+UseZGC     Use ZGC (Java 15+)
+// -XX:MaxGCPauseMillis=200  Target max GC pause
+// -Xss512k        Thread stack size
+// -XX:+PrintGCDetails  Print GC activity
+
+// Common memory leaks in Java:
+// 1. Static collections that grow unbounded
+static List<Object> cache = new ArrayList<>(); // ❌ never cleared
+
+// 2. Unclosed resources
+// ❌ Connection conn = getConnection(); // never closed
+// ✅ try (var conn = getConnection()) { ... }
+
+// 3. Inner class references
+// Non-static inner classes hold reference to outer class
+
+// 4. ThreadLocal not removed
+ThreadLocal<byte[]> buffer = new ThreadLocal<>();
+// ❌ Never call buffer.remove() after use
+\\\`\\\`\\\`
+
+### Best Practices
+
+- **Prefer short-lived objects** — they get collected in cheap minor GCs
+- **Avoid finalizers** — use \\\\\\\`try-with-resources\\\\\\\` instead
+- **Nullify large objects** when done (helps GC in long-lived scopes)
+- **Use WeakReference / SoftReference** for caches
+- **Monitor with tools**: \\\\\\\`jvisualvm\\\\\\\`, \\\\\\\`jconsole\\\\\\\`, \\\\\\\`jstat -gc\\\\\\\``}]},{id:`design-patterns`,title:`Design Patterns`,icon:`Puzzle`,color:`#a78bfa`,chapters:[{id:`creational-patterns`,title:`Creational Patterns`,content:`## Creational Design Patterns
+
+### Singleton — One Instance Only
+
+\\\`\\\`\\\`java
+// Thread-safe Singleton (enum-based — Joshua Bloch recommended)
+public enum DatabaseConnection {
+    INSTANCE;
+
+    private Connection conn;
+
+    DatabaseConnection() {
+        conn = DriverManager.getConnection("jdbc:...");
+    }
+
+    public Connection getConnection() { return conn; }
+}
+
+// Usage
+DatabaseConnection.INSTANCE.getConnection();
+\\\`\\\`\\\`
+
+### Builder — Step-by-Step Construction
+
+\\\`\\\`\\\`java
+public class User {
+    private final String name;
+    private final String email;
+    private final int age;
+    private final String phone;
+
+    private User(Builder builder) {
+        this.name = builder.name;
+        this.email = builder.email;
+        this.age = builder.age;
+        this.phone = builder.phone;
+    }
+
+    public static class Builder {
+        private final String name;   // required
+        private String email;        // optional
+        private int age;
+        private String phone;
+
+        public Builder(String name) { this.name = name; }
+
+        public Builder email(String email) {
+            this.email = email; return this;
+        }
+        public Builder age(int age) {
+            this.age = age; return this;
+        }
+        public Builder phone(String phone) {
+            this.phone = phone; return this;
+        }
+        public User build() { return new User(this); }
+    }
+}
+
+// Fluent API
+User user = new User.Builder("Alice")
+    .email("alice@example.com")
+    .age(30)
+    .build();
+\\\`\\\`\\\`
+
+### Factory Method
+
+\\\`\\\`\\\`java
+// Define product interface
+interface Notification {
+    void send(String message);
+}
+
+// Concrete products
+class EmailNotification implements Notification {
+    public void send(String msg) { /* send email */ }
+}
+class SMSNotification implements Notification {
+    public void send(String msg) { /* send SMS */ }
+}
+class PushNotification implements Notification {
+    public void send(String msg) { /* push notification */ }
+}
+
+// Factory
+class NotificationFactory {
+    public static Notification create(String type) {
+        return switch (type.toUpperCase()) {
+            case "EMAIL" -> new EmailNotification();
+            case "SMS"   -> new SMSNotification();
+            case "PUSH"  -> new PushNotification();
+            default -> throw new IllegalArgumentException("Unknown: " + type);
+        };
+    }
+}
+
+Notification n = NotificationFactory.create("EMAIL");
+n.send("Hello!");
+\\\`\\\`\\\``},{id:`behavioral-patterns`,title:`Behavioral Patterns`,content:`## Behavioral Design Patterns
+
+### Strategy — Swap Algorithms at Runtime
+
+\\\`\\\`\\\`
++----------------------------+
+|        Context             |
+|  (uses a Strategy)         |
+|                            |
+|  strategy.execute(data)    |
++------------+---------------+
+             |
+             | (interface)
+             v
++----------------------------+
+|     Strategy Interface     |
+|  execute(data)             |
++----------------------------+
+    ^          ^          ^
+    |          |          |
++-------+  +-------+  +-------+
+| Strat |  | Strat |  | Strat |
+|   A   |  |   B   |  |   C   |
++-------+  +-------+  +-------+
+\\\`\\\`\\\`
+
+\\\`\\\`\\\`java
+// Using lambdas (modern approach)
+@FunctionalInterface
+interface SortStrategy {
+    void sort(List<Integer> list);
+}
+
+class Sorter {
+    private SortStrategy strategy;
+
+    public Sorter(SortStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void sort(List<Integer> data) {
+        strategy.sort(data);
+    }
+}
+
+// Usage — strategies as lambdas
+var sorter = new Sorter(list -> Collections.sort(list));
+sorter.sort(myList);
+
+// Swap strategy at runtime
+sorter = new Sorter(list -> list.sort(Comparator.reverseOrder()));
+\\\`\\\`\\\`
+
+### Observer — Event Notification
+
+\\\`\\\`\\\`java
+// Modern Observer with functional interfaces
+class EventBus<T> {
+    private final List<Consumer<T>> listeners = new ArrayList<>();
+
+    public void subscribe(Consumer<T> listener) {
+        listeners.add(listener);
+    }
+
+    public void publish(T event) {
+        listeners.forEach(l -> l.accept(event));
+    }
+}
+
+// Usage
+var bus = new EventBus<String>();
+bus.subscribe(msg -> System.out.println("Logger: " + msg));
+bus.subscribe(msg -> System.out.println("Analytics: " + msg));
+bus.publish("User signed up!");
+// Logger: User signed up!
+// Analytics: User signed up!
+\\\`\\\`\\\`
+
+### Iterator — Traverse Collections
+
+\\\`\\\`\\\`java
+// Java's for-each loop uses Iterator internally
+List<String> names = List.of("Alice", "Bob", "Charlie");
+
+// These are equivalent:
+for (String name : names) { }
+
+// Under the hood:
+Iterator<String> it = names.iterator();
+while (it.hasNext()) {
+    String name = it.next();
+}
+\\\`\\\`\\\``},{id:`structural-patterns`,title:`Structural Patterns`,content:`## Structural Design Patterns
+
+### Decorator — Add Behavior Dynamically
+
+\\\`\\\`\\\`
++-------------------+
+|   Component       |  <-- Base interface
+|   operation()     |
++-------------------+
+        ^
+        |
++-------------------+     +-------------------------+
+| ConcreteComponent |     |      Decorator          |
+| operation()       |     |  wraps a Component      |
++-------------------+     |  operation() {          |
+                          |    wrapped.operation(); |
+                          |    // + extra behavior  |
+                          |  }                      |
+                          +-------------------------+
+\\\`\\\`\\\`
+
+\\\`\\\`\\\`java
+// Using Java I/O streams — classic Decorator pattern
+InputStream raw = new FileInputStream("data.gz");
+InputStream buffered = new BufferedInputStream(raw);        // adds buffering
+InputStream unzipped = new GZIPInputStream(buffered);      // adds decompression
+Reader reader = new InputStreamReader(unzipped, "UTF-8");   // adds char decoding
+
+// Functional decorator with lambdas
+Function<String, String> trim = String::strip;
+Function<String, String> lower = String::toLowerCase;
+Function<String, String> decorated = trim.andThen(lower);
+
+System.out.println(decorated.apply("  HELLO  ")); // "hello"
+\\\`\\\`\\\`
+
+### Adapter — Bridge Incompatible Interfaces
+
+\\\`\\\`\\\`java
+// Legacy system uses XML
+interface LegacyXMLParser {
+    String parseXML(String xml);
+}
+
+// New system expects JSON
+interface JsonParser {
+    String parseJson(String json);
+}
+
+// Adapter bridges the gap
+class XmlToJsonAdapter implements JsonParser {
+    private final LegacyXMLParser xmlParser;
+
+    XmlToJsonAdapter(LegacyXMLParser xmlParser) {
+        this.xmlParser = xmlParser;
+    }
+
+    @Override
+    public String parseJson(String json) {
+        String xml = convertJsonToXml(json); // conversion logic
+        return xmlParser.parseXML(xml);
+    }
+}
+\\\`\\\`\\\`
+
+### Common Patterns Quick Reference
+
+| Pattern | Type | Purpose | Java Example |
+|---------|------|---------|--------------|
+| Singleton | Creational | One instance | Runtime.getRuntime() |
+| Builder | Creational | Complex construction | StringBuilder |
+| Factory | Creational | Delegate instantiation | Calendar.getInstance() |
+| Strategy | Behavioral | Swap algorithms | Comparator |
+| Observer | Behavioral | Event notification | PropertyChangeListener |
+| Iterator | Behavioral | Traverse collection | java.util.Iterator |
+| Decorator | Structural | Add behavior | BufferedInputStream |
+| Adapter | Structural | Bridge interfaces | InputStreamReader |
+| Proxy | Structural | Control access | java.lang.reflect.Proxy |`}]},{id:`string-apis`,title:`String APIs & Regex`,icon:`Type`,color:`#22d3ee`,chapters:[{id:`string-methods`,title:`Essential String Methods`,content:`## Comprehensive String API
+
+### String Immutability
+
+\\\`\\\`\\\`
++--------------------------------------------------+
+|  STRING IMMUTABILITY IN JAVA                     |
+|                                                  |
+|  String s1 = "Hello";                            |
+|  String s2 = s1.concat(" World");                |
+|                                                  |
+|  Heap:                                           |
+|  +----------+     +---------------+              |
+|  | "Hello"  |     | "Hello World" | <- NEW obj   |
+|  +----------+     +---------------+              |
+|       ^                  ^                       |
+|       |                  |                       |
+|     s1 (unchanged)     s2 (points to new)        |
+|                                                  |
+|  Original "Hello" is NEVER modified.             |
+|  Every "modification" creates a NEW String.      |
++--------------------------------------------------+
+\\\`\\\`\\\`
+
+### Modern String Methods (Java 11-21)
+
+\\\`\\\`\\\`java
+// Java 11+ methods
+"  hello  ".strip();         // "hello" (Unicode-aware trim)
+"  hello  ".stripLeading();  // "hello  "
+"  hello  ".stripTrailing(); // "  hello"
+"  ".isBlank();              // true (empty or whitespace)
+"Hi\\nWorld".lines().toList();// ["Hi", "World"]
+"Ha".repeat(3);              // "HaHaHa"
+
+// Java 12+
+"hello".indent(4);           // "    hello\\n"
+"hello".transform(s -> s.toUpperCase());  // "HELLO"
+
+// Java 15+ Text Block methods
+"Hello World".translateEscapes();  // process \\n, \\t etc.
+"Hello World".stripIndent();       // remove incidental whitespace
+
+// Java 21+ Template (Preview)
+// String template = STR."Hello \\{name}, you are \\{age}.";
+\\\`\\\`\\\`
+
+### StringBuilder vs StringBuffer vs String
+
+| Feature | String | StringBuilder | StringBuffer |
+|---------|--------|---------------|--------------|
+| Mutable | ❌ No | ✅ Yes | ✅ Yes |
+| Thread-safe | ✅ (immutable) | ❌ No | ✅ Yes (synchronized) |
+| Performance | Slow for concat | **Fastest** | Slower (sync overhead) |
+| Use when | Few modifications | Single-threaded building | Multi-threaded building |
+
+\\\`\\\`\\\`java
+// ❌ Slow — creates N intermediate String objects
+String result = "";
+for (int i = 0; i < 10000; i++) {
+    result += i;  // O(n^2) — copies entire string each time!
+}
+
+// ✅ Fast — modifies internal buffer
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 10000; i++) {
+    sb.append(i);  // O(1) amortized
+}
+String result2 = sb.toString();
+\\\`\\\`\\\`
+
+### String Comparison Deep Dive
+
+\\\`\\\`\\\`java
+String a = "Hello";          // String Pool
+String b = "Hello";          // Same pool reference
+String c = new String("Hello"); // New Heap object
+
+System.out.println(a == b);      // true  (same pool reference)
+System.out.println(a == c);      // false (different objects!)
+System.out.println(a.equals(c)); // true  (same content) ✅
+
+// ALWAYS use .equals() for String comparison, NEVER ==
+\\\`\\\`\\\``},{id:`regex`,title:`Regular Expressions (Regex)`,content:`## Regular Expressions in Java
+
+### Common Regex Patterns
+
+| Pattern | Matches | Example |
+|---------|---------|---------|
+| \\\\\\\\d | Any digit | "5" |
+| \\\\\\\\D | Non-digit | "a" |
+| \\\\\\\\w | Word char [a-zA-Z0-9_] | "k" |
+| \\\\\\\\s | Whitespace | " " |
+| . | Any char (except newline) | "x" |
+| [abc] | a, b, or c | "b" |
+| [^abc] | NOT a, b, or c | "z" |
+| a{2,4} | 2 to 4 'a's | "aaa" |
+| ^...$ | Start to end of line | Full match |
+| (group) | Capture group | Extract sub-match |
+
+### Using Regex in Java
+
+\\\`\\\`\\\`java
+// Simple matching
+boolean isEmail = "user@example.com"
+    .matches("[\\\\w.]+@[\\\\w.]+\\\\.[a-z]{2,}");  // true
+
+// Pattern + Matcher (reusable, better performance)
+Pattern emailPattern = Pattern.compile(
+    "([\\\\w.]+)@([\\\\w.]+)\\\\.([a-z]{2,})"
+);
+Matcher matcher = emailPattern.matcher("alice@gmail.com");
+
+if (matcher.matches()) {
+    System.out.println("User: " + matcher.group(1));   // alice
+    System.out.println("Domain: " + matcher.group(2)); // gmail
+    System.out.println("TLD: " + matcher.group(3));    // com
+}
+
+// Find all matches
+String text = "Call 123-4567 or 987-6543";
+Pattern phonePattern = Pattern.compile("\\\\d{3}-\\\\d{4}");
+Matcher m = phonePattern.matcher(text);
+while (m.find()) {
+    System.out.println("Found: " + m.group());
+}
+// Found: 123-4567
+// Found: 987-6543
+
+// Replace
+String cleaned = "Hello   World".replaceAll("\\\\s+", " ");
+// "Hello World"
+
+// Split
+String[] parts = "a,b,,c".split(",", -1);
+// ["a", "b", "", "c"]
+\\\`\\\`\\\`
+
+### Named Groups (Java 7+)
+
+\\\`\\\`\\\`java
+Pattern datePattern = Pattern.compile(
+    "(?<year>\\\\d{4})-(?<month>\\\\d{2})-(?<day>\\\\d{2})"
+);
+Matcher m2 = datePattern.matcher("2024-12-25");
+if (m2.matches()) {
+    System.out.println("Year: " + m2.group("year"));   // 2024
+    System.out.println("Month: " + m2.group("month")); // 12
+    System.out.println("Day: " + m2.group("day"));     // 25
+}
+\\\`\\\`\\\`
+
+### Common Validation Patterns
+
+\\\`\\\`\\\`java
+// Email validation
+static final Pattern EMAIL = Pattern.compile(
+    "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}$"
+);
+
+// Phone number (US format)
+static final Pattern PHONE = Pattern.compile(
+    "^\\\\(?\\\\d{3}\\\\)?[-.\\\\s]?\\\\d{3}[-.\\\\s]?\\\\d{4}$"
+);
+
+// Password: 8+ chars, 1 upper, 1 lower, 1 digit, 1 special
+static final Pattern STRONG_PASSWORD = Pattern.compile(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)(?=.*[@#$%^&+=]).{8,}$"
+);
+
+// IP address
+static final Pattern IPV4 = Pattern.compile(
+    "^((25[0-5]|2[0-4]\\\\d|[01]?\\\\d\\\\d?)\\\\.){3}(25[0-5]|2[0-4]\\\\d|[01]?\\\\d\\\\d?)$"
+);
+\\\`\\\`\\\``}]},{id:`exception-handling`,title:`Exception Handling`,icon:`ShieldAlert`,color:`#f87171`,chapters:[{id:`exceptions`,title:`Exceptions & Error Handling`,content:`## Exception Handling
 
 ### Exception Hierarchy
 
@@ -4105,6 +5451,168 @@ Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
 Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);
 Files.delete(path); // throws if not exists
 Files.deleteIfExists(path);
+\`\`\``}]},{id:`database-networking`,title:`Networking, HTTP & JDBC`,icon:`Globe`,color:`#38bdf8`,chapters:[{id:`http-client`,title:`Modern HTTP Client (Java 11-21)`,content:`## Modern HTTP Client (\`java.net.http\`)
+
+Java 11 introduced a modern, non-blocking, HTTP/2-compliant **HttpClient** that replaces outdated \`HttpURLConnection\` and external libraries like Apache HttpClient for standard REST calls.
+
+### Core Architecture
+
+\`\`\`
++---------------------+      +---------------------+      +---------------------+
+|     HttpClient      | ---> |     HttpRequest     | ---> |    HttpResponse<T>  |
+|  (Client Instance)  |      |  (URI, Method, Body)|      | (Status, Body, Head)|
++---------------------+      +---------------------+      +---------------------+
+\`\`\`
+
+### Synchronous GET & POST Requests
+
+\`\`\`java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+// 1. Create client (reusable, thread-safe)
+HttpClient client = HttpClient.newBuilder()
+    .version(HttpClient.Version.HTTP_2)
+    .connectTimeout(Duration.ofSeconds(10))
+    .followRedirects(HttpClient.Redirect.NORMAL)
+    .build();
+
+// 2. Build GET Request
+HttpRequest getRequest = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.github.com/users/octocat"))
+    .header("Accept", "application/json")
+    .GET()
+    .build();
+
+// Send synchronously
+HttpResponse<String> response = client.send(
+    getRequest, 
+    HttpResponse.BodyHandlers.ofString()
+);
+
+System.out.println("Status: " + response.statusCode());
+System.out.println("Body: " + response.body());
+
+// 3. Build POST Request with JSON body
+String jsonPayload = """
+    {
+      "title": "Learn Java 21",
+      "completed": false
+    }
+    """;
+
+HttpRequest postRequest = HttpRequest.newBuilder()
+    .uri(URI.create("https://jsonplaceholder.typicode.com/todos"))
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+    .build();
+
+HttpResponse<String> postResponse = client.send(
+    postRequest, 
+    HttpResponse.BodyHandlers.ofString()
+);
+System.out.println("Created Status: " + postResponse.statusCode());
+\`\`\`
+
+### Asynchronous Non-Blocking Requests (\`CompletableFuture\`)
+
+\`\`\`java
+// Send request asynchronously without blocking caller thread:
+client.sendAsync(getRequest, HttpResponse.BodyHandlers.ofString())
+    .thenApply(HttpResponse::body)
+    .thenAccept(body -> System.out.println("Async Body: " + body))
+    .exceptionally(err -> {
+        System.err.println("Request failed: " + err.getMessage());
+        return null;
+    });
+\`\`\``},{id:`jdbc-database`,title:`JDBC & Database Persistence`,content:`## JDBC (Java Database Connectivity)
+
+JDBC is the standard Java API for connecting to relational databases (PostgreSQL, MySQL, Oracle, SQLite, H2).
+
+### Complete CRUD Lifecycle with \`PreparedStatement\`
+
+\`\`\`java
+import java.sql.*;
+
+public class DatabaseExample {
+    private static final String URL = "jdbc:postgresql://localhost:5432/mydb";
+    private static final String USER = "postgres";
+    private static final String PASS = "secret";
+
+    public static void main(String[] args) {
+        // SQL query with parameterized placeholders (?) to prevent SQL Injection!
+        String insertSql = "INSERT INTO users (name, email, age) VALUES (?, ?, ?)";
+        String selectSql = "SELECT id, name, email, age FROM users WHERE age >= ?";
+
+        // Always use try-with-resources for Connection, Statement & ResultSet!
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+
+            // 1. Insert Record
+            insertStmt.setString(1, "Karthik");
+            insertStmt.setString(2, "karthik@example.com");
+            insertStmt.setInt(3, 25);
+            int rowsAffected = insertStmt.executeUpdate();
+            System.out.println("Rows inserted: " + rowsAffected);
+
+            // 2. Query Records
+            selectStmt.setInt(1, 18);
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                while (rs.next()) {
+                    long id = rs.getLong("id");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    int age = rs.getInt("age");
+                    System.out.printf("User #%d: %s (%s, age %d)%n", id, name, email, age);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+\`\`\`
+
+### ACID Transactions in JDBC
+
+\`\`\`java
+try (Connection conn = DriverManager.getConnection(URL, USER, PASS)) {
+    // Disable auto-commit to start a transaction
+    conn.setAutoCommit(false);
+
+    try (PreparedStatement debit = conn.prepareStatement(
+             "UPDATE accounts SET balance = balance - ? WHERE id = ?");
+         PreparedStatement credit = conn.prepareStatement(
+             "UPDATE accounts SET balance = balance + ? WHERE id = ?")) {
+
+        // Debit Account A
+        debit.setDouble(1, 500.0);
+        debit.setInt(2, 101);
+        debit.executeUpdate();
+
+        // Credit Account B
+        credit.setDouble(1, 500.0);
+        credit.setInt(2, 202);
+        credit.executeUpdate();
+
+        // Commit both operations together atomically
+        conn.commit();
+        System.out.println("Transfer successful!");
+
+    } catch (SQLException e) {
+        // Rollback on any failure to preserve consistency
+        conn.rollback();
+        System.err.println("Transaction rolled back: " + e.getMessage());
+    } finally {
+        conn.setAutoCommit(true);
+    }
+}
 \`\`\``}]},{id:`concurrency`,title:`Concurrency`,icon:`Layers`,color:`#60a5fa`,chapters:[{id:`threads-basics`,title:`Threads & Synchronization`,content:`## Concurrency in Java
 
 ### Creating Threads
@@ -4222,6 +5730,279 @@ CompletableFuture<List<Order>> orderFuture = CompletableFuture
 CompletableFuture<UserProfile> combined = userFuture
     .thenCombine(orderFuture, (user, orders) ->
         new UserProfile(user, orders));
+\`\`\``}]},{id:`bit-manipulation`,title:`Bit Manipulation & Theory`,icon:`Binary`,color:`#10b981`,chapters:[{id:`bitwise-basics`,title:`Bitwise Operators & 2's Complement`,content:`## Bitwise Operations & Binary Representation
+
+At the hardware level, all data is stored as binary digits (**bits**: \`0\` or \`1\`). Understanding bit manipulation allows you to write ultra-fast, memory-efficient code with **O(1) time and O(1) space**.
+
+### Java Primitive Integer Bit Widths
+
+| Type | Bit Width | Bytes | Value Range |
+|------|-----------|-------|-------------|
+| \`byte\` | 8 bits | 1 byte | -128 to 127 ($-2^7$ to $2^7-1$) |
+| \`short\` | 16 bits | 2 bytes | -32,768 to 32,767 ($-2^{15}$ to $2^{15}-1$) |
+| \`int\` | 32 bits | 4 bytes | -2,147,483,648 to 2,147,483,647 ($-2^{31}$ to $2^{31}-1$) |
+| \`long\` | 64 bits | 8 bytes | $-2^{63}$ to $2^{63}-1$ |
+
+### Two's Complement Representation (Signed Integers)
+
+Java represents all signed integers using **Two's Complement**.
+
+\`\`\`
++-------------------------------------------------------------------------------+
+|                        TWO'S COMPLEMENT (32-bit int)                          |
++-------------------------------------------------------------------------------+
+|  Bit 31 (MSB) | Bits 30 - 0                                                   |
+|  Sign Bit     | Magnitude Bits                                                |
+|  0 = Positive | Value = + (binary value)                                      |
+|  1 = Negative | Value = - (~binary value + 1)                                 |
++-------------------------------------------------------------------------------+
+
+Example: 
+  +5 in binary:  0000 0000 0000 0000 0000 0000 0000 0101
+  Invert bits (~5): 1111 1111 1111 1111 1111 1111 1111 1010
+  Add 1 (+1):       1111 1111 1111 1111 1111 1111 1111 1011  (= -5 in Two's Complement)
+\`\`\`
+
+### Fundamental Bitwise Operators
+
+\`\`\`
+1. AND (&)         2. OR (|)          3. XOR (^)         4. NOT (~)
+   0 & 0 = 0          0 | 0 = 0          0 ^ 0 = 0          ~0 = 1
+   0 & 1 = 0          0 | 1 = 1          0 ^ 1 = 1          ~1 = 0
+   1 & 0 = 0          1 | 0 = 1          1 ^ 0 = 1
+   1 & 1 = 1          1 | 1 = 1          1 ^ 1 = 0 (same=0)
+\`\`\`
+
+### Bitwise Shift Operators
+
+\`\`\`
++-------------------------------------------------------------------------------+
+|                              BIT SHIFT MECHANICS                              |
++-------------------------------------------------------------------------------+
+|  Operation        | Symbol | Behavior                                         |
+|-------------------+--------+--------------------------------------------------|
+| Left Shift        | a << k | Shifts bits left by k, fills right with 0s.      |
+|                   |        | Math equivalent: a * 2^k                         |
+|-------------------+--------+--------------------------------------------------|
+| Arithmetic Right  | a >> k | Shifts bits right by k, preserves SIGN bit (MSB).|
+| Shift (Signed)    |        | Math equivalent: a / 2^k                         |
+|-------------------+--------+--------------------------------------------------|
+| Logical Right     | a >>> k| Shifts bits right by k, ALWAYS fills left with 0s|
+| Shift (Unsigned)  |        | Unsigned shift (useful for bitmasks & hashing)   |
++-------------------------------------------------------------------------------+
+\`\`\`
+
+\`\`\`java
+int a = 5;       //  ...00000101 (binary)
+int b = 3;       //  ...00000011 (binary)
+
+System.out.println(a & b);   // 1  (AND:  ...00000001)
+System.out.println(a | b);   // 7  (OR:   ...00000111)
+System.out.println(a ^ b);   // 6  (XOR:  ...00000110)
+System.out.println(~a);      // -6 (NOT:  -(5+1) = -6)
+
+// Shift examples:
+int x = 4;       // ...00000100
+System.out.println(x << 2);  // 16 (4 * 2^2)
+System.out.println(x >> 1);  // 2  (4 / 2^1)
+
+int neg = -8;    // 11111111 11111111 11111111 11111000
+System.out.println(neg >> 1);   // -4 (sign preserved)
+System.out.println(neg >>> 1);  // 2147483644 (sign NOT preserved, 0 inserted)
+\`\`\``},{id:`bit-tricks`,title:`Essential Bit Manipulation Hacks & Tricks`,content:`## Essential Bit Manipulation Tricks & Hacks
+
+Mastering these bit formulas is essential for solving FAANG-level algorithmic challenges in O(1) time.
+
+### 1. Check, Set, Clear, and Toggle $i$-th Bit
+
+\`\`\`
+     Bit Index:   7   6   5   4   3   2   1   0
+     Number n:    0   0   1   0   1   1   0   1
+                                      ^
+                                  Target i=2
+\`\`\`
+
+\`\`\`java
+// 1. Check if i-th bit is set (1) or unset (0)
+public boolean isBitSet(int n, int i) {
+    return (n & (1 << i)) != 0;
+}
+
+// 2. Set the i-th bit to 1
+public int setBit(int n, int i) {
+    return n | (1 << i);
+}
+
+// 3. Clear the i-th bit to 0
+public int clearBit(int n, int i) {
+    return n & ~(1 << i);
+}
+
+// 4. Toggle the i-th bit (0 -> 1 or 1 -> 0)
+public int toggleBit(int n, int i) {
+    return n ^ (1 << i);
+}
+\`\`\`
+
+### 2. Brian Kernighan's Algorithm (Clear Lowest Set Bit)
+
+\`n & (n - 1)\` clears the **lowest (rightmost) set bit** of \`n\`.
+
+\`\`\`
+Example: n = 12 (binary 1100)
+  n     = 1100 (12)
+  n - 1 = 1011 (11)
+  n & (n-1) = 1000 (8)  <-- lowest set bit cleared!
+\`\`\`
+
+\`\`\`java
+// Count number of set bits (Hamming Weight) in O(number of 1s) time:
+public int countSetBits(int n) {
+    int count = 0;
+    while (n != 0) {
+        n = n & (n - 1); // Clears the lowest set bit in 1 operation!
+        count++;
+    }
+    return count;
+}
+// Note: Built-in method: Integer.bitCount(n);
+\`\`\`
+
+### 3. Power of Two Check
+
+A positive number is a power of 2 if and only if it has **exactly one set bit**.
+
+\`\`\`java
+public boolean isPowerOfTwo(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
+// Examples:
+// 8 (1000) & 7 (0111) = 0000 -> true
+// 6 (0110) & 5 (0101) = 0100 != 0 -> false
+\`\`\`
+
+### 4. Extract Lowest Set Bit (LSB)
+
+\`n & (-n)\` isolates the lowest set bit of \`n\`.
+
+\`\`\`
+Example: n = 12 (0000 1100)
+  -n = ~n + 1 = (1111 0011) + 1 = (1111 0100)
+  n & (-n) = (0000 1100) & (1111 0100) = 0000 0100 (4)
+\`\`\`
+
+\`\`\`java
+int lsb = n & (-n); // Used extensively in Fenwick Trees (Binary Indexed Trees)!
+\`\`\`
+
+### 5. XOR Properties & Single Number Problem
+
+\`\`\`
+XOR Properties:
+1. a ^ 0 = a
+2. a ^ a = 0 (self-cancellation)
+3. a ^ b ^ a = b (commutative & associative)
+\`\`\`
+
+\`\`\`java
+// Find single non-duplicate number in array where every other element appears twice:
+public int singleNumber(int[] nums) {
+    int unique = 0;
+    for (int num : nums) {
+        unique ^= num; // Duplicate pairs cancel out to 0!
+    }
+    return unique;
+}
+
+// Swap two variables without temporary variable:
+public void swap(int a, int b) {
+    a ^= b;
+    b ^= a;
+    a ^= b;
+}
+\`\`\``},{id:`bit-masking`,title:`Bitmasking, State Compression & Subsets`,content:`## Bitmasking & State Compression
+
+A **Bitmask** uses an integer's binary representation to represent a **set of boolean flags** or a **subset of elements**.
+
+### 1. Generating All $2^n$ Subsets (Power Set)
+
+If a set has $n$ elements, there are $2^n$ total subsets. We can map numbers from $0$ to $2^n - 1$ directly to subsets!
+
+\`\`\`
+Array: ["A", "B", "C"]  (n = 3, Total subsets = 2^3 = 8)
+
+Mask (Binary) | Included Elements | Subset
+--------------+-------------------+------------
+ 000 (0)      | None              | []
+ 001 (1)      | Index 0 (A)       | [A]
+ 010 (2)      | Index 1 (B)       | [B]
+ 011 (3)      | Index 0, 1 (A, B) | [A, B]
+ 100 (4)      | Index 2 (C)       | [C]
+ 101 (5)      | Index 0, 2 (A, C) | [A, C]
+ 110 (6)      | Index 1, 2 (B, C) | [B, C]
+ 111 (7)      | Index 0, 1, 2     | [A, B, C]
+\`\`\`
+
+\`\`\`java
+public List<List<Integer>> subsets(int[] nums) {
+    int n = nums.length;
+    int totalSubsets = 1 << n; // 2^n
+    List<List<Integer>> result = new ArrayList<>();
+
+    for (int mask = 0; mask < totalSubsets; mask++) {
+        List<Integer> current = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            // Check if i-th bit is set in mask
+            if ((mask & (1 << i)) != 0) {
+                current.add(nums[i]);
+            }
+        }
+        result.add(current);
+    }
+    return result;
+}
+\`\`\`
+
+### 2. Fast Character Set Representation (Alphabet Bitmask)
+
+Instead of using a \`HashSet<Character>\` or \`boolean[26]\` array, use a single 32-bit \`int\` bitmask!
+
+\`\`\`java
+// Check if word contains all unique lowercase letters ('a'-'z'):
+public boolean hasAllUniqueChars(String s) {
+    int mask = 0;
+    for (char c : s.toCharArray()) {
+        int bit = c - 'a';
+        if ((mask & (1 << bit)) != 0) {
+            return false; // Character already seen!
+        }
+        mask |= (1 << bit); // Mark character as seen
+    }
+    return true;
+}
+\`\`\`
+
+### 3. Java \`BitSet\` Class
+
+For sets larger than 64 bits, use Java's built-in \`java.util.BitSet\`:
+
+\`\`\`java
+BitSet bs1 = new BitSet(100);
+BitSet bs2 = new BitSet(100);
+
+bs1.set(2);
+bs1.set(5);
+bs1.set(10);
+
+bs2.set(5);
+bs2.set(20);
+
+// Bitwise operations directly on BitSets:
+bs1.and(bs2);      // Intersection: keeps only common bits (bit 5)
+bs1.or(bs2);       // Union: combines all set bits
+bs1.xor(bs2);      // Symmetric difference
+System.out.println(bs1.get(5)); // true
+System.out.println(bs1.cardinality()); // count of set bits
 \`\`\``}]},{id:`dsa-java`,title:`DSA in Java`,icon:`GitBranch`,color:`#2dd4bf`,chapters:[{id:`big-o`,title:`Big-O Notation & Complexity`,content:`## Big-O Notation
 
 Big-O describes how an algorithm's time or space grows as input size \`n\` increases.
