@@ -50,12 +50,17 @@ function formatSnippet(lines, lineNum, colNum) {
 
 export const testRunner = {
   async runCode(code, testCases, language = 'javascript', problemId = '') {
+    // Auto-detect Java code if language was accidentally left on JavaScript
+    const looksLikeJava = /^\s*(?:import\s+java|public\s+class|class\s+Solution\s*\{[\s\S]*public\s+(?:boolean|int|void|String|List|int\[\])|Set<|Map<|List<|int\[\]|boolean\[\])/m.test(code);
+    const effectiveLanguage = (language === 'javascript' && looksLikeJava) ? 'java' : language;
+
     // 1. In-Browser Native Java Engine
-    if (language === 'java') {
+    if (effectiveLanguage === 'java') {
       try {
         return await runJavaInBrowser(code, testCases, problemId);
       } catch (err) {
         console.error('Java runner error:', err);
+        const lines = code.split('\n');
         return {
           allPassed: false,
           totalTests: testCases.length,
@@ -69,10 +74,13 @@ export const testRunner = {
             passed: false,
             executionTimeMs: 0,
             logs: [],
-            error: `Java Engine Error: ${err.message}`,
+            error: `Compilation Error: ${err.message}`,
             errorDetails: {
               type: 'Compilation Error',
+              line: 1,
+              column: 1,
               message: err.message,
+              snippet: formatSnippet(lines, 1, 1),
               suggestion: 'Please verify your Java syntax and class structure.'
             }
           }))
@@ -81,12 +89,12 @@ export const testRunner = {
     }
 
     // 2. Python Runner (with fallback syntax linter)
-    if (language === 'python') {
+    if (effectiveLanguage === 'python') {
       return this.runPython(code, testCases);
     }
 
     // 3. C++ Runner
-    if (language === 'cpp') {
+    if (effectiveLanguage === 'cpp') {
       return {
         allPassed: false,
         totalTests: testCases.length,
@@ -165,18 +173,16 @@ export const testRunner = {
           getFn = new Function('console', wrapperCode);
         } catch (syntaxErr) {
           // Parse line number from SyntaxError stack if available
-          let errLine = null;
-          let errCol = null;
+          let errLine = 1;
+          let errCol = 1;
           const stackMatch = (syntaxErr.stack || '').match(/<anonymous>:(\d+):(\d+)/);
           if (stackMatch) {
             errLine = Math.max(1, parseInt(stackMatch[1], 10) - 1);
             errCol = parseInt(stackMatch[2], 10);
           }
 
-          const snippet = errLine ? formatSnippet(lines, errLine, errCol) : '';
-          const formattedMsg = errLine 
-            ? `Line ${errLine}${errCol ? ', Col ' + errCol : ''}: ${syntaxErr.message}\n${snippet}`
-            : `Syntax Error: ${syntaxErr.message}`;
+          const snippet = formatSnippet(lines, errLine, errCol);
+          const formattedMsg = `Line ${errLine}, Col ${errCol}: SyntaxError: ${syntaxErr.message}\n${snippet}\n💡 Check for unclosed brackets, missing commas, or typos in your JavaScript code.`;
 
           throw {
             message: formattedMsg,
@@ -307,7 +313,6 @@ export const testRunner = {
     // Default translation of Python algorithm to JS for quick test runs
     try {
       let pyJs = code;
-      // Convert python syntax to JS
       pyJs = pyJs.replace(/def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(([^)]*)\):/g, 'function $1($2) {');
       pyJs = pyJs.replace(/\bTrue\b/g, 'true');
       pyJs = pyJs.replace(/\bFalse\b/g, 'false');

@@ -8,21 +8,28 @@
 function createJavaRuntimeEnvironment() {
   // HashSet / Set
   class JavaSet {
-    constructor() {
+    constructor(initial) {
       this._set = new Set();
+      if (initial) {
+        if (Array.isArray(initial)) {
+          for (let item of initial) this.add(item);
+        } else if (initial._set) {
+          for (let item of initial._set) this._set.add(item);
+        }
+      }
     }
     add(item) {
-      const key = typeof item === 'object' ? JSON.stringify(item) : item;
+      const key = typeof item === 'object' && item !== null ? JSON.stringify(item) : item;
       if (this._set.has(key)) return false;
       this._set.add(key);
       return true;
     }
     contains(item) {
-      const key = typeof item === 'object' ? JSON.stringify(item) : item;
+      const key = typeof item === 'object' && item !== null ? JSON.stringify(item) : item;
       return this._set.has(key);
     }
     remove(item) {
-      const key = typeof item === 'object' ? JSON.stringify(item) : item;
+      const key = typeof item === 'object' && item !== null ? JSON.stringify(item) : item;
       return this._set.delete(key);
     }
     size() {
@@ -442,7 +449,7 @@ export function analyzeJavaCode(code) {
     let match;
     while ((match = declRegex.exec(line)) !== null) {
       const varName = match[1];
-      const reserved = ['class', 'public', 'private', 'protected', 'static', 'final', 'void', 'return', 'if', 'else', 'for', 'while', 'new', 'boolean', 'int', 'long', 'double', 'float', 'char', 'byte', 'short', 'true', 'false', 'null', 'Solution', 'import', 'package', 'containsDuplicate', 'twoSum', 'isAnagram'];
+      const reserved = ['class', 'public', 'private', 'protected', 'static', 'final', 'void', 'return', 'if', 'else', 'for', 'while', 'new', 'boolean', 'int', 'long', 'double', 'float', 'char', 'byte', 'short', 'true', 'false', 'null', 'Solution', 'import', 'package', 'containsDuplicate', 'twoSum', 'isAnagram', 'groupAnagrams', 'topKFrequent', 'isPalindrome', 'threeSum', 'maxArea', 'maxProfit', 'lengthOfLongestSubstring', 'isValid', 'search', 'reverseList', 'invertTree', 'numIslands', 'climbStairs', 'coinChange', 'singleNumber'];
       if (!reserved.includes(varName)) {
         const col = match.index + 1;
         declaredVariables.set(varName, { line: lineNum, col, name: varName });
@@ -539,6 +546,18 @@ export function transpileJavaToJS(javaCode) {
   const lines = javaCode.split('\n');
   let braceDepth = 0;
   const transpiledLines = [];
+  const methodNames = new Set();
+
+  // First pass: identify method names in class Solution
+  for (let line of lines) {
+    const isControlFlow = /^\s*(if|for|while|switch|catch|return)\b/.test(line);
+    if (!isControlFlow && !line.includes('=') && !line.includes('new ')) {
+      const match = line.match(/^\s*(?:(?:public|private|protected|static|final)\s+)*(?:[a-zA-Z0-9_<>[\]]+)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/);
+      if (match && match[1] !== 'class') {
+        methodNames.add(match[1]);
+      }
+    }
+  }
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
@@ -546,6 +565,11 @@ export function transpileJavaToJS(javaCode) {
     // Remove package & imports
     line = line.replace(/package\s+[a-zA-Z0-9_.]+;/g, '');
     line = line.replace(/import\s+[a-zA-Z0-9_.*]+;/g, '');
+
+    // Transpile 2D array initializations: new int[m][n] -> Array.from({length: m}, () => new Array(n).fill(0))
+    line = line.replace(/new\s+(?:int|long|double|float)\[([^\]]+)\]\[([^\]]+)\]/g, 'Array.from({length: $1}, () => new Array($2).fill(0))');
+    line = line.replace(/new\s+boolean\[([^\]]+)\]\[([^\]]+)\]/g, 'Array.from({length: $1}, () => new Array($2).fill(false))');
+    line = line.replace(/new\s+char\[([^\]]+)\]\[([^\]]+)\]/g, 'Array.from({length: $1}, () => new Array($2).fill(" "))');
 
     // Transpile array literals: int[] nums = {1, 2, 3}; -> nums = [1, 2, 3];
     line = line.replace(/=\s*\{([^{}]*)\}/g, '= [$1]');
@@ -555,6 +579,7 @@ export function transpileJavaToJS(javaCode) {
     line = line.replace(/new\s+int\[([^\]]+)\]/g, 'new Array($1).fill(0)');
     line = line.replace(/new\s+boolean\[([^\]]+)\]/g, 'new Array($1).fill(false)');
     line = line.replace(/new\s+String\[([^\]]+)\]/g, 'new Array($1).fill("")');
+    line = line.replace(/new\s+char\[([^\]]+)\]/g, 'new Array($1).fill("")');
 
     // Transpile new HashSet<>() -> new HashSet()
     line = line.replace(/new\s+([A-Za-z0-9_]+)\s*<[^>]*>\s*\(/g, 'new $1(');
@@ -596,6 +621,17 @@ export function transpileJavaToJS(javaCode) {
           line = line.replace(typePattern, `  let ${varName} $2`);
         }
       }
+
+      // Handle multi-variable declarations: int a = 1, b = 2; -> let a = 1, b = 2;
+      const multiVarPattern = /^\s*(?:int|long|double|float|boolean|char|byte|short|String)\s+([a-zA-Z_][a-zA-Z0-9_]*\s*=[^,;]+(?:,\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=[^,;]+)+);?/;
+      const multiMatch = line.match(multiVarPattern);
+      if (multiMatch) {
+        if (braceDepth <= 1) {
+          line = `  ${multiMatch[1]};`;
+        } else {
+          line = `  let ${multiMatch[1]};`;
+        }
+      }
     }
 
     // Strip remaining generic types <...>
@@ -604,9 +640,22 @@ export function transpileJavaToJS(javaCode) {
     // Enhanced for loop: for (int x : nums) -> for (let x of nums)
     line = line.replace(/for\s*\(\s*(?:let|var|int|long|double|String|char|boolean)?\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*([^)]+)\)/g, 'for (let $1 of $2)');
 
+    // For loop primitive type: for (int i = 0; ...) -> for (let i = 0; ...)
+    line = line.replace(/for\s*\(\s*(?:int|long|double|float|char)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g, 'for (let $1 =');
+
     // String length & charAt
     line = line.replace(/\.length\(\)/g, '.length');
     line = line.replace(/\.toCharArray\(\)/g, ".split('')");
+
+    // Auto-bind internal helper method calls: e.g. dfs(r, c) -> this.dfs(r, c)
+    for (let mName of methodNames) {
+      if (mName !== 'containsDuplicate' && mName !== 'twoSum' && mName !== 'isAnagram' && mName !== 'if' && mName !== 'for' && mName !== 'while') {
+        const callRegex = new RegExp(`(?<!this\\.)\\b(${mName})\\s*\\(`, 'g');
+        if (!line.includes(`function ${mName}`) && !line.includes(`${mName}(` + params_placeholder(line, mName))) {
+          line = line.replace(callRegex, `this.${mName}(`);
+        }
+      }
+    }
 
     // System.out.println -> console.log
     line = line.replace(/System\.out\.println/g, 'console.log');
@@ -622,6 +671,10 @@ export function transpileJavaToJS(javaCode) {
   }
 
   return transpiledLines.join('\n');
+}
+
+function params_placeholder(line, mName) {
+  return '';
 }
 
 /**
@@ -712,7 +765,45 @@ export async function runJavaInBrowser(code, testCases, problemId) {
         throw new Error("Class 'Solution' not found in Java code.");
       `;
 
-      const factory = new Function('runtime', 'customConsole', runnerWrapper);
+      let factory;
+      try {
+        factory = new Function('runtime', 'customConsole', runnerWrapper);
+      } catch (syntaxErr) {
+        // Parse line number of syntax error from user Java code
+        const lines = code.split('\n');
+        let errLine = 1;
+        let errCol = 1;
+
+        // Try to match offending token in user's original code
+        const tokenMatch = syntaxErr.message.match(/Unexpected token '([^']+)'/);
+        if (tokenMatch) {
+          const token = tokenMatch[1];
+          for (let l = 0; l < lines.length; l++) {
+            const col = lines[l].indexOf(token);
+            if (col !== -1) {
+              errLine = l + 1;
+              errCol = col + 1;
+              break;
+            }
+          }
+        }
+
+        const snippet = formatSnippet(lines, errLine, errCol);
+        const formattedErr = `Line ${errLine}, Col ${errCol}: SyntaxError: ${syntaxErr.message}\n${snippet}\n💡 Verify Java class syntax, braces, and variable declarations.`;
+
+        throw {
+          message: formattedErr,
+          details: {
+            type: 'Syntax Error',
+            line: errLine,
+            column: errCol,
+            message: syntaxErr.message,
+            snippet,
+            suggestion: 'Check for unclosed brackets, missing semicolons, or invalid type declarations.'
+          }
+        };
+      }
+
       const solutionInstance = factory(runtime, customConsole);
 
       const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(solutionInstance))
@@ -755,8 +846,11 @@ export async function runJavaInBrowser(code, testCases, problemId) {
       const endTime = performance.now();
       allPassed = false;
 
-      let errorLine = null;
-      let errorMsg = err.message || String(err);
+      const errDetails = err.details || {
+        type: 'Runtime Error',
+        message: err.message || String(err),
+        suggestion: 'Check for array out-of-bounds, null references, or infinite loops.'
+      };
 
       results.push({
         testIndex: i + 1,
@@ -766,13 +860,8 @@ export async function runJavaInBrowser(code, testCases, problemId) {
         passed: false,
         executionTimeMs: Math.round((endTime - startTime) * 100) / 100,
         logs: capturedLogs,
-        error: `Runtime Error: ${errorMsg}`,
-        errorDetails: {
-          type: 'Runtime Error',
-          message: errorMsg,
-          line: errorLine,
-          suggestion: 'Check for array out-of-bounds, null references, or infinite loops.'
-        }
+        error: err.message || String(err),
+        errorDetails: errDetails
       });
     }
   }
