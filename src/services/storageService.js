@@ -4,10 +4,34 @@ const STORAGE_KEYS = {
   SETTINGS: 'neetcode_ai_settings',
   NOTES: 'neetcode_ai_notes',
   BOOKMARKS: 'neetcode_ai_bookmarks',
-  HISTORY: 'neetcode_ai_submission_history'
+  HISTORY: 'neetcode_ai_submission_history',
+  THEORY_READ: 'neetcode_ai_theory_read'
 };
 
 export const storageService = {
+  getTheoryProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.THEORY_READ) || '[]');
+    } catch {
+      return [];
+    }
+  },
+
+  toggleTheoryRead(chapterId) {
+    try {
+      const readSet = new Set(this.getTheoryProgress());
+      if (readSet.has(chapterId)) {
+        readSet.delete(chapterId);
+      } else {
+        readSet.add(chapterId);
+      }
+      const arr = Array.from(readSet);
+      localStorage.setItem(STORAGE_KEYS.THEORY_READ, JSON.stringify(arr));
+      return arr;
+    } catch {
+      return [];
+    }
+  },
   getCode(problemId, language) {
     try {
       const codeStore = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_CODE) || '{}');

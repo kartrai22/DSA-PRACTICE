@@ -3,17 +3,19 @@ import Navbar from './components/Navbar';
 import RoadmapView from './components/RoadmapView';
 import ProblemList from './components/ProblemList';
 import ProblemWorkspace from './components/Workspace/ProblemWorkspace';
+import JavaTheoryView from './components/JavaTheoryView';
 import SettingsModal from './components/Modals/SettingsModal';
 import StatsModal from './components/Modals/StatsModal';
 import { PROBLEMS } from './data/problems';
 import { storageService } from './services/storageService';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('roadmap'); // 'roadmap' | 'problems' | 'workspace'
+  const [currentView, setCurrentView] = useState('roadmap'); // 'roadmap' | 'problems' | 'workspace' | 'theory'
   const [selectedProblem, setSelectedProblem] = useState(PROBLEMS[0]);
   const [filterCategory, setFilterCategory] = useState('all');
   const [problemStatus, setProblemStatus] = useState({});
   const [bookmarks, setBookmarks] = useState([]);
+  const [theoryProgress, setTheoryProgress] = useState([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
 
@@ -21,6 +23,7 @@ export default function App() {
   useEffect(() => {
     setProblemStatus(storageService.getProblemStatus());
     setBookmarks(storageService.getBookmarks());
+    setTheoryProgress(storageService.getTheoryProgress());
   }, []);
 
   const handleStatusChange = (problemId, status) => {
@@ -31,6 +34,11 @@ export default function App() {
   const handleToggleBookmark = (problemId) => {
     const updated = storageService.toggleBookmark(problemId);
     setBookmarks(updated);
+  };
+
+  const handleToggleTheoryRead = (chapterId) => {
+    const updated = storageService.toggleTheoryRead(chapterId);
+    setTheoryProgress(updated);
   };
 
   const handleSelectProblem = (problem) => {
@@ -53,6 +61,7 @@ export default function App() {
     localStorage.clear();
     setProblemStatus({});
     setBookmarks([]);
+    setTheoryProgress([]);
   };
 
   const solvedCount = PROBLEMS.filter(p => problemStatus[p.id]?.status === 'solved').length;
@@ -88,6 +97,14 @@ export default function App() {
             onToggleBookmark={handleToggleBookmark}
             onSelectProblem={handleSelectProblem}
             initialCategory={filterCategory}
+          />
+        )}
+
+        {currentView === 'theory' && (
+          <JavaTheoryView
+            theoryProgress={theoryProgress}
+            onToggleTheoryRead={handleToggleTheoryRead}
+            onNavigateToWorkspace={(problem) => handleSelectProblem(problem)}
           />
         )}
 

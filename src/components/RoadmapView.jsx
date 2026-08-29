@@ -33,13 +33,13 @@ export default function RoadmapView({ problemStatus, onSelectCategory, onSelectP
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <Sparkles size={20} color="#38bdf8" />
+            <Sparkles size={20} color="#f59e0b" />
             <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#f8fafc' }}>
-              DSA Practice Roadmap
+              Java DSA Practice Roadmap
             </h1>
           </div>
           <p style={{ color: '#94a3b8', fontSize: '14px', maxWidth: '640px', lineHeight: '1.5' }}>
-            Master Data Structures & Algorithms with this structured curriculum. Write clean, optimal solutions in Java, Python, or JS and test them live!
+            Master Data Structures & Algorithms in Java with this structured curriculum. Write clean, optimal solutions and test them live with your local Java compiler!
           </p>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>

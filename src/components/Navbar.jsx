@@ -10,7 +10,8 @@ import {
   Settings, 
   BarChart3, 
   Sparkles,
-  Terminal
+  Terminal,
+  BookOpen
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -85,18 +86,18 @@ export default function Navbar({
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', color: '#f8fafc' }}>
-                DSA
+              <span style={{ fontSize: '17px', fontWeight: 800, letterSpacing: '-0.02em', color: '#f8fafc' }}>
+                JAVA DSA
               </span>
               <span style={{
-                background: 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)',
+                background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
                 color: '#ffffff',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 800,
-                padding: '2px 8px',
+                padding: '2px 7px',
                 borderRadius: '6px',
-                letterSpacing: '0.05em',
-                boxShadow: '0 0 12px rgba(56, 189, 248, 0.4)'
+                letterSpacing: '0.04em',
+                boxShadow: '0 0 10px rgba(245, 158, 11, 0.35)'
               }}>
                 PRACTICE
               </span>
@@ -147,6 +148,35 @@ export default function Navbar({
           >
             <ListOrdered size={15} />
             <span>Problems</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentView('theory')}
+            className="btn-secondary"
+            style={{
+              backgroundColor: currentView === 'theory' ? '#1e293b' : 'transparent',
+              borderColor: currentView === 'theory' ? '#38bdf8' : 'transparent',
+              color: currentView === 'theory' ? '#38bdf8' : '#94a3b8',
+              padding: '6px 12px',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <BookOpen size={15} />
+            <span>Java Theory</span>
+            <span style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              backgroundColor: 'rgba(245, 158, 11, 0.2)',
+              color: '#f59e0b',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              padding: '1px 5px',
+              borderRadius: '4px'
+            }}>
+              21 LTS
+            </span>
           </button>
 
           {selectedProblem && (

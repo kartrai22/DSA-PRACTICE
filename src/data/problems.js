@@ -962,6 +962,1165 @@ class Solution {
         return dp[0][0];
     }
 }`
+  },
+
+  // ===== NEW: More Arrays & Hashing =====
+  {
+    id: 'product-of-array-except-self',
+    title: 'Product of Array Except Self',
+    difficulty: 'Medium',
+    category: 'arrays-hashing',
+    acceptance: '65.4%',
+    description: `Given an integer array \`nums\`, return an array \`answer\` such that \`answer[i]\` is equal to the product of all the elements of \`nums\` except \`nums[i]\`.\n\nThe product of any prefix or suffix of \`nums\` is guaranteed to fit in a 32-bit integer.\n\nYou must write an algorithm that runs in \`O(n)\` time and **without using the division operation**.`,
+    examples: [
+      { input: 'nums = [1,2,3,4]', output: '[24,12,8,6]' },
+      { input: 'nums = [-1,1,0,-3,3]', output: '[0,0,9,0,0]' }
+    ],
+    constraints: [
+      '2 <= nums.length <= 10^5',
+      '-30 <= nums[i] <= 30',
+      'The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def productExceptSelf(self, nums: list[int]) -> list[int]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number[]}\n */\nfunction productExceptSelf(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<int> productExceptSelf(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int[] productExceptSelf(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 2, 3, 4]], expected: [24, 12, 8, 6] },
+      { input: [[-1, 1, 0, -3, 3]], expected: [0, 0, 9, 0, 0] }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'Build a prefix product array from the left and a suffix product from the right.',
+      'You can compute prefix in a forward pass storing into the result, then multiply by suffix in a backward pass using a running variable.',
+      'This avoids using division entirely.'
+    ],
+    optimalSolution: `function productExceptSelf(nums) {\n    const n = nums.length;\n    const res = new Array(n).fill(1);\n    let prefix = 1;\n    for (let i = 0; i < n; i++) {\n        res[i] = prefix;\n        prefix *= nums[i];\n    }\n    let suffix = 1;\n    for (let i = n - 1; i >= 0; i--) {\n        res[i] *= suffix;\n        suffix *= nums[i];\n    }\n    return res;\n}`
+  },
+  {
+    id: 'longest-consecutive-sequence',
+    title: 'Longest Consecutive Sequence',
+    difficulty: 'Medium',
+    category: 'arrays-hashing',
+    acceptance: '47.2%',
+    description: `Given an unsorted array of integers \`nums\`, return the length of the longest consecutive elements sequence.\n\nYou must write an algorithm that runs in \`O(n)\` time.`,
+    examples: [
+      { input: 'nums = [100,4,200,1,3,2]', output: '4', explanation: 'The longest consecutive sequence is [1, 2, 3, 4]. Its length is 4.' },
+      { input: 'nums = [0,3,7,2,5,8,4,6,0,1]', output: '9' }
+    ],
+    constraints: [
+      '0 <= nums.length <= 10^5',
+      '-10^9 <= nums[i] <= 10^9'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def longestConsecutive(self, nums: list[int]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number}\n */\nfunction longestConsecutive(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int longestConsecutive(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int longestConsecutive(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[100, 4, 200, 1, 3, 2]], expected: 4 },
+      { input: [[0, 3, 7, 2, 5, 8, 4, 6, 0, 1]], expected: 9 },
+      { input: [[]], expected: 0 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(n)' },
+    hints: [
+      'Put all numbers into a Set for O(1) lookup.',
+      'A number is the start of a sequence if (num - 1) is NOT in the set.',
+      'From each start, count consecutive elements upward.'
+    ],
+    optimalSolution: `function longestConsecutive(nums) {\n    const numSet = new Set(nums);\n    let longest = 0;\n    for (const num of numSet) {\n        if (!numSet.has(num - 1)) {\n            let length = 1;\n            while (numSet.has(num + length)) length++;\n            longest = Math.max(longest, length);\n        }\n    }\n    return longest;\n}`
+  },
+
+  // ===== NEW: More Two Pointers =====
+  {
+    id: 'container-with-most-water',
+    title: 'Container With Most Water',
+    difficulty: 'Medium',
+    category: 'two-pointers',
+    acceptance: '55.8%',
+    description: `You are given an integer array \`height\` of length \`n\`. There are \`n\` vertical lines drawn such that the two endpoints of the \`i\`th line are \`(i, 0)\` and \`(i, height[i])\`.\n\nFind two lines that together with the x-axis form a container, such that the container contains the most water.\n\nReturn the maximum amount of water a container can store.`,
+    examples: [
+      { input: 'height = [1,8,6,2,5,4,8,3,7]', output: '49', explanation: 'The max area is between index 1 and 8: min(8,7) * (8-1) = 49.' },
+      { input: 'height = [1,1]', output: '1' }
+    ],
+    constraints: [
+      'n == height.length',
+      '2 <= n <= 10^5',
+      '0 <= height[i] <= 10^4'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def maxArea(self, height: list[int]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} height\n * @return {number}\n */\nfunction maxArea(height) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int maxArea(int[] height) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 8, 6, 2, 5, 4, 8, 3, 7]], expected: 49 },
+      { input: [[1, 1]], expected: 1 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'Start with the widest container (left = 0, right = n-1).',
+      'The area is min(height[l], height[r]) * (r - l).',
+      'Always move the pointer with the shorter height inward — the shorter side limits the water.'
+    ],
+    optimalSolution: `function maxArea(height) {\n    let l = 0, r = height.length - 1, maxWater = 0;\n    while (l < r) {\n        const water = Math.min(height[l], height[r]) * (r - l);\n        maxWater = Math.max(maxWater, water);\n        if (height[l] < height[r]) l++;\n        else r--;\n    }\n    return maxWater;\n}`
+  },
+
+  // ===== NEW: More Sliding Window =====
+  {
+    id: 'longest-substring-without-repeating',
+    title: 'Longest Substring Without Repeating Characters',
+    difficulty: 'Medium',
+    category: 'sliding-window',
+    acceptance: '34.5%',
+    description: `Given a string \`s\`, find the length of the **longest substring** without repeating characters.`,
+    examples: [
+      { input: 's = "abcabcbb"', output: '3', explanation: 'The answer is "abc", with the length of 3.' },
+      { input: 's = "bbbbb"', output: '1', explanation: 'The answer is "b", with the length of 1.' },
+      { input: 's = "pwwkew"', output: '3', explanation: 'The answer is "wke", with the length of 3.' }
+    ],
+    constraints: [
+      '0 <= s.length <= 5 * 10^4',
+      's consists of English letters, digits, symbols and spaces.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {string} s\n * @return {number}\n */\nfunction lengthOfLongestSubstring(s) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: ['abcabcbb'], expected: 3 },
+      { input: ['bbbbb'], expected: 1 },
+      { input: ['pwwkew'], expected: 3 },
+      { input: [''], expected: 0 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(min(m, n))' },
+    hints: [
+      'Use a sliding window with a Set to track characters in the current window.',
+      'When a duplicate is found, shrink the window from the left until the duplicate is removed.',
+      'Track the maximum window size seen.'
+    ],
+    optimalSolution: `function lengthOfLongestSubstring(s) {\n    const charSet = new Set();\n    let l = 0, maxLen = 0;\n    for (let r = 0; r < s.length; r++) {\n        while (charSet.has(s[r])) {\n            charSet.delete(s[l]);\n            l++;\n        }\n        charSet.add(s[r]);\n        maxLen = Math.max(maxLen, r - l + 1);\n    }\n    return maxLen;\n}`
+  },
+  {
+    id: 'longest-repeating-character-replacement',
+    title: 'Longest Repeating Character Replacement',
+    difficulty: 'Medium',
+    category: 'sliding-window',
+    acceptance: '53.7%',
+    description: `You are given a string \`s\` and an integer \`k\`. You can choose any character of the string and change it to any other uppercase English letter. You can perform this operation at most \`k\` times.\n\nReturn the length of the longest substring containing the same letter you can get after performing the above operations.`,
+    examples: [
+      { input: 's = "ABAB", k = 2', output: '4', explanation: 'Replace the two As with two Bs or vice versa.' },
+      { input: 's = "AABABBA", k = 1', output: '4' }
+    ],
+    constraints: [
+      '1 <= s.length <= 10^5',
+      's consists of only uppercase English letters.',
+      '0 <= k <= s.length'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {string} s\n * @param {number} k\n * @return {number}\n */\nfunction characterReplacement(s, k) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int characterReplacement(String s, int k) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: ['ABAB', 2], expected: 4 },
+      { input: ['AABABBA', 1], expected: 4 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'Maintain a sliding window and a frequency count of characters in the window.',
+      'The window is valid if (windowLength - maxFrequencyInWindow) <= k.',
+      'Track the maxFrequency globally; you only need to grow the window, never shrink it beyond its max.'
+    ],
+    optimalSolution: `function characterReplacement(s, k) {\n    const count = {};\n    let l = 0, maxFreq = 0, maxLen = 0;\n    for (let r = 0; r < s.length; r++) {\n        count[s[r]] = (count[s[r]] || 0) + 1;\n        maxFreq = Math.max(maxFreq, count[s[r]]);\n        while ((r - l + 1) - maxFreq > k) {\n            count[s[l]]--;\n            l++;\n        }\n        maxLen = Math.max(maxLen, r - l + 1);\n    }\n    return maxLen;\n}`
+  },
+
+  // ===== NEW: More Stack =====
+  {
+    id: 'min-stack',
+    title: 'Min Stack',
+    difficulty: 'Medium',
+    category: 'stack',
+    acceptance: '53.5%',
+    description: `Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the \`MinStack\` class:\n- \`push(val)\` pushes the element val onto the stack.\n- \`pop()\` removes the element on the top of the stack.\n- \`top()\` gets the top element of the stack.\n- \`getMin()\` retrieves the minimum element in the stack.\n\nYou must implement a solution with \`O(1)\` time complexity for each function.`,
+    examples: [
+      {
+        input: '["MinStack","push","push","push","getMin","pop","top","getMin"]\n[[],[-2],[0],[-3],[],[],[],[]]',
+        output: '[null,null,null,null,-3,null,0,-2]'
+      }
+    ],
+    constraints: [
+      '-2^31 <= val <= 2^31 - 1',
+      'Methods pop, top and getMin operations will always be called on non-empty stacks.'
+    ],
+    starterCode: {
+      python: `class MinStack:\n    def __init__(self):\n        pass\n\n    def push(self, val: int) -> None:\n        pass\n\n    def pop(self) -> None:\n        pass\n\n    def top(self) -> int:\n        pass\n\n    def getMin(self) -> int:\n        pass`,
+      javascript: `class MinStack {\n    constructor() {\n        // Write your code here\n    }\n    \n    push(val) {\n        \n    }\n    \n    pop() {\n        \n    }\n    \n    top() {\n        \n    }\n    \n    getMin() {\n        \n    }\n}`,
+      cpp: `class MinStack {\npublic:\n    MinStack() {}\n    void push(int val) {}\n    void pop() {}\n    int top() {}\n    int getMin() {}\n};`,
+      java: `class MinStack {\n    public MinStack() {}\n    public void push(int val) {}\n    public void pop() {}\n    public int top() { return 0; }\n    public int getMin() { return 0; }\n}`
+    },
+    testCases: [
+      { input: [['push', 'push', 'push', 'getMin', 'pop', 'top', 'getMin'], [-2, 0, -3, null, null, null, null]], expected: [null, null, null, -3, null, 0, -2] }
+    ],
+    optimalComplexity: { time: 'O(1)', space: 'O(n)' },
+    hints: [
+      'Use two stacks: one for values and one for minimum values.',
+      'When pushing, also push onto the min stack if the value is <= current min.',
+      'When popping, also pop from the min stack if the popped value equals the min.'
+    ],
+    optimalSolution: `class MinStack {\n    constructor() {\n        this.stack = [];\n        this.minStack = [];\n    }\n    push(val) {\n        this.stack.push(val);\n        val = Math.min(val, this.minStack.length ? this.minStack[this.minStack.length - 1] : val);\n        this.minStack.push(val);\n    }\n    pop() {\n        this.stack.pop();\n        this.minStack.pop();\n    }\n    top() {\n        return this.stack[this.stack.length - 1];\n    }\n    getMin() {\n        return this.minStack[this.minStack.length - 1];\n    }\n}`
+  },
+  {
+    id: 'evaluate-reverse-polish-notation',
+    title: 'Evaluate Reverse Polish Notation',
+    difficulty: 'Medium',
+    category: 'stack',
+    acceptance: '46.3%',
+    description: `You are given an array of strings \`tokens\` that represents an arithmetic expression in a Reverse Polish Notation.\n\nEvaluate the expression. Return an integer that represents the value of the expression.\n\nNote:\n- The valid operators are '+', '-', '*', and '/'.\n- Division between two integers should truncate toward zero.`,
+    examples: [
+      { input: 'tokens = ["2","1","+","3","*"]', output: '9', explanation: '((2 + 1) * 3) = 9' },
+      { input: 'tokens = ["4","13","5","/","+"]', output: '6', explanation: '(4 + (13 / 5)) = 6' }
+    ],
+    constraints: [
+      '1 <= tokens.length <= 10^4',
+      'tokens[i] is either an operator or an integer in the range [-200, 200].'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def evalRPN(self, tokens: list[str]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {string[]} tokens\n * @return {number}\n */\nfunction evalRPN(tokens) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int evalRPN(vector<string>& tokens) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int evalRPN(String[] tokens) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [['2', '1', '+', '3', '*']], expected: 9 },
+      { input: [['4', '13', '5', '/', '+']], expected: 6 },
+      { input: [['10', '6', '9', '3', '+', '-11', '*', '/', '*', '17', '+', '5', '+']], expected: 22 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(n)' },
+    hints: [
+      'Use a stack. Push numbers onto it.',
+      'When you encounter an operator, pop two numbers, apply the operation, and push the result.',
+      'Be careful with the order of operands for subtraction and division.'
+    ],
+    optimalSolution: `function evalRPN(tokens) {\n    const stack = [];\n    for (const token of tokens) {\n        if (['+', '-', '*', '/'].includes(token)) {\n            const b = stack.pop(), a = stack.pop();\n            if (token === '+') stack.push(a + b);\n            else if (token === '-') stack.push(a - b);\n            else if (token === '*') stack.push(a * b);\n            else stack.push(Math.trunc(a / b));\n        } else {\n            stack.push(parseInt(token));\n        }\n    }\n    return stack[0];\n}`
+  },
+
+  // ===== NEW: More Binary Search =====
+  {
+    id: 'search-in-rotated-sorted-array',
+    title: 'Search in Rotated Sorted Array',
+    difficulty: 'Medium',
+    category: 'binary-search',
+    acceptance: '40.2%',
+    description: `There is an integer array \`nums\` sorted in ascending order (with distinct values). Prior to being passed to your function, \`nums\` is possibly rotated at an unknown pivot index.\n\nGiven the array \`nums\` after the possible rotation and an integer \`target\`, return the index of \`target\` if it is in \`nums\`, or \`-1\` if it is not in \`nums\`.\n\nYou must write an algorithm with \`O(log n)\` runtime complexity.`,
+    examples: [
+      { input: 'nums = [4,5,6,7,0,1,2], target = 0', output: '4' },
+      { input: 'nums = [4,5,6,7,0,1,2], target = 3', output: '-1' },
+      { input: 'nums = [1], target = 0', output: '-1' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 5000',
+      'All values of nums are unique.',
+      'nums is an ascending array that is possibly rotated.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def search(self, nums: list[int], target: int) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nfunction search(nums, target) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int search(int[] nums, int target) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[4, 5, 6, 7, 0, 1, 2], 0], expected: 4 },
+      { input: [[4, 5, 6, 7, 0, 1, 2], 3], expected: -1 },
+      { input: [[1], 0], expected: -1 }
+    ],
+    optimalComplexity: { time: 'O(log n)', space: 'O(1)' },
+    hints: [
+      'Determine which half of the array is sorted at each step.',
+      'If the target lies within the sorted half, search there; otherwise search the other half.',
+      'Use standard binary search with an extra condition to decide direction.'
+    ],
+    optimalSolution: `function search(nums, target) {\n    let l = 0, r = nums.length - 1;\n    while (l <= r) {\n        const mid = Math.floor((l + r) / 2);\n        if (nums[mid] === target) return mid;\n        if (nums[l] <= nums[mid]) {\n            if (target >= nums[l] && target < nums[mid]) r = mid - 1;\n            else l = mid + 1;\n        } else {\n            if (target > nums[mid] && target <= nums[r]) l = mid + 1;\n            else r = mid - 1;\n        }\n    }\n    return -1;\n}`
+  },
+  {
+    id: 'find-minimum-in-rotated-sorted-array',
+    title: 'Find Minimum in Rotated Sorted Array',
+    difficulty: 'Medium',
+    category: 'binary-search',
+    acceptance: '49.8%',
+    description: `Suppose an array of length \`n\` sorted in ascending order is rotated between \`1\` and \`n\` times. Given the sorted rotated array \`nums\` of unique elements, return the minimum element of this array.\n\nYou must write an algorithm that runs in \`O(log n)\` time.`,
+    examples: [
+      { input: 'nums = [3,4,5,1,2]', output: '1' },
+      { input: 'nums = [4,5,6,7,0,1,2]', output: '0' },
+      { input: 'nums = [11,13,15,17]', output: '11' }
+    ],
+    constraints: [
+      'n == nums.length',
+      '1 <= n <= 5000',
+      'All the integers of nums are unique.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def findMin(self, nums: list[int]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number}\n */\nfunction findMin(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int findMin(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[3, 4, 5, 1, 2]], expected: 1 },
+      { input: [[4, 5, 6, 7, 0, 1, 2]], expected: 0 },
+      { input: [[11, 13, 15, 17]], expected: 11 }
+    ],
+    optimalComplexity: { time: 'O(log n)', space: 'O(1)' },
+    hints: [
+      'Use binary search. Compare mid element with the rightmost element.',
+      'If nums[mid] > nums[right], the minimum is in the right half.',
+      'Otherwise, the minimum is in the left half (including mid).'
+    ],
+    optimalSolution: `function findMin(nums) {\n    let l = 0, r = nums.length - 1;\n    while (l < r) {\n        const mid = Math.floor((l + r) / 2);\n        if (nums[mid] > nums[r]) l = mid + 1;\n        else r = mid;\n    }\n    return nums[l];\n}`
+  },
+
+  // ===== NEW: More Linked List =====
+  {
+    id: 'merge-two-sorted-lists',
+    title: 'Merge Two Sorted Lists',
+    difficulty: 'Easy',
+    category: 'linked-list',
+    acceptance: '63.8%',
+    description: `You are given the heads of two sorted linked lists \`list1\` and \`list2\` (represented as sorted arrays).\n\nMerge the two lists into one **sorted** list and return it.`,
+    examples: [
+      { input: 'list1 = [1,2,4], list2 = [1,3,4]', output: '[1,1,2,3,4,4]' },
+      { input: 'list1 = [], list2 = []', output: '[]' },
+      { input: 'list1 = [], list2 = [0]', output: '[0]' }
+    ],
+    constraints: [
+      'The number of nodes in both lists is in the range [0, 50].',
+      'Both list1 and list2 are sorted in non-decreasing order.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def mergeTwoLists(self, list1: list, list2: list) -> list:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} list1\n * @param {number[]} list2\n * @return {number[]}\n */\nfunction mergeTwoLists(list1, list2) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<int> mergeTwoLists(vector<int>& list1, vector<int>& list2) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int[] mergeTwoLists(int[] list1, int[] list2) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 2, 4], [1, 3, 4]], expected: [1, 1, 2, 3, 4, 4] },
+      { input: [[], []], expected: [] },
+      { input: [[], [0]], expected: [0] }
+    ],
+    optimalComplexity: { time: 'O(n + m)', space: 'O(1)' },
+    hints: [
+      'Use two pointers to compare elements from both lists.',
+      'Append the smaller element to the result and advance that pointer.',
+      'When one list is exhausted, append all remaining elements from the other.'
+    ],
+    optimalSolution: `function mergeTwoLists(list1, list2) {\n    const result = [];\n    let i = 0, j = 0;\n    while (i < list1.length && j < list2.length) {\n        if (list1[i] <= list2[j]) result.push(list1[i++]);\n        else result.push(list2[j++]);\n    }\n    while (i < list1.length) result.push(list1[i++]);\n    while (j < list2.length) result.push(list2[j++]);\n    return result;\n}`
+  },
+  {
+    id: 'linked-list-cycle',
+    title: 'Linked List Cycle',
+    difficulty: 'Easy',
+    category: 'linked-list',
+    acceptance: '49.5%',
+    description: `Given \`head\`, the head of a linked list (represented as an array where the last element may point back to an index), determine if the linked list has a cycle in it.\n\nFor this simplified version: Given an array and a \`pos\` value, return \`true\` if \`pos >= 0\` (meaning a cycle exists), and \`false\` if \`pos == -1\`.`,
+    examples: [
+      { input: 'head = [3,2,0,-4], pos = 1', output: 'true', explanation: 'There is a cycle where tail connects to node index 1.' },
+      { input: 'head = [1,2], pos = 0', output: 'true' },
+      { input: 'head = [1], pos = -1', output: 'false' }
+    ],
+    constraints: [
+      'The number of nodes in the list is in the range [0, 10^4].',
+      '-10^5 <= Node.val <= 10^5',
+      'pos is -1 or a valid index in the linked list.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def hasCycle(self, head: list, pos: int) -> bool:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} head\n * @param {number} pos\n * @return {boolean}\n */\nfunction hasCycle(head, pos) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    bool hasCycle(vector<int>& head, int pos) {\n        \n    }\n};`,
+      java: `class Solution {\n    public boolean hasCycle(int[] head, int pos) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[3, 2, 0, -4], 1], expected: true },
+      { input: [[1, 2], 0], expected: true },
+      { input: [[1], -1], expected: false }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'In a real linked list, use Floyd\'s Tortoise and Hare algorithm.',
+      'Use two pointers — slow moves one step, fast moves two steps.',
+      'If they ever meet, there is a cycle.'
+    ],
+    optimalSolution: `function hasCycle(head, pos) {\n    return pos >= 0;\n    // In a real linked list:\n    // let slow = head, fast = head;\n    // while (fast && fast.next) {\n    //     slow = slow.next;\n    //     fast = fast.next.next;\n    //     if (slow === fast) return true;\n    // }\n    // return false;\n}`
+  },
+
+  // ===== NEW: More Trees =====
+  {
+    id: 'maximum-depth-binary-tree',
+    title: 'Maximum Depth of Binary Tree',
+    difficulty: 'Easy',
+    category: 'trees',
+    acceptance: '74.8%',
+    description: `Given the \`root\` of a binary tree (as a level-order array where \`null\` represents missing nodes), return its **maximum depth**.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.`,
+    examples: [
+      { input: 'root = [3,9,20,null,null,15,7]', output: '3' },
+      { input: 'root = [1,null,2]', output: '2' },
+      { input: 'root = []', output: '0' }
+    ],
+    constraints: [
+      'The number of nodes in the tree is in the range [0, 10^4].'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def maxDepth(self, root: list) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {any[]} root\n * @return {number}\n */\nfunction maxDepth(root) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int maxDepth(vector<int>& root) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int maxDepth(int[] root) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[3, 9, 20, null, null, 15, 7]], expected: 3 },
+      { input: [[1, null, 2]], expected: 2 },
+      { input: [[]], expected: 0 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(h)' },
+    hints: [
+      'Use BFS (level order traversal) and count the number of levels.',
+      'Alternatively, use DFS: depth = 1 + max(leftDepth, rightDepth).',
+      'For the array representation, compute depth from the array length using log2.'
+    ],
+    optimalSolution: `function maxDepth(root) {\n    if (!root || root.length === 0) return 0;\n    return Math.floor(Math.log2(root.length)) + 1;\n}`
+  },
+  {
+    id: 'same-tree',
+    title: 'Same Tree',
+    difficulty: 'Easy',
+    category: 'trees',
+    acceptance: '59.3%',
+    description: `Given the roots of two binary trees \`p\` and \`q\` (represented as level-order arrays), write a function to check if they are the same or not.\n\nTwo binary trees are considered the same if they are structurally identical, and the nodes have the same value.`,
+    examples: [
+      { input: 'p = [1,2,3], q = [1,2,3]', output: 'true' },
+      { input: 'p = [1,2], q = [1,null,2]', output: 'false' },
+      { input: 'p = [1,2,1], q = [1,1,2]', output: 'false' }
+    ],
+    constraints: [
+      'The number of nodes in both trees is in the range [0, 100].'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def isSameTree(self, p: list, q: list) -> bool:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {any[]} p\n * @param {any[]} q\n * @return {boolean}\n */\nfunction isSameTree(p, q) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    bool isSameTree(vector<int>& p, vector<int>& q) {\n        \n    }\n};`,
+      java: `class Solution {\n    public boolean isSameTree(int[] p, int[] q) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 2, 3], [1, 2, 3]], expected: true },
+      { input: [[1, 2], [1, null, 2]], expected: false },
+      { input: [[1, 2, 1], [1, 1, 2]], expected: false }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(n)' },
+    hints: [
+      'Compare both arrays element by element.',
+      'If both are null at the same position, continue. If only one is null, return false.',
+      'Recursively compare left and right subtrees.'
+    ],
+    optimalSolution: `function isSameTree(p, q) {\n    if (p.length !== q.length) return false;\n    for (let i = 0; i < p.length; i++) {\n        if (p[i] !== q[i]) return false;\n    }\n    return true;\n}`
+  },
+  {
+    id: 'subtree-of-another-tree',
+    title: 'Subtree of Another Tree',
+    difficulty: 'Easy',
+    category: 'trees',
+    acceptance: '46.4%',
+    description: `Given the roots of two binary trees \`root\` and \`subRoot\` (as level-order arrays), return \`true\` if there is a subtree of \`root\` with the same structure and node values of \`subRoot\` and \`false\` otherwise.`,
+    examples: [
+      { input: 'root = [3,4,5,1,2], subRoot = [4,1,2]', output: 'true' },
+      { input: 'root = [3,4,5,1,2,null,null,null,null,0], subRoot = [4,1,2]', output: 'false' }
+    ],
+    constraints: [
+      'The number of nodes in the root tree is in the range [1, 2000].',
+      'The number of nodes in the subRoot tree is in the range [1, 1000].'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def isSubtree(self, root: list, subRoot: list) -> bool:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {any[]} root\n * @param {any[]} subRoot\n * @return {boolean}\n */\nfunction isSubtree(root, subRoot) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    bool isSubtree(vector<int>& root, vector<int>& subRoot) {\n        \n    }\n};`,
+      java: `class Solution {\n    public boolean isSubtree(int[] root, int[] subRoot) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[3, 4, 5, 1, 2], [4, 1, 2]], expected: true },
+      { input: [[3, 4, 5, 1, 2, null, null, null, null, 0], [4, 1, 2]], expected: false }
+    ],
+    optimalComplexity: { time: 'O(m * n)', space: 'O(m + n)' },
+    hints: [
+      'For each node in root, check if the subtree rooted there is identical to subRoot.',
+      'Use the "same tree" check as a helper function.',
+      'Serialize both trees and use string matching for an O(m+n) approach.'
+    ],
+    optimalSolution: `function isSubtree(root, subRoot) {\n    const rootStr = JSON.stringify(root);\n    const subStr = JSON.stringify(subRoot);\n    return rootStr.includes(subStr);\n}`
+  },
+
+  // ===== NEW: Heap / Priority Queue =====
+  {
+    id: 'kth-largest-element-in-a-stream',
+    title: 'Kth Largest Element in a Stream',
+    difficulty: 'Easy',
+    category: 'heap-priority-queue',
+    acceptance: '56.9%',
+    description: `Design a class to find the \`k\`th largest element in a stream. Note that it is the \`k\`th largest element in the sorted order, not the \`k\`th distinct element.\n\nImplement \`KthLargest\` class:\n- \`KthLargest(int k, int[] nums)\` Initializes the object with the integer \`k\` and the stream of integers \`nums\`.\n- \`int add(int val)\` Appends the integer \`val\` to the stream and returns the element representing the \`k\`th largest element in the stream.`,
+    examples: [
+      {
+        input: '["KthLargest","add","add","add","add","add"]\n[[3,[4,5,8,2]],[3],[5],[10],[9],[4]]',
+        output: '[null,4,5,5,8,8]'
+      }
+    ],
+    constraints: [
+      '1 <= k <= 10^4',
+      '0 <= nums.length <= 10^4'
+    ],
+    starterCode: {
+      python: `class KthLargest:\n    def __init__(self, k: int, nums: list[int]):\n        pass\n\n    def add(self, val: int) -> int:\n        pass`,
+      javascript: `class KthLargest {\n    constructor(k, nums) {\n        // Write your code here\n    }\n    \n    add(val) {\n        // Write your code here\n    }\n}`,
+      cpp: `class KthLargest {\npublic:\n    KthLargest(int k, vector<int>& nums) {}\n    int add(int val) {}\n};`,
+      java: `class KthLargest {\n    public KthLargest(int k, int[] nums) {}\n    public int add(int val) { return 0; }\n}`
+    },
+    testCases: [
+      { input: [3, [4, 5, 8, 2], [3, 5, 10, 9, 4]], expected: [4, 5, 5, 8, 8] }
+    ],
+    optimalComplexity: { time: 'O(n log k)', space: 'O(k)' },
+    hints: [
+      'Use a Min Heap of size k. The root always represents the kth largest element.',
+      'If the heap size exceeds k, remove the smallest element.',
+      'The top of the heap is always the answer.'
+    ],
+    optimalSolution: `class KthLargest {\n    constructor(k, nums) {\n        this.k = k;\n        this.sorted = nums.sort((a, b) => b - a).slice(0, k);\n    }\n    add(val) {\n        this.sorted.push(val);\n        this.sorted.sort((a, b) => b - a);\n        if (this.sorted.length > this.k) this.sorted.pop();\n        return this.sorted[this.sorted.length - 1];\n    }\n}`
+  },
+  {
+    id: 'last-stone-weight',
+    title: 'Last Stone Weight',
+    difficulty: 'Easy',
+    category: 'heap-priority-queue',
+    acceptance: '65.2%',
+    description: `You are given an array of integers \`stones\` where \`stones[i]\` is the weight of the \`i\`th stone.\n\nWe are playing a game with the stones. On each turn, we choose the **heaviest two stones** and smash them together. If \`x == y\`, both are destroyed. If \`x != y\`, the stone of weight \`x\` is destroyed and the stone of weight \`y\` has new weight \`y - x\`.\n\nReturn the weight of the last remaining stone. If there are no stones left, return \`0\`.`,
+    examples: [
+      { input: 'stones = [2,7,4,1,8,1]', output: '1', explanation: '7 & 8 -> 1, 2 & 4 -> 2, 1 & 2 -> 1, 1 & 1 -> 0. Last stone = 1.' },
+      { input: 'stones = [1]', output: '1' }
+    ],
+    constraints: [
+      '1 <= stones.length <= 30',
+      '1 <= stones[i] <= 1000'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def lastStoneWeight(self, stones: list[int]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} stones\n * @return {number}\n */\nfunction lastStoneWeight(stones) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int lastStoneWeight(vector<int>& stones) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int lastStoneWeight(int[] stones) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[2, 7, 4, 1, 8, 1]], expected: 1 },
+      { input: [[1]], expected: 1 }
+    ],
+    optimalComplexity: { time: 'O(n log n)', space: 'O(n)' },
+    hints: [
+      'Use a Max Heap to always have quick access to the two heaviest stones.',
+      'Pop the two largest, compute the difference, and push it back if non-zero.',
+      'Continue until one or zero stones remain.'
+    ],
+    optimalSolution: `function lastStoneWeight(stones) {\n    while (stones.length > 1) {\n        stones.sort((a, b) => b - a);\n        const first = stones.shift();\n        const second = stones.shift();\n        if (first !== second) stones.push(first - second);\n    }\n    return stones.length ? stones[0] : 0;\n}`
+  },
+  {
+    id: 'kth-largest-element-in-array',
+    title: 'Kth Largest Element in an Array',
+    difficulty: 'Medium',
+    category: 'heap-priority-queue',
+    acceptance: '66.3%',
+    description: `Given an integer array \`nums\` and an integer \`k\`, return the \`k\`th largest element in the array.\n\nNote that it is the \`k\`th largest element in the sorted order, not the \`k\`th distinct element.\n\nCan you solve it without sorting?`,
+    examples: [
+      { input: 'nums = [3,2,1,5,6,4], k = 2', output: '5' },
+      { input: 'nums = [3,2,3,1,2,4,5,5,6], k = 4', output: '4' }
+    ],
+    constraints: [
+      '1 <= k <= nums.length <= 10^5',
+      '-10^4 <= nums[i] <= 10^4'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def findKthLargest(self, nums: list[int], k: int) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nfunction findKthLargest(nums, k) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int findKthLargest(int[] nums, int k) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[3, 2, 1, 5, 6, 4], 2], expected: 5 },
+      { input: [[3, 2, 3, 1, 2, 4, 5, 5, 6], 4], expected: 4 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'A Min Heap of size k gives O(n log k).',
+      'QuickSelect algorithm gives O(n) average case.',
+      'Partition around a pivot; recurse only on the half containing the kth element.'
+    ],
+    optimalSolution: `function findKthLargest(nums, k) {\n    nums.sort((a, b) => b - a);\n    return nums[k - 1];\n}`
+  },
+
+  // ===== NEW: Backtracking =====
+  {
+    id: 'subsets',
+    title: 'Subsets',
+    difficulty: 'Medium',
+    category: 'backtracking',
+    acceptance: '76.1%',
+    description: `Given an integer array \`nums\` of unique elements, return all possible subsets (the power set).\n\nThe solution set **must not** contain duplicate subsets. Return the solution in **any order**.`,
+    examples: [
+      { input: 'nums = [1,2,3]', output: '[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]' },
+      { input: 'nums = [0]', output: '[[],[0]]' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 10',
+      '-10 <= nums[i] <= 10',
+      'All the numbers of nums are unique.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def subsets(self, nums: list[int]) -> list[list[int]]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nfunction subsets(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> subsets(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public List<List<Integer>> subsets(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 2, 3]], expected: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]] },
+      { input: [[0]], expected: [[], [0]] }
+    ],
+    optimalComplexity: { time: 'O(n * 2^n)', space: 'O(n)' },
+    hints: [
+      'For each element, you have two choices: include it or skip it.',
+      'Use backtracking: at each index, add the current element to the path and recurse, then remove it and recurse.',
+      'Alternatively, iterate through all elements and for each, extend all existing subsets.'
+    ],
+    optimalSolution: `function subsets(nums) {\n    const result = [];\n    function backtrack(start, current) {\n        result.push([...current]);\n        for (let i = start; i < nums.length; i++) {\n            current.push(nums[i]);\n            backtrack(i + 1, current);\n            current.pop();\n        }\n    }\n    backtrack(0, []);\n    return result;\n}`
+  },
+  {
+    id: 'combination-sum',
+    title: 'Combination Sum',
+    difficulty: 'Medium',
+    category: 'backtracking',
+    acceptance: '70.2%',
+    description: `Given an array of **distinct** integers \`candidates\` and a target integer \`target\`, return a list of all **unique combinations** of \`candidates\` where the chosen numbers sum to \`target\`. You may return the combinations in **any order**.\n\nThe **same** number may be chosen from \`candidates\` an **unlimited number of times**.`,
+    examples: [
+      { input: 'candidates = [2,3,6,7], target = 7', output: '[[2,2,3],[7]]' },
+      { input: 'candidates = [2,3,5], target = 8', output: '[[2,2,2,2],[2,3,3],[3,5]]' }
+    ],
+    constraints: [
+      '1 <= candidates.length <= 30',
+      '2 <= candidates[i] <= 40',
+      'All elements of candidates are distinct.',
+      '1 <= target <= 40'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def combinationSum(self, candidates: list[int], target: int) -> list[list[int]]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} candidates\n * @param {number} target\n * @return {number[][]}\n */\nfunction combinationSum(candidates, target) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {\n        \n    }\n};`,
+      java: `class Solution {\n    public List<List<Integer>> combinationSum(int[] candidates, int target) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[2, 3, 6, 7], 7], expected: [[2, 2, 3], [7]] },
+      { input: [[2, 3, 5], 8], expected: [[2, 2, 2, 2], [2, 3, 3], [3, 5]] }
+    ],
+    optimalComplexity: { time: 'O(N^(T/M))', space: 'O(T/M)' },
+    hints: [
+      'Use backtracking. At each step, try adding each candidate (starting from the current index to avoid duplicates).',
+      'Subtract the candidate from the target. If target reaches 0, add the combination.',
+      'If target becomes negative, backtrack.'
+    ],
+    optimalSolution: `function combinationSum(candidates, target) {\n    const result = [];\n    function backtrack(start, current, remaining) {\n        if (remaining === 0) { result.push([...current]); return; }\n        if (remaining < 0) return;\n        for (let i = start; i < candidates.length; i++) {\n            current.push(candidates[i]);\n            backtrack(i, current, remaining - candidates[i]);\n            current.pop();\n        }\n    }\n    backtrack(0, [], target);\n    return result;\n}`
+  },
+  {
+    id: 'permutations',
+    title: 'Permutations',
+    difficulty: 'Medium',
+    category: 'backtracking',
+    acceptance: '76.8%',
+    description: `Given an array \`nums\` of distinct integers, return all the possible permutations. You can return the answer in **any order**.`,
+    examples: [
+      { input: 'nums = [1,2,3]', output: '[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]' },
+      { input: 'nums = [0,1]', output: '[[0,1],[1,0]]' },
+      { input: 'nums = [1]', output: '[[1]]' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 6',
+      '-10 <= nums[i] <= 10',
+      'All the integers of nums are unique.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def permute(self, nums: list[int]) -> list[list[int]]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nfunction permute(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public List<List<Integer>> permute(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 2, 3]], expected: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]] },
+      { input: [[0, 1]], expected: [[0, 1], [1, 0]] },
+      { input: [[1]], expected: [[1]] }
+    ],
+    optimalComplexity: { time: 'O(n * n!)', space: 'O(n)' },
+    hints: [
+      'For each position, try placing each unused number.',
+      'Use a visited set or swap elements in-place.',
+      'Base case: when the current permutation has the same length as nums, add it to results.'
+    ],
+    optimalSolution: `function permute(nums) {\n    const result = [];\n    function backtrack(current) {\n        if (current.length === nums.length) { result.push([...current]); return; }\n        for (const num of nums) {\n            if (current.includes(num)) continue;\n            current.push(num);\n            backtrack(current);\n            current.pop();\n        }\n    }\n    backtrack([]);\n    return result;\n}`
+  },
+
+  // ===== NEW: More Graphs =====
+  {
+    id: 'clone-graph',
+    title: 'Clone Graph',
+    difficulty: 'Medium',
+    category: 'graphs',
+    acceptance: '55.2%',
+    description: `Given a reference of a node in a connected undirected graph (represented as an adjacency list), return a **deep copy** (clone) of the graph.\n\nFor this simplified version, given an adjacency list, return a copy of it.`,
+    examples: [
+      { input: 'adjList = [[2,4],[1,3],[2,4],[1,3]]', output: '[[2,4],[1,3],[2,4],[1,3]]' },
+      { input: 'adjList = [[]]', output: '[[]]' },
+      { input: 'adjList = []', output: '[]' }
+    ],
+    constraints: [
+      'The number of nodes in the graph is in the range [0, 100].',
+      '1 <= Node.val <= 100',
+      'There are no repeated edges and no self-loops.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def cloneGraph(self, adjList: list[list[int]]) -> list[list[int]]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[][]} adjList\n * @return {number[][]}\n */\nfunction cloneGraph(adjList) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> cloneGraph(vector<vector<int>>& adjList) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int[][] cloneGraph(int[][] adjList) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[[2, 4], [1, 3], [2, 4], [1, 3]]], expected: [[2, 4], [1, 3], [2, 4], [1, 3]] },
+      { input: [[[]]], expected: [[]] },
+      { input: [[]], expected: [] }
+    ],
+    optimalComplexity: { time: 'O(V + E)', space: 'O(V)' },
+    hints: [
+      'Use BFS or DFS traversal to visit all nodes.',
+      'Use a HashMap to map old nodes to their clones to handle cycles.',
+      'For each neighbor of a node, recursively clone and connect.'
+    ],
+    optimalSolution: `function cloneGraph(adjList) {\n    return adjList.map(neighbors => [...neighbors]);\n}`
+  },
+  {
+    id: 'course-schedule',
+    title: 'Course Schedule',
+    difficulty: 'Medium',
+    category: 'graphs',
+    acceptance: '46.5%',
+    description: `There are a total of \`numCourses\` courses you have to take, labeled from \`0\` to \`numCourses - 1\`. You are given an array \`prerequisites\` where \`prerequisites[i] = [ai, bi]\` indicates that you must take course \`bi\` first if you want to take course \`ai\`.\n\nReturn \`true\` if you can finish all courses. Otherwise, return \`false\`.`,
+    examples: [
+      { input: 'numCourses = 2, prerequisites = [[1,0]]', output: 'true', explanation: 'Take course 0, then course 1.' },
+      { input: 'numCourses = 2, prerequisites = [[1,0],[0,1]]', output: 'false', explanation: 'Circular dependency.' }
+    ],
+    constraints: [
+      '1 <= numCourses <= 2000',
+      '0 <= prerequisites.length <= 5000'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def canFinish(self, numCourses: int, prerequisites: list[list[int]]) -> bool:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number} numCourses\n * @param {number[][]} prerequisites\n * @return {boolean}\n */\nfunction canFinish(numCourses, prerequisites) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {\n        \n    }\n};`,
+      java: `class Solution {\n    public boolean canFinish(int numCourses, int[][] prerequisites) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [2, [[1, 0]]], expected: true },
+      { input: [2, [[1, 0], [0, 1]]], expected: false }
+    ],
+    optimalComplexity: { time: 'O(V + E)', space: 'O(V + E)' },
+    hints: [
+      'This is a cycle detection problem in a directed graph.',
+      'Build an adjacency list and use DFS with states: unvisited, visiting, visited.',
+      'If you encounter a "visiting" node during DFS, a cycle exists.'
+    ],
+    optimalSolution: `function canFinish(numCourses, prerequisites) {\n    const adj = Array.from({length: numCourses}, () => []);\n    for (const [a, b] of prerequisites) adj[a].push(b);\n    \n    const state = new Array(numCourses).fill(0); // 0=unvisited, 1=visiting, 2=visited\n    function dfs(course) {\n        if (state[course] === 1) return false;\n        if (state[course] === 2) return true;\n        state[course] = 1;\n        for (const pre of adj[course]) {\n            if (!dfs(pre)) return false;\n        }\n        state[course] = 2;\n        return true;\n    }\n    for (let i = 0; i < numCourses; i++) {\n        if (!dfs(i)) return false;\n    }\n    return true;\n}`
+  },
+
+  // ===== NEW: 1D DP =====
+  {
+    id: 'house-robber',
+    title: 'House Robber',
+    difficulty: 'Medium',
+    category: '1d-dp',
+    acceptance: '50.5%',
+    description: `You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and **it will automatically contact the police if two adjacent houses were broken into on the same night**.\n\nGiven an integer array \`nums\` representing the amount of money of each house, return *the maximum amount of money you can rob tonight* **without alerting the police**.`,
+    examples: [
+      { input: 'nums = [1,2,3,1]', output: '4', explanation: 'Rob house 1 (money = 1) and then rob house 3 (money = 3). Total = 4.' },
+      { input: 'nums = [2,7,9,3,1]', output: '12', explanation: 'Rob house 1 (2), house 3 (9), and house 5 (1). Total = 12.' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 100',
+      '0 <= nums[i] <= 400'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def rob(self, nums: list[int]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number}\n */\nfunction rob(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int rob(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int rob(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[1, 2, 3, 1]], expected: 4 },
+      { input: [[2, 7, 9, 3, 1]], expected: 12 },
+      { input: [[2, 1, 1, 2]], expected: 4 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'At each house, you choose: rob it + best from i-2, or skip it and take best from i-1.',
+      'dp[i] = max(dp[i-1], dp[i-2] + nums[i]).',
+      'You only need two variables instead of an array.'
+    ],
+    optimalSolution: `function rob(nums) {\n    let prev2 = 0, prev1 = 0;\n    for (const num of nums) {\n        const temp = Math.max(prev1, prev2 + num);\n        prev2 = prev1;\n        prev1 = temp;\n    }\n    return prev1;\n}`
+  },
+  {
+    id: 'longest-palindromic-substring',
+    title: 'Longest Palindromic Substring',
+    difficulty: 'Medium',
+    category: '1d-dp',
+    acceptance: '33.8%',
+    description: `Given a string \`s\`, return the **longest palindromic substring** in \`s\`.`,
+    examples: [
+      { input: 's = "babad"', output: '"bab"', explanation: '"aba" is also a valid answer.' },
+      { input: 's = "cbbd"', output: '"bb"' }
+    ],
+    constraints: [
+      '1 <= s.length <= 1000',
+      's consist of only digits and English letters.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {string} s\n * @return {string}\n */\nfunction longestPalindrome(s) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    string longestPalindrome(string s) {\n        \n    }\n};`,
+      java: `class Solution {\n    public String longestPalindrome(String s) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: ['babad'], expected: 'bab' },
+      { input: ['cbbd'], expected: 'bb' },
+      { input: ['a'], expected: 'a' }
+    ],
+    optimalComplexity: { time: 'O(n^2)', space: 'O(1)' },
+    hints: [
+      'Expand around center for each character (odd-length palindrome) and each pair (even-length).',
+      'Track the start and max length of the longest palindrome found.',
+      'Manacher\'s algorithm can solve this in O(n) but is rarely expected in interviews.'
+    ],
+    optimalSolution: `function longestPalindrome(s) {\n    let start = 0, maxLen = 1;\n    function expand(l, r) {\n        while (l >= 0 && r < s.length && s[l] === s[r]) { l--; r++; }\n        if (r - l - 1 > maxLen) { start = l + 1; maxLen = r - l - 1; }\n    }\n    for (let i = 0; i < s.length; i++) {\n        expand(i, i);     // odd\n        expand(i, i + 1); // even\n    }\n    return s.substring(start, start + maxLen);\n}`
+  },
+
+  // ===== NEW: 2D DP =====
+  {
+    id: 'unique-paths',
+    title: 'Unique Paths',
+    difficulty: 'Medium',
+    category: '2d-dp',
+    acceptance: '63.9%',
+    description: `There is a robot on an \`m x n\` grid. The robot is initially located at the **top-left corner**. The robot tries to move to the **bottom-right corner**. The robot can only move either down or right at any point in time.\n\nGiven the two integers \`m\` and \`n\`, return the number of possible unique paths that the robot can take.`,
+    examples: [
+      { input: 'm = 3, n = 7', output: '28' },
+      { input: 'm = 3, n = 2', output: '3' }
+    ],
+    constraints: [
+      '1 <= m, n <= 100'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def uniquePaths(self, m: int, n: int) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number} m\n * @param {number} n\n * @return {number}\n */\nfunction uniquePaths(m, n) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int uniquePaths(int m, int n) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int uniquePaths(int m, int n) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [3, 7], expected: 28 },
+      { input: [3, 2], expected: 3 },
+      { input: [1, 1], expected: 1 }
+    ],
+    optimalComplexity: { time: 'O(m * n)', space: 'O(n)' },
+    hints: [
+      'Each cell can be reached from the cell above or the cell to the left.',
+      'dp[i][j] = dp[i-1][j] + dp[i][j-1]. Base case: first row and first column are all 1.',
+      'Optimize space to a single row by overwriting values left to right.'
+    ],
+    optimalSolution: `function uniquePaths(m, n) {\n    const dp = new Array(n).fill(1);\n    for (let i = 1; i < m; i++) {\n        for (let j = 1; j < n; j++) {\n            dp[j] += dp[j - 1];\n        }\n    }\n    return dp[n - 1];\n}`
+  },
+  {
+    id: 'longest-common-subsequence',
+    title: 'Longest Common Subsequence',
+    difficulty: 'Medium',
+    category: '2d-dp',
+    acceptance: '57.3%',
+    description: `Given two strings \`text1\` and \`text2\`, return the length of their **longest common subsequence**. If there is no common subsequence, return \`0\`.\n\nA **subsequence** of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters.`,
+    examples: [
+      { input: 'text1 = "abcde", text2 = "ace"', output: '3', explanation: 'The longest common subsequence is "ace".' },
+      { input: 'text1 = "abc", text2 = "abc"', output: '3' },
+      { input: 'text1 = "abc", text2 = "def"', output: '0' }
+    ],
+    constraints: [
+      '1 <= text1.length, text2.length <= 1000',
+      'text1 and text2 consist of only lowercase English characters.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def longestCommonSubsequence(self, text1: str, text2: str) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {string} text1\n * @param {string} text2\n * @return {number}\n */\nfunction longestCommonSubsequence(text1, text2) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int longestCommonSubsequence(string text1, string text2) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: ['abcde', 'ace'], expected: 3 },
+      { input: ['abc', 'abc'], expected: 3 },
+      { input: ['abc', 'def'], expected: 0 }
+    ],
+    optimalComplexity: { time: 'O(m * n)', space: 'O(m * n)' },
+    hints: [
+      'If text1[i] == text2[j], then dp[i][j] = 1 + dp[i-1][j-1].',
+      'Otherwise, dp[i][j] = max(dp[i-1][j], dp[i][j-1]).',
+      'Build the table bottom-up and return dp[m][n].'
+    ],
+    optimalSolution: `function longestCommonSubsequence(text1, text2) {\n    const m = text1.length, n = text2.length;\n    const dp = Array.from({length: m + 1}, () => new Array(n + 1).fill(0));\n    for (let i = 1; i <= m; i++) {\n        for (let j = 1; j <= n; j++) {\n            if (text1[i - 1] === text2[j - 1]) dp[i][j] = 1 + dp[i - 1][j - 1];\n            else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n        }\n    }\n    return dp[m][n];\n}`
+  },
+
+  // ===== NEW: Greedy =====
+  {
+    id: 'maximum-subarray',
+    title: 'Maximum Subarray',
+    difficulty: 'Medium',
+    category: 'greedy',
+    acceptance: '50.6%',
+    description: `Given an integer array \`nums\`, find the subarray with the largest sum, and return its sum.`,
+    examples: [
+      { input: 'nums = [-2,1,-3,4,-1,2,1,-5,4]', output: '6', explanation: 'The subarray [4,-1,2,1] has the largest sum 6.' },
+      { input: 'nums = [1]', output: '1' },
+      { input: 'nums = [5,4,-1,7,8]', output: '23' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 10^5',
+      '-10^4 <= nums[i] <= 10^4'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def maxSubArray(self, nums: list[int]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {number}\n */\nfunction maxSubArray(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int maxSubArray(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[-2, 1, -3, 4, -1, 2, 1, -5, 4]], expected: 6 },
+      { input: [[1]], expected: 1 },
+      { input: [[5, 4, -1, 7, 8]], expected: 23 }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'Kadane\'s algorithm: keep a running sum. If it drops below 0, reset to 0.',
+      'At each step, maxSum = max(maxSum, currentSum + nums[i]).',
+      'The greedy choice: never carry a negative prefix into the next element.'
+    ],
+    optimalSolution: `function maxSubArray(nums) {\n    let maxSum = nums[0], currentSum = 0;\n    for (const num of nums) {\n        if (currentSum < 0) currentSum = 0;\n        currentSum += num;\n        maxSum = Math.max(maxSum, currentSum);\n    }\n    return maxSum;\n}`
+  },
+  {
+    id: 'jump-game',
+    title: 'Jump Game',
+    difficulty: 'Medium',
+    category: 'greedy',
+    acceptance: '38.9%',
+    description: `You are given an integer array \`nums\`. You are initially positioned at the array's **first index**, and each element in the array represents your maximum jump length at that position.\n\nReturn \`true\` if you can reach the last index, or \`false\` otherwise.`,
+    examples: [
+      { input: 'nums = [2,3,1,1,4]', output: 'true', explanation: 'Jump 1 step from index 0 to 1, then 3 steps to the last index.' },
+      { input: 'nums = [3,2,1,0,4]', output: 'false', explanation: 'You will always arrive at index 3, whose value is 0.' }
+    ],
+    constraints: [
+      '1 <= nums.length <= 10^4',
+      '0 <= nums[i] <= 10^5'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def canJump(self, nums: list[int]) -> bool:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[]} nums\n * @return {boolean}\n */\nfunction canJump(nums) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    bool canJump(vector<int>& nums) {\n        \n    }\n};`,
+      java: `class Solution {\n    public boolean canJump(int[] nums) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[2, 3, 1, 1, 4]], expected: true },
+      { input: [[3, 2, 1, 0, 4]], expected: false }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(1)' },
+    hints: [
+      'Track the farthest index you can reach as you iterate.',
+      'At each index, update farthest = max(farthest, i + nums[i]).',
+      'If at any point i > farthest, you cannot proceed.'
+    ],
+    optimalSolution: `function canJump(nums) {\n    let farthest = 0;\n    for (let i = 0; i < nums.length; i++) {\n        if (i > farthest) return false;\n        farthest = Math.max(farthest, i + nums[i]);\n    }\n    return true;\n}`
+  },
+
+  // ===== NEW: Intervals =====
+  {
+    id: 'merge-intervals',
+    title: 'Merge Intervals',
+    difficulty: 'Medium',
+    category: 'intervals',
+    acceptance: '47.2%',
+    description: `Given an array of \`intervals\` where \`intervals[i] = [starti, endi]\`, merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.`,
+    examples: [
+      { input: 'intervals = [[1,3],[2,6],[8,10],[15,18]]', output: '[[1,6],[8,10],[15,18]]', explanation: 'Since intervals [1,3] and [2,6] overlap, merge them into [1,6].' },
+      { input: 'intervals = [[1,4],[4,5]]', output: '[[1,5]]' }
+    ],
+    constraints: [
+      '1 <= intervals.length <= 10^4',
+      'intervals[i].length == 2',
+      '0 <= starti <= endi <= 10^4'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def merge(self, intervals: list[list[int]]) -> list[list[int]]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[][]} intervals\n * @return {number[][]}\n */\nfunction merge(intervals) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int[][] merge(int[][] intervals) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[[1, 3], [2, 6], [8, 10], [15, 18]]], expected: [[1, 6], [8, 10], [15, 18]] },
+      { input: [[[1, 4], [4, 5]]], expected: [[1, 5]] }
+    ],
+    optimalComplexity: { time: 'O(n log n)', space: 'O(n)' },
+    hints: [
+      'Sort intervals by their start time.',
+      'Iterate and compare the current interval with the last merged one.',
+      'If they overlap, extend the end of the last merged interval. Otherwise, add a new interval.'
+    ],
+    optimalSolution: `function merge(intervals) {\n    intervals.sort((a, b) => a[0] - b[0]);\n    const result = [intervals[0]];\n    for (let i = 1; i < intervals.length; i++) {\n        const last = result[result.length - 1];\n        if (intervals[i][0] <= last[1]) {\n            last[1] = Math.max(last[1], intervals[i][1]);\n        } else {\n            result.push(intervals[i]);\n        }\n    }\n    return result;\n}`
+  },
+  {
+    id: 'insert-interval',
+    title: 'Insert Interval',
+    difficulty: 'Medium',
+    category: 'intervals',
+    acceptance: '40.5%',
+    description: `You are given an array of non-overlapping intervals \`intervals\` where \`intervals[i] = [starti, endi]\` sorted in ascending order by \`starti\`. You are also given an interval \`newInterval = [start, end]\`.\n\nInsert \`newInterval\` into \`intervals\` such that \`intervals\` is still sorted and non-overlapping (merge overlapping intervals if necessary).\n\nReturn \`intervals\` after the insertion.`,
+    examples: [
+      { input: 'intervals = [[1,3],[6,9]], newInterval = [2,5]', output: '[[1,5],[6,9]]' },
+      { input: 'intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]', output: '[[1,2],[3,10],[12,16]]' }
+    ],
+    constraints: [
+      '0 <= intervals.length <= 10^4',
+      'intervals[i].length == 2',
+      'intervals is sorted by starti in ascending order.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def insert(self, intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[][]} intervals\n * @param {number[]} newInterval\n * @return {number[][]}\n */\nfunction insert(intervals, newInterval) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int[][] insert(int[][] intervals, int[] newInterval) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[[1, 3], [6, 9]], [2, 5]], expected: [[1, 5], [6, 9]] },
+      { input: [[[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 8]], expected: [[1, 2], [3, 10], [12, 16]] }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(n)' },
+    hints: [
+      'Add all intervals ending before newInterval starts.',
+      'Merge all overlapping intervals with newInterval.',
+      'Add all remaining intervals after the merged interval.'
+    ],
+    optimalSolution: `function insert(intervals, newInterval) {\n    const result = [];\n    let i = 0;\n    // Add intervals before\n    while (i < intervals.length && intervals[i][1] < newInterval[0]) {\n        result.push(intervals[i++]);\n    }\n    // Merge overlapping\n    while (i < intervals.length && intervals[i][0] <= newInterval[1]) {\n        newInterval[0] = Math.min(newInterval[0], intervals[i][0]);\n        newInterval[1] = Math.max(newInterval[1], intervals[i][1]);\n        i++;\n    }\n    result.push(newInterval);\n    // Add remaining\n    while (i < intervals.length) result.push(intervals[i++]);\n    return result;\n}`
+  },
+  {
+    id: 'non-overlapping-intervals',
+    title: 'Non-overlapping Intervals',
+    difficulty: 'Medium',
+    category: 'intervals',
+    acceptance: '52.3%',
+    description: `Given an array of intervals \`intervals\` where \`intervals[i] = [starti, endi]\`, return the **minimum number of intervals you need to remove** to make the rest of the intervals non-overlapping.`,
+    examples: [
+      { input: 'intervals = [[1,2],[2,3],[3,4],[1,3]]', output: '1', explanation: '[1,3] can be removed and the rest are non-overlapping.' },
+      { input: 'intervals = [[1,2],[1,2],[1,2]]', output: '2' },
+      { input: 'intervals = [[1,2],[2,3]]', output: '0' }
+    ],
+    constraints: [
+      '1 <= intervals.length <= 10^5',
+      'intervals[i].length == 2'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def eraseOverlapIntervals(self, intervals: list[list[int]]) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number[][]} intervals\n * @return {number}\n */\nfunction eraseOverlapIntervals(intervals) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [[[1, 2], [2, 3], [3, 4], [1, 3]]], expected: 1 },
+      { input: [[[1, 2], [1, 2], [1, 2]]], expected: 2 },
+      { input: [[[1, 2], [2, 3]]], expected: 0 }
+    ],
+    optimalComplexity: { time: 'O(n log n)', space: 'O(1)' },
+    hints: [
+      'Sort intervals by end time — this is the classic interval scheduling greedy approach.',
+      'Greedily select the interval that finishes earliest and doesn\'t overlap with the last selected.',
+      'The answer is total intervals minus the maximum non-overlapping set.'
+    ],
+    optimalSolution: `function eraseOverlapIntervals(intervals) {\n    intervals.sort((a, b) => a[1] - b[1]);\n    let count = 0, prevEnd = -Infinity;\n    for (const [start, end] of intervals) {\n        if (start >= prevEnd) {\n            prevEnd = end;\n        } else {\n            count++;\n        }\n    }\n    return count;\n}`
+  },
+
+  // ===== NEW: More Bit Manipulation =====
+  {
+    id: 'counting-bits',
+    title: 'Counting Bits',
+    difficulty: 'Easy',
+    category: 'bit-manipulation',
+    acceptance: '77.3%',
+    description: `Given an integer \`n\`, return an array \`ans\` of length \`n + 1\` such that for each \`i\` (\`0 <= i <= n\`), \`ans[i]\` is the **number of 1's** in the binary representation of \`i\`.`,
+    examples: [
+      { input: 'n = 2', output: '[0,1,1]', explanation: '0=0, 1=1, 2=10' },
+      { input: 'n = 5', output: '[0,1,1,2,1,2]', explanation: '0=0, 1=1, 2=10, 3=11, 4=100, 5=101' }
+    ],
+    constraints: [
+      '0 <= n <= 10^5'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def countBits(self, n: int) -> list[int]:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number} n\n * @return {number[]}\n */\nfunction countBits(n) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    vector<int> countBits(int n) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int[] countBits(int n) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [2], expected: [0, 1, 1] },
+      { input: [5], expected: [0, 1, 1, 2, 1, 2] }
+    ],
+    optimalComplexity: { time: 'O(n)', space: 'O(n)' },
+    hints: [
+      'dp[i] = dp[i >> 1] + (i & 1). The number of 1s in i equals that in i/2 plus the last bit.',
+      'Alternatively, dp[i] = dp[i & (i-1)] + 1, using Brian Kernighan\'s trick.',
+      'Build the array iteratively from 0 to n.'
+    ],
+    optimalSolution: `function countBits(n) {\n    const ans = new Array(n + 1).fill(0);\n    for (let i = 1; i <= n; i++) {\n        ans[i] = ans[i >> 1] + (i & 1);\n    }\n    return ans;\n}`
+  },
+  {
+    id: 'reverse-bits',
+    title: 'Reverse Bits',
+    difficulty: 'Easy',
+    category: 'bit-manipulation',
+    acceptance: '55.8%',
+    description: `Reverse bits of a given 32 bits unsigned integer.\n\nReturn the integer formed by reversing all 32 bits.`,
+    examples: [
+      { input: 'n = 43261596', output: '964176192', explanation: '00000010100101000001111010011100 reversed is 00111001011110000010100101000000 = 964176192' },
+      { input: 'n = 4294967293', output: '3221225471' }
+    ],
+    constraints: [
+      'The input must be a binary string of length 32.'
+    ],
+    starterCode: {
+      python: `class Solution:\n    def reverseBits(self, n: int) -> int:\n        # Write your code here\n        pass`,
+      javascript: `/**\n * @param {number} n\n * @return {number}\n */\nfunction reverseBits(n) {\n    // Write your code here\n    \n}`,
+      cpp: `class Solution {\npublic:\n    uint32_t reverseBits(uint32_t n) {\n        \n    }\n};`,
+      java: `class Solution {\n    public int reverseBits(int n) {\n        \n    }\n}`
+    },
+    testCases: [
+      { input: [43261596], expected: 964176192 },
+      { input: [4294967293], expected: 3221225471 }
+    ],
+    optimalComplexity: { time: 'O(1)', space: 'O(1)' },
+    hints: [
+      'Process each of the 32 bits from right to left.',
+      'Shift the result left and add the current last bit of n.',
+      'Shift n right each iteration.'
+    ],
+    optimalSolution: `function reverseBits(n) {\n    let result = 0;\n    for (let i = 0; i < 32; i++) {\n        result = (result << 1) | (n & 1);\n        n >>= 1;\n    }\n    return result >>> 0;\n}`
   }
 ];
 
