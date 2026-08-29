@@ -1955,14 +1955,42 @@ void main() {
 ### How Java Compiles & Runs
 
 \`\`\`
-Source Code (.java)
-       ↓  javac (compiler)
-Bytecode (.class)
-       ↓  java (JVM)
-Machine Code (executed)
++------------------+         +-------------------+         +------------------+
+|  Source Code     |  javac  |  Bytecode         |   JVM   |  Native Machine  |
+|  (HelloWorld.java)------>  |  (HelloWorld.class)-------> |  Code (Execution)|
++------------------+         +-------------------+         +------------------+
 \`\`\`
 
-The JVM (Java Virtual Machine) interprets bytecode and uses **JIT (Just-In-Time)** compilation to optimize hot paths at runtime.`},{id:`variables-data-types`,title:`Variables & Data Types`,content:`## Variables & Data Types
+### JVM Memory Architecture Illustration
+
+\`\`\`
++-------------------------------------------------------------------------------+
+|                             JVM RUNTIME DATA AREAS                            |
++-------------------------------------------------------------------------------+
+|                                                                               |
+|  +---------------------------------+   +-----------------------------------+  |
+|  |           HEAP MEMORY           |   |           THREAD STACKS           |  |
+|  | (Shared by all threads)         |   | (Per-thread local variables)      |  |
+|  |                                 |   |                                   |  |
+|  |  +---------------------------+  |   |  +-----------------------------+  |  |
+|  |  | Young Gen (Eden, S0, S1)  |  |   |  | Stack Frame (main method)   |  |  |
+|  |  +---------------------------+  |   |  |  - Primitives: age = 25     |  |  |
+|  |  | Old / Tenured Generation  |  |   |  |  - Object Ref: str -----------------> [ "Hello" Object ]
+|  |  +---------------------------+  |   |  +-----------------------------+  |  |
+|  +---------------------------------+   +-----------------------------------+  |
+|                                                                               |
+|  +---------------------------------+   +-----------------------------------+  |
+|  |            METASPACE            |   |       NATIVE METHOD STACK         |  |
+|  | (Class definitions, methods,    |   | (C/C++ native execution JNI)      |  |
+|  |  static variables & bytecodes)  |   |                                   |  |
+|  +---------------------------------+   +-----------------------------------+  |
++-------------------------------------------------------------------------------+
+\`\`\`
+
+### Key JVM Components:
+1. **ClassLoader**: Loads \`.class\` bytecode into the JVM Metaspace.
+2. **JIT Compiler (Just-In-Time)**: Converts frequently executed bytecode ("hot spots") directly into native machine code at runtime for high performance.
+3. **Garbage Collector (GC)**: Automatically reclaims unreachable objects from the Heap (Generational GC: ZGC, G1GC).`},{id:`variables-data-types`,title:`Variables & Data Types`,content:`## Variables & Data Types
 
 Java is **statically typed** — every variable must have a declared type at compile time.
 
@@ -2306,6 +2334,30 @@ boolean eq = Arrays.equals(
 \`\`\``},{id:`strings`,title:`Strings & Text Blocks`,content:`## Strings in Java
 
 Strings are **immutable** objects. Every modification creates a **new** String.
+
+### String Constant Pool vs Heap Memory
+
+\`\`\`
++-------------------------------------------------------------------------+
+|                              HEAP MEMORY                                |
+|                                                                         |
+|   +-----------------------------------------------------------------+   |
+|   |                      STRING CONSTANT POOL                       |   |
+|   |                                                                 |   |
+|   |                     [ "Hello" Object ] <---------+              |   |
+|   |                     [ "Hi" Object ]              |              |   |
+|   +--------------------------------------------------|--------------+   |
+|                                                      |                  |
+|   [ String Object s2 ] ----------------------------->| (heap reference) |
++------------------------------------------------------|------------------+
+                                                       |
+STACK FRAME:                                           |
+  s1 (ref) --------------------------------------------+
+  s3 (ref) --------------------------------------------+ (points to exact same "Hello")
+\`\`\`
+
+- **String Literals ('Hello')**: Stored in the **String Constant Pool** inside the JVM Heap to save memory. Reused across identical literals.
+- **'new String("Hello")'**: Explicitly allocates a **new object** on the heap, bypassing pool reuse.
 
 ### Creating Strings
 
@@ -3157,11 +3209,36 @@ intersection.retainAll(b);  // [3, 4]
 // Difference
 Set<Integer> diff = new HashSet<>(a);
 diff.removeAll(b);  // [1, 2]
-\`\`\``},{id:`map-implementations`,title:`Map: HashMap, TreeMap & More`,content:`## Map Implementations
+\`\`\` `},{id:`map-implementations`,title:`Map: HashMap, TreeMap & More`,content:`## Map Implementations
 
-A **Map** stores **key-value pairs** — keys are unique.
+### HashMap Internal Architecture & Mechanics
 
-### HashMap
+\`\`\`
++-----------------------------------------------------------------------------------+
+|                            HASHMAP BUCKET ARRAY (Table)                           |
++-----------------------------------------------------------------------------------+
+|  Index | Bucket Content                                                           |
+| -------+------------------------------------------------------------------------- |
+|   [0]  | null                                                                     |
+|   [1]  | [ Node: key="Alice", hash=101, val=95 ]                                  |
+|   [2]  | [ Node: key="Bob" ] ---> [ Node: key="Dave" ] (Linked List Collision)    |
+|   ...  |                                                                          |
+|   [7]  | [ TreeNode (Red-Black Tree Root) ]                                       |
+|        |     /                                                                   |
+|        |  [ TreeNode: "C" ]        [ TreeNode: "Z" ] (Treeified: Threshold >= 8)  |
++-----------------------------------------------------------------------------------+
+\`\`\`
+
+#### How HashMap Works Internally:
+1. **Hash Calculation**: Computes \`hash = (key.hashCode()) ^ (h >>> 16)\` to spread bits.
+2. **Bucket Indexing**: Computes \`index = hash & (n - 1)\` (where \`n\` is array length, default = 16).
+3. **Collision Handling**:
+   - Uses **Separate Chaining**.
+   - **LinkedList Phase**: When bucket has \`< 8\` elements, collisions form a LinkedList.
+   - **Treeification Phase (Java 8+)**: When bucket size reaches \`TREEIFY_THRESHOLD = 8\` and table capacity \`>= 64\`, the LinkedList converts into a **Red-Black Tree** to improve worst-case search time from **O(n)** to **O(log n)**!
+4. **Load Factor & Resizing**: Default Load Factor = \`0.75\`. When \`size > capacity * 0.75\`, the capacity doubles (e.g. 16 -> 32) and all entries are rehashed.
+
+### Basic HashMap Usage
 
 \`\`\`java
 Map<String, Integer> scores = new HashMap<>();
@@ -3632,18 +3709,35 @@ sealed interface Shape permits Circle, Rectangle {}
 record Circle(double radius) implements Shape {}
 record Rectangle(double w, double h) implements Shape {}
 
-String classify(Shape s) {
-    return switch (s) {
-        case Circle c when c.radius() > 100 -> "Huge circle";
-        case Circle c when c.radius() > 10  -> "Big circle";
-        case Circle c                       -> "Small circle";
-        case Rectangle r when r.w() == r.h() -> "Square: " + r.w();
-        case Rectangle r                    -> "Rectangle: " + r.w() + "x" + r.h();
-    };
-}
-\`\`\``},{id:`virtual-threads`,title:`Virtual Threads (Java 21)`,content:`## Virtual Threads (Project Loom)
+## Virtual Threads (Project Loom)
 
-Virtual Threads are **lightweight threads** managed by the JVM, not the OS — enabling millions of concurrent tasks.
+Virtual Threads are **lightweight threads** managed by the JVM, not the OS — enabling millions of concurrent tasks with minimal memory footprint.
+
+### Virtual Threads Architecture & Mounting/Unmounting
+
+\`\`\`
++---------------------------------------------------------------------------------------+
+|                                JVM VIRTUAL THREAD POOL                                |
+|  [ VThread 1 ]   [ VThread 2 ]   [ VThread 3 ]   ...   [ VThread 1,000,000 ]           |
++---------------------------------------------------------------------------------------+
+        |                | (Blocked on I/O)
+        | Mounts         v Unmounts (Yields Carrier)
++---------------------------------------------------------------------------------------+
+|                       CARRIER THREADS (JVM ForkJoinPool)                             |
+|  [ Carrier Thread #1 ]                    [ Carrier Thread #2 ]                       |
++---------------------------------------------------------------------------------------+
+        |                                           |
+        v                                           v
++---------------------------------------------------------------------------------------+
+|                             OS KERNEL THREADS (1:1 with OS)                           |
+|  [ OS Thread A ]                          [ OS Thread B ]                             |
++---------------------------------------------------------------------------------------+
+\`\`\`
+
+#### How Virtual Threads Work:
+1. **Mounting**: When a Virtual Thread runs CPU operations, the JVM **mounts** it onto an OS Carrier Thread (ForkJoinPool worker).
+2. **Unmounting on Blocking I/O**: When the Virtual Thread makes a blocking call (DB query, HTTP request, socket read), the JVM **unmounts** it from the Carrier Thread and saves its stack in Heap memory.
+3. **Re-mounting**: The Carrier Thread becomes free to process other Virtual Threads immediately. Once the I/O completes, the Virtual Thread is scheduled onto an available Carrier Thread again.
 
 ### Creating Virtual Threads
 
@@ -4272,6 +4366,59 @@ private static int partition(int[] arr, int low, int high) {
 | Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) | ✅ |
 | Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) | ❌ |
 | Tim Sort | O(n) | O(n log n) | O(n log n) | O(n) | ✅ |`},{id:`common-patterns`,title:`Common DSA Patterns`,content:`## Common DSA Patterns in Java
+
+### Visual Algorithmic Patterns
+
+#### 1. Two Pointers (Inward Convergence)
+\`\`\`
+  [ 1,  2,  4,  6,  8,  11 ]   Target = 10
+    ^                    ^
+   Left                Right    (Sum = 12 > 10 -> Right--)
+
+  [ 1,  2,  4,  6,  8,  11 ]
+    ^               ^
+   Left           Right         (Sum = 9 < 10 -> Left++)
+
+  [ 1,  2,  4,  6,  8,  11 ]
+        ^           ^
+       Left       Right         (Sum = 10 == 10 -> Found [2, 8]!)
+\`\`\`
+
+#### 2. Sliding Window (Dynamic Expansion & Contraction)
+\`\`\`
+Subarray Sum / Frequency Window:
+   Step 1: [ 2,  1,  5,  1 ], k = 3   Window = [2, 1, 5] (Sum = 8)
+             L       R
+
+   Step 2: [ 2,  1,  5,  1,  3 ]       Window = [1, 5, 1] (Sum = 7)
+                 L       R
+
+   Step 3: [ 2,  1,  5,  1,  3 ]       Window = [5, 1, 3] (Sum = 9 -> Max!)
+                     L       R
+\`\`\`
+
+#### 3. Tree Traversal Mechanics (BFS vs DFS)
+\`\`\`
+          ( 1 )                 BFS (Level Order): [1] -> [2, 3] -> [4, 5, 6]
+         /                     Queue: Front -> 4, 5, 6 -> Back
+       ( 2 )   ( 3 )
+      /                       DFS (Pre-order):  Root -> Left -> Right (1, 2, 4, 5, 3, 6)
+    ( 4 ) ( 5 )   ( 6 )         DFS (In-order):   Left -> Root -> Right (4, 2, 5, 1, 3, 6)
+                                DFS (Post-order): Left -> Right -> Root (4, 5, 2, 6, 3, 1)
+\`\`\`
+
+#### 4. Dynamic Programming State Transitions
+\`\`\`
+   Staircase Problem: dp[i] = dp[i-1] + dp[i-2]
+
+   +-------+-------+-------+-------+-------+
+   | dp[0] | dp[1] | dp[2] | dp[3] | dp[4] |
+   |   1   |   1   |   2   |   3   |   5   |
+   +-------+-------+-------+-------+-------+
+                       ^       ^       ^
+                       |       |       +-- dp[2] + dp[3] = 5
+                       +-------+---------- dp[1] + dp[2] = 3
+\`\`\`
 
 ### Two Pointers
 
