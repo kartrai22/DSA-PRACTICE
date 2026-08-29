@@ -121,6 +121,7 @@ export default function ProblemWorkspace({
             onSubmit={handleSubmit}
             isRunning={isRunning}
             isSubmitting={isSubmitting}
+            testResults={testResults}
           />
         </div>
 

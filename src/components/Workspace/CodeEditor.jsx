@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, Send, RotateCcw, Code, Sparkles } from 'lucide-react';
 
@@ -18,12 +18,15 @@ export default function CodeEditor({
   onRun, 
   onSubmit, 
   isRunning, 
-  isSubmitting 
+  isSubmitting,
+  testResults
 }) {
   const editorRef = useRef(null);
+  const monacoRef = useRef(null);
 
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
+    monacoRef.current = monaco;
     
     // Add custom keyboard shortcuts
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
@@ -33,6 +36,34 @@ export default function CodeEditor({
       onSubmit();
     });
   };
+
+  // Sync Monaco error markers whenever testResults change
+  useEffect(() => {
+    if (editorRef.current && monacoRef.current) {
+      const model = editorRef.current.getModel();
+      if (!model) return;
+
+      const firstErrorResult = testResults?.results?.find(r => r.errorDetails?.line);
+      if (firstErrorResult && firstErrorResult.errorDetails?.line) {
+        const { line, column, message, type } = firstErrorResult.errorDetails;
+        const validLine = Math.min(model.getLineCount(), Math.max(1, line));
+        const maxCol = model.getLineMaxColumn(validLine);
+
+        monacoRef.current.editor.setModelMarkers(model, 'compiler', [
+          {
+            startLineNumber: validLine,
+            startColumn: column ? Math.min(column, maxCol) : 1,
+            endLineNumber: validLine,
+            endColumn: maxCol,
+            message: `${type || 'Error'}: ${message}`,
+            severity: monacoRef.current.MarkerSeverity.Error
+          }
+        ]);
+      } else {
+        monacoRef.current.editor.setModelMarkers(model, 'compiler', []);
+      }
+    }
+  }, [testResults]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#090d16' }}>

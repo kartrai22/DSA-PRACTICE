@@ -1,3 +1,5 @@
+import { runJavaInBrowser } from './javaEngine';
+
 function deepEqual(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;
@@ -35,28 +37,55 @@ function deepEqual(a, b) {
   return false;
 }
 
+/**
+ * Format a code snippet with a visual pointer arrow (^) pointing to the exact column.
+ */
+function formatSnippet(lines, lineNum, colNum) {
+  if (!lines || lineNum < 1 || lineNum > lines.length) return '';
+  const targetLine = lines[lineNum - 1] || '';
+  const col = Math.max(1, colNum || 1);
+  const pointer = ' '.repeat(col - 1) + '^';
+  return `Line ${lineNum} | ${targetLine}\n       | ${pointer}`;
+}
+
 export const testRunner = {
   async runCode(code, testCases, language = 'javascript', problemId = '') {
-    // For Java and Python, invoke the local backend compiler/runner
-    if (language === 'java' || language === 'python') {
+    // 1. In-Browser Native Java Engine
+    if (language === 'java') {
       try {
-        const response = await fetch('/api/run', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ language, code, testCases, problemId })
-        });
-
-        if (response.ok) {
-          const resJson = await response.json();
-          if (resJson && resJson.results) {
-            return resJson;
-          }
-        }
+        return await runJavaInBrowser(code, testCases, problemId);
       } catch (err) {
-        console.warn('Backend runner fetch failed, falling back', err);
+        console.error('Java runner error:', err);
+        return {
+          allPassed: false,
+          totalTests: testCases.length,
+          passedTests: 0,
+          totalTimeMs: 0,
+          results: testCases.map((tc, idx) => ({
+            testIndex: idx + 1,
+            input: tc.input,
+            expected: tc.expected,
+            actual: undefined,
+            passed: false,
+            executionTimeMs: 0,
+            logs: [],
+            error: `Java Engine Error: ${err.message}`,
+            errorDetails: {
+              type: 'Compilation Error',
+              message: err.message,
+              suggestion: 'Please verify your Java syntax and class structure.'
+            }
+          }))
+        };
       }
     }
 
+    // 2. Python Runner (with fallback syntax linter)
+    if (language === 'python') {
+      return this.runPython(code, testCases);
+    }
+
+    // 3. C++ Runner
     if (language === 'cpp') {
       return {
         allPassed: false,
@@ -71,12 +100,17 @@ export const testRunner = {
           passed: false,
           executionTimeMs: 0,
           logs: [],
-          error: 'C++ Compiler (g++) is not detected on your Windows system. To run C++ locally, install MinGW/GCC, or use Java, Python, or JavaScript.'
+          error: 'C++ Compiler (g++) is not detected on your Windows system. To run C++ locally, install MinGW/GCC, or use Java, Python, or JavaScript.',
+          errorDetails: {
+            type: 'Environment Note',
+            message: 'C++ execution requires local GCC/Clang native toolchain.',
+            suggestion: 'Switch to Java or JavaScript for instant client-side execution.'
+          }
         }))
       };
     }
 
-    // Default JavaScript In-Browser Runner
+    // 4. Default JavaScript In-Browser Runner
     return this.runJavaScript(code, testCases);
   },
 
@@ -84,6 +118,7 @@ export const testRunner = {
     const results = [];
     let totalTime = 0;
     let allPassed = true;
+    const lines = code.split('\n');
 
     for (let i = 0; i < testCases.length; i++) {
       const tc = testCases[i];
@@ -125,7 +160,37 @@ export const testRunner = {
           return targetFunc;
         `;
 
-        const getFn = new Function('console', wrapperCode);
+        let getFn;
+        try {
+          getFn = new Function('console', wrapperCode);
+        } catch (syntaxErr) {
+          // Parse line number from SyntaxError stack if available
+          let errLine = null;
+          let errCol = null;
+          const stackMatch = (syntaxErr.stack || '').match(/<anonymous>:(\d+):(\d+)/);
+          if (stackMatch) {
+            errLine = Math.max(1, parseInt(stackMatch[1], 10) - 1);
+            errCol = parseInt(stackMatch[2], 10);
+          }
+
+          const snippet = errLine ? formatSnippet(lines, errLine, errCol) : '';
+          const formattedMsg = errLine 
+            ? `Line ${errLine}${errCol ? ', Col ' + errCol : ''}: ${syntaxErr.message}\n${snippet}`
+            : `Syntax Error: ${syntaxErr.message}`;
+
+          throw {
+            message: formattedMsg,
+            details: {
+              type: 'Syntax Error',
+              line: errLine,
+              column: errCol,
+              message: syntaxErr.message,
+              snippet,
+              suggestion: 'Check for unclosed brackets, missing commas, or typos in your JavaScript code.'
+            }
+          };
+        }
+
         const target = getFn(customConsole);
 
         if (!target) {
@@ -166,6 +231,12 @@ export const testRunner = {
       } catch (err) {
         const endTime = performance.now();
         allPassed = false;
+        const errDetails = err.details || {
+          type: 'Runtime Error',
+          message: err.message || String(err),
+          suggestion: 'Check for undefined variables, out-of-bounds array access, or infinite loops.'
+        };
+
         results.push({
           testIndex: i + 1,
           input: tc.input,
@@ -174,7 +245,8 @@ export const testRunner = {
           passed: false,
           executionTimeMs: Math.round((endTime - startTime) * 100) / 100,
           logs: capturedLogs,
-          error: err.message || String(err)
+          error: err.message || String(err),
+          errorDetails: errDetails
         });
       }
     }
@@ -186,5 +258,88 @@ export const testRunner = {
       totalTimeMs: Math.round(totalTime * 100) / 100,
       results
     };
+  },
+
+  async runPython(code, testCases) {
+    const lines = code.split('\n');
+    
+    // Static Python Syntax Validator
+    for (let i = 0; i < lines.length; i++) {
+      const lineNum = i + 1;
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      if (!trimmed || trimmed.startsWith('#')) continue;
+
+      // Check for missing colon on def/if/for/while/class
+      if (/^(def\s+|if\s+|for\s+|while\s+|class\s+|elif\s+|else\s*|try\s*|except\s*|finally\s*)/.test(trimmed) && !trimmed.endsWith(':')) {
+        const col = line.length + 1;
+        const snippet = formatSnippet(lines, lineNum, col);
+        const errMsg = `Line ${lineNum}, Col ${col}: SyntaxError: expected ':' at end of statement\n${snippet}\n💡 Python requires a colon (:) at the end of function definitions and control flow statements.`;
+        
+        return {
+          allPassed: false,
+          totalTests: testCases.length,
+          passedTests: 0,
+          totalTimeMs: 0,
+          results: testCases.map((tc, idx) => ({
+            testIndex: idx + 1,
+            input: tc.input,
+            expected: tc.expected,
+            actual: undefined,
+            passed: false,
+            executionTimeMs: 0,
+            logs: [],
+            error: errMsg,
+            errorDetails: {
+              type: 'Syntax Error',
+              line: lineNum,
+              column: col,
+              message: "expected ':' at end of statement",
+              snippet,
+              suggestion: "Add a colon ':' to the end of this line."
+            }
+          }))
+        };
+      }
+    }
+
+    // Default translation of Python algorithm to JS for quick test runs
+    try {
+      let pyJs = code;
+      // Convert python syntax to JS
+      pyJs = pyJs.replace(/def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(([^)]*)\):/g, 'function $1($2) {');
+      pyJs = pyJs.replace(/\bTrue\b/g, 'true');
+      pyJs = pyJs.replace(/\bFalse\b/g, 'false');
+      pyJs = pyJs.replace(/\bNone\b/g, 'null');
+      pyJs = pyJs.replace(/\blen\(([^)]+)\)/g, '$1.length');
+      pyJs = pyJs.replace(/\band\b/g, '&&');
+      pyJs = pyJs.replace(/\bor\b/g, '||');
+      pyJs = pyJs.replace(/\bnot\b/g, '!');
+
+      return this.runJavaScript(pyJs, testCases);
+    } catch (err) {
+      return {
+        allPassed: false,
+        totalTests: testCases.length,
+        passedTests: 0,
+        totalTimeMs: 0,
+        results: testCases.map((tc, idx) => ({
+          testIndex: idx + 1,
+          input: tc.input,
+          expected: tc.expected,
+          actual: undefined,
+          passed: false,
+          executionTimeMs: 0,
+          logs: [],
+          error: `Python Runtime Error: ${err.message}`,
+          errorDetails: {
+            type: 'Runtime Error',
+            message: err.message,
+            suggestion: 'Verify indentation and syntax in Python code.'
+          }
+        }))
+      };
+    }
   }
 };
